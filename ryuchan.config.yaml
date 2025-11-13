@@ -1,8 +1,8 @@
 # 网站的基本信息
 site:
-  tab: RyuChan # 浏览器标签栏上显示的文本
-  title: RyuChan # 网站的标题
-  description: 🌸 轻盈、优雅、纯净 —— 用文字与图片记录生活与创意 # 网站的描述，用于SEO等
+  tab: ZSXの小站 # 浏览器标签栏上显示的文本
+  title: ZSXの小站 # 网站的标题
+  description: 钟神秀的博客，我在这里记录我的生活日常、踩坑记录和资源分享。 # 网站的描述，用于SEO等
   language: zh  # 网站的语言，例如 "en" 是英文
   favicon: /favicon.ico # 网站的图标，用于浏览器标签栏和其他地方显示
   theme: # 更多主题 https://daisyui.com/docs/themes/
@@ -14,31 +14,31 @@ site:
     pageSize: 8 # 每页显示的文章数量
   banner:  
     images:  
-      - "https://s2.loli.net/2025/01/25/PBvHFjr5yDu6t4a.webp"  
-      - "https://s2.loli.net/2025/01/25/6bKcwHZigzlM4mJ.webp"  
-      - "https://s2.loli.net/2025/01/25/H9WgEK6qNTcpFiS.webp"  
-      - "https://s2.loli.net/2025/01/25/njNVtuUMzxs81RI.webp"  
-      - "https://s2.loli.net/2025/01/25/tozsJ8QHAjFN3Mm.webp"  
-      - "https://s2.loli.net/2025/01/25/Pm89OveZq7NWUxF.webp"  
-      - "https://s2.loli.net/2025/01/25/UCYKvc1ZhgPHB9m.webp"  
-      - "https://s2.loli.net/2025/01/25/JjpLOW8VSmufzlA.webp"  
+      - "/image/banner/1.png"  
+      - "/image/banner/2.png"  
+      - "/image/banner/3.png"  
+      - "/image/banner/4.png"  
+      - "/image/banner/5.png"  
+      - "/image/banner/6.png"  
+      - "/image/banner/7.png"  
+      - "/image/banner/8.png"  
     height: "60vh"
   # Banner 页面标题配置
   pages:
     home:  
-      title: "RyuChan's Blog"  
-      subtitle: "欲买桂花同载酒，终不似，少年游！"   
+      title: "欢迎来到ZSXの小站！"  
+      subtitle: "造化钟神秀，阴阳割昏晓！"   
       typewriterTexts: # 新增打字机文本配置  
-        - "🌸 欲买桂花同载酒，终不似，少年游！"  
-        - "🌸花有重开日，人无再少年！"  
-        - "🌿 记录生活的点滴，分享美好的瞬间！"  
-        - "📚 纸上得来终觉浅，绝知此事要躬行！" 
+        - "愿你看清一切真相后，依旧热爱你的家人和朋友。"  
+        - "总有些事情，高于其他！"  
+        - "少年曾许凌云志，曾许人间第一流！"  
+        - "每一段旅行，都有终点~" 
     friend:  
       title: "友人帐"  
       subtitle: "记录那些珍贵的友谊，分享彼此的故事"  
     about:  
       title: "About Me"  
-      subtitle: "一个热爱生活与技术的普通人！" 
+      subtitle: "一个摆烂的牛马~" 
     navigation:  
       title: "网站导航"  
       subtitle: "收藏的常用网站和工具链接"  
@@ -124,8 +124,8 @@ site:
 
 # 用户的个人信息
 user:
-  name: RyuChan # 用户名
-  site: "https://hub.xiaozhangya.xin" # 用户的网站链接
+  name: 钟神秀 # 用户名
+  site: "https://boke.zsx815.top" # 用户的网站链接
   avatar: /profile.png # 用户头像路径
   sidebar: # 侧边栏配置
     social:
@@ -133,7 +133,7 @@ user:
       #   ariaLabel: Support my work # 图标的可访问性标签
       #   title: Support my work # 图标的悬浮标题
       #   svg: "ri:cup-line"
-      - href: "https://github.com/xz131714"
+      - href: "https://github.com/mcyzsx"
         ariaLabel: Github
         title: Github
         svg: "ri:github-line"

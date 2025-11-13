@@ -1,0 +1,243 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import MainCard from "@/components/MainCard.astro";
+
+/* 头像 & 基本信息 – 硬编码即可 */
+const author = {
+  name: "小张",
+  avatar: "https://img.xiaozhangya.xin/file/1753185126703_avatar.jpg",
+  email: "zwl2247103169@outlook.com",
+};
+---
+
+<BaseLayout title="关于我">
+  <MainCard
+    title="关于我"
+    description="博主的个人介绍页面"
+    textOverlay="ABOUT"
+    image="https://img.xiaozhangya.xin/file/1753261567796_bg1.jpg"
+    infoIcon="lucide:user"
+  >
+    <div class="space-y-10 mb-8">
+      <!-- 页面头部 -->
+      <section class="flex flex-col md:flex-row gap-8 items-center md:items-start">
+        <div class="avatar">
+          <div
+            class="w-32 h-32 md:w-40 md:h-40 rounded-xl ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden"
+          >
+            <img
+              src={author.avatar}
+              alt="XZ"
+              width="160"
+              height="160"
+              loading="eager"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        <div class="flex-1 text-center md:text-left">
+          <h1 class="text-3xl md:text-4xl font-bold mb-2">关于我</h1>
+          <p class="text-xl text-base-content/80 mb-4">总有些事情比永恒更重要！</p>
+
+          <!-- 联系方式 -->
+          <div class="flex flex-wrap gap-3 justify-center md:justify-start mb-6">
+            <a href={`mailto:${author.email}`} class="btn btn-sm btn-outline gap-2">
+              <Icon name="lucide:mail" class="w-4 h-4" />
+              <span>Email</span>
+            </a>
+            <a
+              href="https://github.com/xz131714"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-sm btn-outline gap-2"
+            >
+              <Icon name="lucide:github" class="w-4 h-4" />
+              <span>GitHub</span>
+            </a>
+            <a
+              href="https://twitter.com/xzz_ya"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-sm btn-outline gap-2"
+            >
+              <Icon name="lucide:twitter" class="w-4 h-4" />
+              <span>Twitter</span>
+            </a>
+          </div>
+
+          <!-- 计数器 -->
+          <p class="text-base-content/80">
+            <img src="https://count.getloli.com/get/@:xz131714?theme=rule34&num=9131714" alt="访问统计" />
+            <h2>IT爱好者—小张</h2>
+            热爱折腾、热爱技术。小白一枚。
+          </p>
+        </div>
+      </section>
+
+      <!-- 卡片网格 -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 个人介绍 -->
+        <div class="sm:col-span-2 lg:col-span-3 card card-bordered p-6 relative overflow-hidden">
+          <span class="absolute top-4 left-6 text-xs text-base-content/60">个人介绍</span>
+          <div class="mt-4">
+            <p class="mb-2">您好，很高兴认识您！👋</p>
+            <h2 class="text-3xl font-extrabold mb-2">我叫 {author.name}</h2>
+            <p class="text-base-content/80">是一名学生、独立开发者、灵墨社区管理员、志海融新成员、博主。</p>
+          </div>
+          <Icon name="ph:user-circle-bold" class="absolute right-4 bottom-4 w-20 h-20 text-base-content/10" />
+        </div>
+
+        <!-- 出生 / 年龄 -->
+        <div class="card card-bordered p-6 relative">
+          <!-- 左上角标题 -->
+          <span class="absolute top-4 left-6 text-xs text-base-content/60">信息</span>
+
+          <!-- 内容区：自然靠左，不撑开 -->
+          <div class="mt-8 space-y-4">
+            <!-- 出生 -->
+            <div class="flex items-center gap-x-4">
+              <span class="text-sm text-base-content/70">出生</span>
+              <span class="text-2xl font-bold">2009</span>
+            </div>
+
+            <!-- 当前 -->
+            <div class="flex items-center gap-x-4">
+              <span class="text-sm text-base-content/70">当前</span>
+              <span class="text-2xl font-bold">16岁</span>
+            </div>
+          </div>
+
+          <!-- 两个图标：毕业帽移到左下角，日历保持右下角 -->
+          <Icon
+            name="ph:graduation-cap-bold"
+            class="absolute left-4 bottom-4 w-16 h-16 text-base-content/10 pointer-events-none"
+          />
+          <Icon
+            name="ph:calendar-dots-bold"
+            class="absolute right-4 bottom-4 w-16 h-16 text-base-content/10 pointer-events-none"
+          />
+        </div>
+
+        <!-- 座右铭 -->
+        <div class="card card-bordered p-6 relative">
+          <span class="absolute top-4 left-6 text-xs text-base-content/60">座右铭</span>
+          <div class="mt-8">
+            <p class="text-2xl font-bold">越努力</p>
+            <p class="text-2xl font-bold">越幸运</p>
+          </div>
+          <Icon name="ph:compass-bold" class="absolute right-4 bottom-4 w-16 h-16 text-base-content/10" />
+        </div>
+
+        <!-- 关注偏好 -->
+        <div class="card card-bordered p-6 relative">
+          <span class="absolute top-4 left-6 text-xs text-base-content/60">关注偏好</span>
+          <div class="mt-8">
+            <h3 class="text-2xl font-bold mb-1">资源分享</h3>
+            <p class="text-sm text-base-content/70">小说、PC游戏</p>
+          </div>
+          <Icon name="ph:star-bold" class="absolute right-4 bottom-4 w-16 h-16 text-base-content/10" />
+        </div>
+
+        <!-- 音乐偏好 -->
+        <div class="card card-bordered p-6 relative">
+          <span class="absolute top-4 left-6 text-xs text-base-content/60">音乐偏好</span>
+          <div class="mt-8">
+            <h3 class="text-2xl font-bold mb-1">情歌、民谣、轻音乐</h3>
+            <p class="text-sm text-base-content/70">等我喜欢就听</p>
+          </div>
+          <Icon name="ph:music-notes-simple-bold" class="absolute right-4 bottom-4 w-16 h-16 text-base-content/10" />
+        </div>
+
+        <!-- 性格 -->
+        <div class="card card-bordered p-6 relative">
+          <span class="absolute top-4 left-6 text-xs text-base-content/60">性格</span>
+          <div class="mt-8 text-center">
+            <p class="text-2xl font-bold">指挥官</p>
+            <p class="text-lg text-base-content/80">ENTJ-T</p>
+            <a
+              href="https://www.16personalities.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-xs link link-primary absolute right-4 bottom-4"
+            >
+              在 16 Personalities 了解更多
+            </a>
+          </div>
+          <Icon name="ph:brain-bold" class="absolute right-4 bottom-4 w-16 h-16 text-base-content/10" />
+        </div>
+
+        <!-- 特长 -->
+        <div class="card card-bordered p-6 relative">
+          <span class="absolute top-4 left-6 text-xs text-base-content/60">特长</span>
+          <div class="mt-8 text-center text-xl font-bold">
+            <p>Linux、社区管理专家</p>
+            <p class="mt-2">
+              学习能力 <span class="text-primary text-3xl">MAX</span>
+            </p>
+          </div>
+          <Icon name="ph:magic-wand-bold" class="absolute right-4 bottom-4 w-16 h-16 text-base-content/10" />
+        </div>
+
+        <!-- 联系方式 -->
+        <div class="sm:col-span-2 lg:col-span-3 card card-bordered p-6 relative">
+          <span class="absolute top-4 left-6 text-xs text-base-content/60">联系我</span>
+          <div class="mt-8 flex flex-wrap justify-center gap-4">
+            {
+              [
+                { icon: "ph:envelope-simple-bold", url: `mailto:${author.email}`, tip: "邮箱" },
+                { icon: "ph:wechat-logo-bold", url: "https://weixin.qq.com", tip: "微信" },
+                { icon: "ri:bilibili-fill", url: "https://bilibili.com", tip: "哔哩哔哩" },
+                { icon: "ph:telegram-logo-bold", url: "https://t.me", tip: "Telegram" },
+                { icon: "ph:discord-logo-bold", url: "https://discord.com", tip: "Discord" },
+                { icon: "ph:x-logo-bold", url: "https://x.com", tip: "X" },
+              ].map((l) => (
+                <a
+                  href={l.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-circle btn-outline"
+                  aria-label={l.tip}
+                >
+                  <Icon name={l.icon} class="w-5 h-5" />
+                </a>
+              ))
+            }
+          </div>
+          <Icon name="ph:address-book-bold" class="absolute right-4 bottom-4 w-16 h-16 text-base-content/10" />
+        </div>
+
+        <!-- 网站统计 -->
+        <div class="sm:col-span-2 lg:col-span-3 card card-bordered p-6 relative">
+          <span class="absolute top-4 left-6 text-xs text-base-content/60">网站统计</span>
+          <!-- 这里留空，用你原来的 JS 调 Umami 即可 -->
+          <div id="umami-stats" class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <div class="stat-item">
+              <div class="text-2xl font-bold">--</div>
+              <div class="text-xs text-base-content/70">今日 PV</div>
+            </div>
+            <div class="stat-item">
+              <div class="text-2xl font-bold">--</div>
+              <div class="text-xs text-base-content/70">今日 UV</div>
+            </div>
+            <div class="stat-item">
+              <div class="text-2xl font-bold">--</div>
+              <div class="text-xs text-base-content/70">昨日 PV</div>
+            </div>
+            <div class="stat-item">
+              <div class="text-2xl font-bold">--</div>
+              <div class="text-xs text-base-content/70">昨日 UV</div>
+            </div>
+          </div>
+          <Icon name="ph:chart-line-bold" class="absolute right-4 bottom-4 w-16 h-16 text-base-content/10" />
+        </div>
+      </section>
+    </div>
+  </MainCard>
+</BaseLayout>
+
+<!-- 可选：直接把 Vue 里的那段 Umami 请求拷过来即可 -->
+<script>
+  // 这里写你原来 Vue 的 onMounted 逻辑，直接操作 DOM 即可
+</script>
