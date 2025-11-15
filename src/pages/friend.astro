@@ -200,11 +200,12 @@ const lines = [
 
   <script>
     /* 一键复制 */
-    document.querySelectorAll("[data-copy]").forEach((btn: HTMLButtonElement) => {
-      btn.addEventListener("click", () => {
-        const text = btn.dataset.copy || "";
+    document.querySelectorAll("[data-copy]").forEach((btn) => {
+      const button = btn as HTMLButtonElement;
+      button.addEventListener("click", () => {
+        const text = button.dataset.copy || "";
         navigator.clipboard.writeText(text).then(() => {
-          const span = btn.querySelector("span");
+          const span = button.querySelector("span");
           if (!span) return;
           const old = span.textContent;
           span.textContent = "已复制";
