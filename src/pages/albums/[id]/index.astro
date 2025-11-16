@@ -6,7 +6,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Card from "@/components/temple/Card.astro";
 import CardGroup from "@/components/temple/CardGroup.astro";
 import { Icon } from "astro-icon/components";
-import FancyboxInit from "@/components/FancyboxInit.astro"; // ① 客户端组件
+import BaguetteInit from "@/components/BaguetteInit.astro"; // ① 客户端组件
 
 export async function getStaticPaths() {
   const albums = await scanAlbums();
@@ -16,7 +16,7 @@ const { album } = Astro.props;
 ---
 
 <BaseLayout title={album.title}>
-  <FancyboxInit />
+  <BaguetteInit client:load />
   <!-- 放最顶部，跟着 DOM 走 -->
 
   <CardGroup cols="1">
@@ -70,7 +70,7 @@ const { album } = Astro.props;
               >
                 <a
                   href={p.src}
-                  data-fancybox="gallery"
+                  data-baguette
                   data-caption={p.title || p.alt}
                   class="block rounded-box overflow-hidden border border-base-300"
                 >

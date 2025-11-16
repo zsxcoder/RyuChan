@@ -1,5 +1,4 @@
 ---
-// src/pages/diary.astro
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Icon } from "astro-icon/components";
 import MainCard from "@/components/MainCard.astro";
@@ -8,6 +7,7 @@ import CardGroup from "@/components/temple/CardGroup.astro";
 import VideoEmbed from "@/components/VideoEmbed.astro";
 import { getRecentDiaryEntries } from "@/data/diary";
 import Waline from "@components/comments/Waline.astro";
+import GithubCard from "@components/GitHubCard.astro";
 import { commentsConfig } from "@config";
 
 const diaryEntries = getRecentDiaryEntries(30);
@@ -34,12 +34,22 @@ function processText(text: string): string {
   return text.replace(/<br>/g, "<br>").replace(/<b>(.*?)<\/b>/g, "<strong>$1</strong>");
 }
 
+/* ===== 新增：把 music 统一转成 <meting-js> ===== */
+import type { MusicItem } from "@/data/diary";
+function renderMusic(music?: MusicItem | MusicItem[]) {
+  if (!music) return "";
+  const list = Array.isArray(music) ? music : [music];
+  return list
+    .map((m) => `<meting-js server="${m.server}" type="${m.type}" id="${m.id}" autoplay="false"></meting-js>`)
+    .join("\n");
+}
+
 const title = "日记";
 const description = "记录生活点滴，分享日常感悟。";
 ---
 
 <BaseLayout title={title}>
-  <link rel="stylesheet" href="/css/netease-mini-player-v2.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" />
   <CardGroup cols="1">
     <MainCard infoIcon="lucide:book-open">
       <div class="space-y-6">
@@ -56,6 +66,7 @@ const description = "记录生活点滴，分享日常感悟。";
             {
               diaryEntries.map((entry) => (
                 <div class="diary-item bg-base-200/50 rounded-lg p-6 shadow-sm border border-base-300">
+                  {/* 头像/昵称/日期 */}
                   <div class="diary-meta flex items-center gap-3 mb-4">
                     <img src={userInfo.avatar} alt={userInfo.name} class="avatar w-12 h-12 rounded-full shadow-lg" />
                     <div class="info">
@@ -67,49 +78,52 @@ const description = "记录生活点滴，分享日常感悟。";
                     </div>
                   </div>
 
-                  <div class="diary-content mb-4">
-                    {entry.text && <div class="text-content leading-relaxed mb-3" set:html={processText(entry.text)} />}
+                  {/* 文字 */}
+                  {entry.text && <div class="text-content leading-relaxed mb-3" set:html={processText(entry.text)} />}
 
-                    {entry.images && entry.images.length > 0 && (
-                      <div class="images grid grid-cols-3 gap-2 mb-3">
-                        {entry.images.map((img) => (
-                          <div class="image-container relative overflow-hidden rounded-lg">
-                            <img
-                              src={img}
-                              alt="日记图片"
-                              class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                              loading="lazy"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                  {/* 音乐 */}
+                  {entry.music && <div class="music-box mb-3 space-y-2" set:html={renderMusic(entry.music)} />}
 
-                    {entry.video && (
-                      <div class="video-box mb-3">
-                        <VideoEmbed
-                          type={entry.video.type}
-                          id={entry.video.id}
-                          ratio={entry.video.ratio}
-                          poster={entry.video.poster}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  {entry.music && (
-                    <div class="music-box my-3">
-                      <div
-                        class="netease-mini-player"
-                        data-playlist-id={entry.music.type === "playlist" ? entry.music.id : undefined}
-                        data-song-id={entry.music.type === "song" ? entry.music.id : undefined}
-                        data-lyric={entry.music.lyric ?? true}
-                        data-theme={entry.music.theme ?? "auto"}
-                        data-size={entry.music.size ?? "compact"}
+                  {/* 视频 */}
+                  {entry.video && (
+                    <div class="video-box mb-3">
+                      <VideoEmbed
+                        type={entry.video.type}
+                        id={entry.video.id}
+                        ratio={entry.video.ratio}
+                        poster={entry.video.poster}
                       />
                     </div>
                   )}
 
+                  {/* 图片 */}
+                  {entry.images && entry.images.length > 0 && (
+                    <div class="images grid grid-cols-3 gap-2 mb-3">
+                      {entry.images.map((img) => (
+                        <div class="image-container relative overflow-hidden rounded-lg">
+                          <img
+                            src={img}
+                            alt="日记图片"
+                            class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* GitHub 卡片 */}
+                  {entry.github && (
+                    <div class="mt-4">
+                      {Array.isArray(entry.github) ? (
+                        entry.github.map((u) => <GithubCard url={u} />)
+                      ) : (
+                        <GithubCard url={entry.github} />
+                      )}
+                    </div>
+                  )}
+
+                  {/* 标签/位置/评论按钮 */}
                   <div class="diary-bottom flex items-center justify-between text-sm">
                     <div class="tags flex gap-2">
                       {entry.tags?.map((tag) => (
@@ -118,7 +132,6 @@ const description = "记录生活点滴，分享日常感悟。";
                           {tag}
                         </span>
                       ))}
-
                       {entry.location && (
                         <a
                           href={`https://bing.com/maps?q=${encodeURIComponent(entry.location)}`}
@@ -132,7 +145,6 @@ const description = "记录生活点滴，分享日常感悟。";
                         </a>
                       )}
                     </div>
-
                     <button
                       class="comment-btn btn btn-ghost btn-xs gap-1"
                       title="评论"
@@ -154,6 +166,7 @@ const description = "记录生活点滴，分享日常感悟。";
       </div>
     </MainCard>
 
+    <!-- 右侧信息卡片 -->
     <Card>
       <div class="p-6">
         <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
@@ -163,9 +176,7 @@ const description = "记录生活点滴，分享日常感悟。";
         <p class="text-base-content/70 text-sm leading-relaxed">
           这里记录着我的日常生活感悟、技术学习心得和各种有趣的发现。
         </p>
-
         <div class="divider my-4"></div>
-
         <div class="stats stats-vertical shadow">
           <div class="stat">
             <div class="stat-title">日记总数</div>
@@ -181,27 +192,26 @@ const description = "记录生活点滴，分享日常感悟。";
       </div>
     </Card>
   </CardGroup>
+
+  {/* 评论区 */}
   {
     commentsConfig?.enable && commentsConfig.type === "waline" && commentsConfig.waline && (
       <section class="comments">
-        {/* <h2>评论区</h2> */}
+        <h2>评论区</h2>
         <Waline {...commentsConfig.waline} />
       </section>
     )
   }
 </BaseLayout>
 
-<script is:inline src="/js/netease-mini-player-v2.js"></script>
-
-<!-- 图片放大 & 评论滚动 -->
+<!-- 图片放大 & 音乐播放器所需资源 -->
 <script>
-  /* 点击放大图片 */
+  /* ======== 图片放大不变 ======== */
   document.addEventListener("click", (e) => {
     const img = (e.target as HTMLElement).closest(".image-container img");
     if (!img) return;
     const src = img.getAttribute("src");
     if (!src) return;
-
     const modal = document.createElement("div");
     modal.className = "fixed inset-0 z-50 flex items-center justify-center bg-black/80";
     modal.innerHTML = `
@@ -216,39 +226,16 @@ const description = "记录生活点滴，分享日常感悟。";
     modal.addEventListener("click", () => modal.remove());
   });
 
-  /* 评论按钮滚动到底部（假设评论区在页面最下方） */
-  document.addEventListener("click", (e) => {
-    const btn = (e.target as HTMLElement).closest(".comment-btn");
-    if (!btn) return;
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  });
+  /* ======== 音乐播放器：只加载一次 ======== */
+  function loadPlayer() {
+    // 只加载 JS，CSS 已提前引入
+    if ((window as any).APlayer && (window as any).Meting) return;
+    const js1 = document.createElement("script");
+    js1.src = "https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js";
+    const js2 = document.createElement("script");
+    js2.src = "https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js";
+    js1.onload = () => document.head.appendChild(js2);
+    document.head.appendChild(js1);
+  }
+  document.addEventListener("DOMContentLoaded", loadPlayer);
 </script>
-
-<style>
-  .diary-item {
-    transition: all 0.3s ease;
-  }
-  .diary-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  .image-container {
-    aspect-ratio: 1;
-    cursor: zoom-in;
-  }
-  .text-content :global(a) {
-    color: hsl(var(--p));
-    text-decoration: underline;
-  }
-  .text-content :global(a:hover) {
-    opacity: 0.8;
-  }
-  .text-content :global(strong) {
-    font-weight: 600;
-    color: hsl(var(--pc));
-  }
-  .music-box {
-    max-width: 560px; /* 再大就撑破列 */
-    margin: 0 auto;
-  }
-</style>

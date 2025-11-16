@@ -1,6 +1,5 @@
 ---
-// Props interface
-interface Props {
+export interface Props {
   serverURL: string;
   lang?: string;
   dark?: string;
@@ -10,7 +9,6 @@ interface Props {
   reaction?: boolean;
   pageview?: boolean;
 }
-
 const {
   serverURL,
   lang = "en",
@@ -24,7 +22,6 @@ const {
 ---
 
 <div id="waline-container"></div>
-
 <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
 
 <script
@@ -42,13 +39,8 @@ const {
 >
   import { init } from "https://unpkg.com/@waline/client@v3/dist/waline.js";
 
-  let walineInstance;
-
-  async function mountWaline() {
-    if (walineInstance) {
-      await walineInstance.destroy();
-    }
-    walineInstance = init({
+  function mountWaline() {
+    init({
       el: "#waline-container",
       serverURL,
       path: location.pathname,
@@ -62,12 +54,12 @@ const {
     });
   }
 
-  document.addEventListener("astro:after-swap", () => {
-    mountWaline();
-  });
+  /* 下一帧再跑，保证 Astro 已插完 DOM */
+  requestAnimationFrame(() => mountWaline());
 
-  document.addEventListener("DOMContentLoaded", () => {
-    mountWaline();
+  /* 如果以后开 View-Transition，保留兼容 */
+  document.addEventListener("astro:after-swap", () => {
+    requestAnimationFrame(() => mountWaline());
   });
 </script>
 

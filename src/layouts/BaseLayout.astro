@@ -84,10 +84,11 @@ const bannerSubtitle = pageConfig?.subtitle || "";
         });
       })();
     </script>
-  </head>
 
-  <!-- 移除上边距，让Banner从顶部开始 -->
-  <body class="flex flex-col min-h-screen" {...isIndexed ? { "data-pagefind-body": true } : {}}>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css" />
+
+    <!-- 移除上边距，让Banner从顶部开始 -->
+  </head><body class="flex flex-col min-h-screen" {...isIndexed ? { "data-pagefind-body": true } : {}}>
     <Banner title={bannerTitle} subtitle={bannerSubtitle} />
     <Navbar />
     <div class="max-w-blog mx-auto w-full flex-grow">
@@ -382,5 +383,7 @@ const bannerSubtitle = pageConfig?.subtitle || "";
         }
       }
     </style>
+
+    <script is:inline src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/js/lightbox.min.js"></script>
   </body>
 </html>

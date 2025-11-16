@@ -13,7 +13,10 @@ import { getMainBlogPaginationPaths } from "@utils/paginationUtils";
 import Card from "@/components/temple/Card.astro";
 
 export async function getStaticPaths({ paginate }: { paginate: any }) {
-  return getMainBlogPaginationPaths({ paginate });
+  const rawPaths = await getMainBlogPaginationPaths({ paginate });
+
+  /* =====  新增：过滤掉以“.”开头的任何路径（含 /.well-known/…） ===== */
+  return rawPaths.filter((p: any) => (p.params.page as string[]).every((seg: string) => !seg.startsWith(".")));
 }
 
 const { page }: { page: Page } = Astro.props;

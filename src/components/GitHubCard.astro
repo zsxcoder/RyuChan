@@ -1,0 +1,100 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  url: string;
+} // 完整 GitHub 链接
+const { url } = Astro.props;
+
+// 解析 owner/repo
+const repoMatch = url.match(/^https:\/\/github\.com\/([^/]+\/[^/]+?)(\/|$)/);
+const repo = repoMatch ? repoMatch[1] : "";
+
+/* ----- 服务端直接请求，带 GH_TOKEN ----- */
+let name = repo;
+let desc = "";
+let stars = 0;
+
+if (repo) {
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repo}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${import.meta.env.GH_TOKEN}`,
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      name = data.full_name || data.name || repo;
+      desc = data.description ?? "";
+      stars = data.stargazers_count ?? 0;
+    }
+  } catch {
+    // 静默降级
+  }
+}
+---
+
+<div class="gh-card gradient-card">
+  <a href={url} target="_blank" rel="noopener noreferrer" class="gh-link">
+    <div class="gh-info">
+      <span class="gh-icon"><Icon name="bi:github" /></span>
+      <div class="gh-title">{name}</div>
+      {
+        stars > 0 && (
+          <div class="gh-stars" aria-label="stars">
+            <Icon name="ph:star-bold" />
+            <span>{stars}</span>
+          </div>
+        )
+      }
+    </div>
+  </a>
+  {desc && <div class="gh-desc">{desc}</div>}
+</div>
+
+<style>
+  .gh-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--c-bg-soft, var(--fallback-b1, #fff));
+    transition: transform 0.2s ease;
+  }
+  .gh-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .gh-info {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 10px;
+  }
+  .gh-icon {
+    font-size: 18px;
+    opacity: 0.8;
+  }
+  .gh-title {
+    font-weight: 600;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    word-break: break-all;
+  }
+  .gh-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #f59e0b;
+  }
+  .gh-card:hover {
+    transform: translateY(-2px);
+  }
+  .gh-desc {
+    padding: 0 10px 10px;
+    color: var(--c-text-2, hsl(var(--bc) / 0.6));
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+</style>

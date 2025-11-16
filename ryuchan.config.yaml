@@ -116,10 +116,20 @@ site:
           href: /anime
           svg: "material-symbols:movie-outline" 
           target: _self
+        - id: diary
+          text: 日记
+          href: /diary
+          svg: "arcticons:diary" 
+          target: _self
         - id: project
           text: 项目
           href: /project
           svg: "material-symbols:code-blocks-outline"
+          target: _self
+        - id: albums
+          text: 相册
+          href: /albums
+          svg: "heroicons:photo"
           target: _self
     # - id: contact
     #   text: Contact

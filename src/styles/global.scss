@@ -693,3 +693,9 @@ code {
     @apply block text-center py-8 text-base-content opacity-50;
   }
 }
+    html.dark {
+  --waline-color: #e5e7eb;
+  --waline-bgcolor: #1f2937;
+  --waline-border-color: #374151;
+  --waline-theme-color: hsl(var(--p));
+}

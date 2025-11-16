@@ -42,7 +42,7 @@
     --text-primary: #e0e0e0;
     --text-secondary: #b0b0b0;
     /* 自改动 */
-    --text-third: #e0e0e0;
+    --text-third: #808080;
 
     --text-muted: #808080;
     --shadow-light: rgba(255, 255, 255, 0.05);
@@ -60,7 +60,7 @@
         --text-primary: #e0e0e0;
         --text-secondary: #b0b0b0;
             /* 自改动 */
-        --text-third: #e0e0e0;
+        --text-third: #808080;
 
         --text-muted: #808080;
         --shadow-light: rgba(255, 255, 255, 0.05);
@@ -79,7 +79,7 @@
         --text-primary: #333333;
         --text-secondary: #666666;
             /* 自改动 */
-        --text-third: #e0e0e0;
+        --text-third: #808080;
             /* 自改动 */
         --text-muted: #999999;
         --shadow-light: rgba(255, 255, 255, 0.8);

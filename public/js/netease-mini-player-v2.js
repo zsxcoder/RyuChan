@@ -287,7 +287,7 @@ class NeteaseMiniPlayer {
   }
 
   async apiRequest(endpoint, params = {}) {
-    const baseUrl = "https://api.hypcvgm.top/NeteaseMiniPlayer/nmp.php";
+    const baseUrl = "https://netease-api.kemiaosw.top";
     const queryString = new URLSearchParams(params).toString();
     const url = `${baseUrl}${endpoint}${queryString ? `?${queryString}` : ""}`;
     try {
