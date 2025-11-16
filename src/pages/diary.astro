@@ -99,8 +99,6 @@ const description = "记录生活点滴，分享日常感悟。";
 
                   {entry.music && (
                     <div class="music-box my-3">
-                      <link rel="stylesheet" href="/src/assets/styles/netease-mini-player-v2.css" />
-                      <script is:inline src="/src/assets/js/netease-mini-player-v2.js" />
                       <div
                         class="netease-mini-player"
                         data-playlist-id={entry.music.type === "playlist" ? entry.music.id : undefined}
