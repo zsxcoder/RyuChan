@@ -30,6 +30,7 @@ const BIRTH_YEAR = 2005;
 ---
 
 <BaseLayout title="关于我">
+  <link slot="head" rel="stylesheet" href="/src/assets/styles/netease-mini-player-v2.css" />
   <MainCard
     title="关于我"
     description="我的关于页面"
@@ -204,6 +205,12 @@ const BIRTH_YEAR = 2005;
           <Icon name="ph:address-book-bold" class="absolute right-4 bottom-4 w-16 h-16 text-base-content/10" />
         </div>
 
+        <!-- 引入 CSS 文件 -->
+        <link rel="stylesheet" href="/src/assets/styles/netease-mini-player-v2.css" />
+
+        <!-- 引入 JS 文件 -->
+        <script src="/src/assets/js/netease-mini-player-v2.js"></script>
+
         <!-- 正在听 -->
         <div class="sm:col-span-2 lg:col-span-3 card card-bordered p-6 relative">
           <span class="absolute top-4 left-6 text-xs text-base-content/60">正在听</span>
@@ -256,6 +263,8 @@ const BIRTH_YEAR = 2005;
     </div>
   </MainCard>
 </BaseLayout>
+
+<script src="/src/assets/js/netease-mini-player-v2.js"></script>
 
 <!-- 浏览器端仅保留 PV/UV/Visit 统计 -->
 <script>
