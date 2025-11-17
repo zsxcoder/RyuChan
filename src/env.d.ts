@@ -34,3 +34,9 @@ declare module "dayjs/locale/*" {
   const locale: any;
   export default locale;
 }
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    [elem: string]: any; // 允许任意 JSX 标签
+  }
+}
