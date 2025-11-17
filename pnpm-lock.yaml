@@ -9895,7 +9895,7 @@ snapshots:
 
   '@types/resolve@1.17.1':
     dependencies:
-      '@types/node': 24.2.0
+      '@types/node': 24.10.1
 
   '@types/sax@1.2.7':
     dependencies:

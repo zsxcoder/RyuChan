@@ -6,7 +6,6 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import Card from "@/components/temple/Card.astro";
 import CardGroup from "@/components/temple/CardGroup.astro";
 import { Icon } from "astro-icon/components";
-import BaguetteInit from "@/components/BaguetteInit.astro"; // ① 客户端组件
 
 export async function getStaticPaths() {
   const albums = await scanAlbums();
@@ -16,8 +15,8 @@ const { album } = Astro.props;
 ---
 
 <BaseLayout title={album.title}>
-  <BaguetteInit client:load />
-  <!-- 放最顶部，跟着 DOM 走 -->
+  <!-- 1. Lightbox 样式 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css" />
 
   <CardGroup cols="1">
     <Card>
@@ -57,21 +56,15 @@ const { album } = Astro.props;
           )
         }
 
-        <!-- Masonry 照片墙（默认锁点击） -->
+        <!-- Masonry 照片墙 -->
         <div class="masonry-grid" data-ready="false">
           {
             album.photos.map((p) => (
-              <figure
-                class="break-inside-avoid mb-2"
-                data-description={p.description}
-                data-dimensions={`${p.width || "?"} × ${p.height || "?"}`}
-                data-location={p.location}
-                data-tags={p.tags?.join(",")}
-              >
+              <figure class="break-inside-avoid mb-2">
                 <a
                   href={p.src}
-                  data-baguette
-                  data-caption={p.title || p.alt}
+                  data-lightbox="gallery"
+                  data-title={p.title || p.alt}
                   class="block rounded-box overflow-hidden border border-base-300"
                 >
                   <img
@@ -90,13 +83,29 @@ const { album } = Astro.props;
       </div>
     </Card>
   </CardGroup>
+
+  <!-- 2. Lightbox 脚本（带 jQuery，无需组件） -->
+  <script src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/js/lightbox-plus-jquery.min.js" defer></script>
+
+  <!-- 3. 解锁点击（同原来逻辑） -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const grid = document.querySelector(".masonry-grid");
+      if (!grid) return;
+      // 等首图加载完
+      const firstImg = grid.querySelector("img");
+      if (!firstImg) return grid.setAttribute("data-ready", "true");
+      if (firstImg.complete) grid.setAttribute("data-ready", "true");
+      else firstImg.addEventListener("load", () => grid.setAttribute("data-ready", "true"), { once: true });
+    });
+  </script>
 </BaseLayout>
 
 <style>
   /* 点击锁定 + 解锁 */
   .masonry-grid:not([data-ready]) {
     position: relative;
-    pointer-events: none; /* 禁止点击 */
+    pointer-events: none;
     cursor: wait;
   }
   .masonry-grid:not([data-ready])::before {
