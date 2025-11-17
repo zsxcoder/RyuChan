@@ -38,7 +38,7 @@ export default defineConfig({
     tailwind({
       configFile: "./tailwind.config.mjs",
     }),
-    // playformCompress(),
+    playformCompress(),
   ],
   markdown: {
     shikiConfig: {
