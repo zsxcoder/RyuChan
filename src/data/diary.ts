@@ -37,6 +37,12 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
+    text: "今天完善了日记页面，然后添加了公告组件。",
+    date: "2025-11-17 21:52",
+    tags: ["日常"],
+    location: "南京",
+  },
+  {
     text: "今天完成了 mizuki 博客的内容分离，还听到一首超好听的歌~",
     date: "2025-11-16 21:12",
     github: ["https://github.com/mcyzsx/Mizuki", "https://github.com/mcyzsx/mizuki-content"],
