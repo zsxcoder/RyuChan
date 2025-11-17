@@ -4,18 +4,18 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/baguettebox.js@1.11.1/dist/baguetteBox.min.css" />
 
-<script>
-  import baguetteBox from "baguettebox.js";
-
-  // 等 DOM  ready
-  document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", run) : run();
-
-  function run() {
-    baguetteBox.run("[data-baguette]", {
-      captions: true, // 取 alt 或 title 做标题
-      buttons: "auto", // 左右箭头
-      overlayBackgroundColor: "rgba(0,0,0,.8)",
-    });
-    console.log("[debug] baguetteBox 绑定完成");
-  }
+<script is:inline>
+  // 现在这段代码会原样吐到 HTML，不再被 Vite 打包
+  // 因此不会触发虚拟入口文件解析 tsconfig
+  (function () {
+    function run() {
+      baguetteBox.run("[data-baguette]", {
+        captions: true,
+        buttons: "auto",
+        overlayBackgroundColor: "rgba(0,0,0,.8)",
+      });
+      console.log("[debug] baguetteBox 绑定完成");
+    }
+    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", run) : run();
+  })();
 </script>
