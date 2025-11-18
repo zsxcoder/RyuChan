@@ -111,7 +111,7 @@ const bannerSubtitle = pageConfig?.subtitle || "";
     <MobileTOC headings={headings} showTOC={showTOC} />
 
     <!-- 全局樱花飘落特效 -->
-    <script is:inline>
+    <!-- <script is:inline>
       // sakura.js - 浏览器全局樱花飘落特效
       (function () {
         function getRandom(option, config) {
@@ -320,7 +320,7 @@ const bannerSubtitle = pageConfig?.subtitle || "";
       document.addEventListener("astro:after-swap", () => {
         runSakura();
       });
-    </script>
+    </script> -->
 
     <!-- 其余脚本保持不变 -->
     <script define:vars={{ SITE_THEME }} is:inline>

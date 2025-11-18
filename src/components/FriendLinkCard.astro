@@ -27,25 +27,17 @@ const showQR = qrcode && qrcode !== "";
 ---
 
 <div class="friend-card">
-  <!-- 打孔 -->
+  <!-- 下面结构完全沿用你原来的 -->
   <div class="punch"></div>
-
-  <!-- 顶部 -->
   <header>
     <h3 class="title">{sitenick}</h3>
     {siteIcon && <img class="icon" src={siteIcon} alt={siteName} loading="lazy" />}
   </header>
-
-  <!-- 主体 -->
   <main>
     <p class="author">{siteName}</p>
     <p class="desc">{siteDesc}</p>
   </main>
-
-  <!-- 左下角二维码 -->
   {showQR && <img class="qrcode" src={qrcode} alt="qr" onclick={`window.__openQR('${qrcode}')`} />}
-
-  <!-- 右下角日期 / 角标 -->
   <aside class="extras">
     {date && <time class="date">{date}</time>}
     {
@@ -58,8 +50,6 @@ const showQR = qrcode && qrcode !== "";
       )
     }
   </aside>
-
-  <!-- 底部指示器 -->
   <a class="indicator" href={siteUrl} target="_blank" rel="noopener">
     <span>前往网站</span><span>→</span>
   </a>
@@ -70,39 +60,71 @@ const showQR = qrcode && qrcode !== "";
     const box = document.createElement("div");
     box.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:9999`;
     box.innerHTML = `
-      <div style="background:var(--c-bg-soft);padding:30px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+      <div style="background:#fff;padding:30px;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5)">
         <img src="${src}" style="width:280px;height:280px"/>
-        <button onclick="this.closest('div').parentElement.remove()" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border:none;background:var(--c-bg-soft);border-radius:50%;font-size:20px;cursor:pointer">×</button>
+        <button onclick="this.closest('div').parentElement.remove()" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border:none;background:#fff;border-radius:50%;font-size:20px;cursor:pointer">×</button>
       </div>`;
     document.body.appendChild(box);
   };
 </script>
 
 <style>
-  /* 卡片基础 - 与 GitHub 卡片保持一致 */
+  /* ===============  纸纹共用  =============== */
   .friend-card {
     --w: 320px;
     --h: 210px;
     width: var(--w);
     height: var(--h);
-    background: var(--ld-bg-card, var(--c-bg-1));
-    border-radius: 8px;
-    box-shadow: 0 0 0 1px var(--c-border, hsl(var(--b3) / 0.2));
+    position: relative;
     padding: 18px;
     display: flex;
     flex-direction: column;
-    position: relative;
-    transition: transform 0.2s ease;
     overflow: hidden;
-  }
-  html.dark .friend-card {
-    background: var(--c-bg-soft, var(--c-bg-2));
-  }
-  .friend-card:hover {
-    transform: translateY(-2px);
+    border-radius: 12px;
+
+    /* 纸色 & 纹理 */
+    background-color: var(--bg-soft); /* 博客已有变量 */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .65 0 0 0 0 .62 0 0 0 0 .58 0 0 0 .25 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 240px;
+
+    /* 纸纤维轻微压纹 */
+    box-shadow:
+      inset 0 0 0 1px var(--border),
+      /* 内描边 = 纸沿 */ 0 2px 4px -1px rgba(0, 0, 0, 0.06),
+      0 4px 10px -2px rgba(0, 0, 0, 0.04);
+
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease;
   }
 
-  /* 打孔 */
+  /* 悬停：纸略上浮 */
+  .friend-card:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 0 0 1px var(--border),
+      0 6px 16px -2px rgba(0, 0, 0, 0.1),
+      0 8px 24px -4px rgba(0, 0, 0, 0.06);
+  }
+
+  /* ===============  深色纸  =============== */
+  html.dark .friend-card {
+    /* 用博客深色变量 */
+    background-color: var(--bg-base);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .22 0 0 0 0 .22 0 0 0 0 .25 0 0 0 .15 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    box-shadow:
+      inset 0 0 0 1px var(--border),
+      /* 深色边框对比更高 */ 0 4px 12px -1px rgba(0, 0, 0, 0.35),
+      0 8px 24px -4px rgba(0, 0, 0, 0.2);
+  }
+  html.dark .friend-card:hover {
+    box-shadow:
+      inset 0 0 0 1px var(--border),
+      0 8px 24px -1px rgba(0, 0, 0, 0.45),
+      0 12px 32px -4px rgba(0, 0, 0, 0.25);
+  }
+
+  /* ===============  打孔  =============== */
   .punch {
     position: absolute;
     top: 12px;
@@ -113,19 +135,19 @@ const showQR = qrcode && qrcode !== "";
     border-radius: 50%;
     background: transparent;
     box-shadow:
-      inset 0 1px 2px rgba(0, 0, 0, 0.2),
-      inset 0 -1px 1px rgba(255, 255, 255, 0.1),
-      0 0 0 1px rgba(0, 0, 0, 0.15);
+      inset 0 1px 2px rgba(0, 0, 0, 0.15),
+      inset 0 -1px 1px rgba(255, 255, 255, 0.8),
+      0 0 0 1px var(--border);
     pointer-events: none;
   }
   html.dark .punch {
     box-shadow:
       inset 0 1px 3px #000,
       inset 0 -1px 1px rgba(255, 255, 255, 0.05),
-      0 0 0 1px rgba(255, 255, 255, 0.1);
+      0 0 0 1px var(--border);
   }
 
-  /* 顶部 */
+  /* ===============  其余原样式仅做变量替换  =============== */
   header {
     display: flex;
     align-items: center;
@@ -135,7 +157,7 @@ const showQR = qrcode && qrcode !== "";
   .title {
     font-size: 16px;
     font-weight: 600;
-    color: var(--c-text, hsl(var(--bc)));
+    color: var(--c-text);
     font-family: "ChillHuoSong_F", serif;
   }
   .icon {
@@ -145,7 +167,6 @@ const showQR = qrcode && qrcode !== "";
     object-fit: cover;
   }
 
-  /* 主体 */
   main {
     flex: 1;
     min-height: 0;
@@ -153,21 +174,19 @@ const showQR = qrcode && qrcode !== "";
   .author {
     font-size: 15px;
     font-weight: 600;
-    color: var(--c-text, hsl(var(--bc)));
+    color: var(--c-text);
     margin: 0 0 4px;
   }
   .desc {
     font-size: 14px;
-    color: var(--c-text-2, hsl(var(--bc) / 0.6));
-    line-height: 1.45;
+    color: var(--c-text-2);
+    line-height: 1.5;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    word-break: break-all;
   }
 
-  /* 左下角二维码 */
   .qrcode {
     position: absolute;
     bottom: 14px;
@@ -182,7 +201,6 @@ const showQR = qrcode && qrcode !== "";
     transform: scale(1.05);
   }
 
-  /* 右下角日期 / 角标 */
   .extras {
     position: absolute;
     bottom: 14px;
@@ -193,7 +211,7 @@ const showQR = qrcode && qrcode !== "";
   }
   .date {
     font-size: 11px;
-    color: var(--c-text-3, hsl(var(--bc) / 0.5));
+    color: var(--c-text-3);
     white-space: nowrap;
   }
   .corner {
@@ -204,10 +222,9 @@ const showQR = qrcode && qrcode !== "";
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
   }
   html.dark .corner {
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
   }
 
-  /* 底部指示器 */
   .indicator {
     position: absolute;
     bottom: 8px;

@@ -3,6 +3,8 @@
 
 interface ImportMeta {
   env: {
+[x: string]: any;
+[x: string]: any;
     PROD: boolean;
     DEV: boolean;
   };
