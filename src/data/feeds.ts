@@ -9,7 +9,7 @@ export default [
         sitenick: "纸鹿摸鱼处",
         desc: "纸鹿至麓不知路，支炉制露不止漉",
         link: "https://blog.zhilu.site/",
-        avatar: "https://mcyzsx.github.io/picx-images-hosting/links/image.mi5rnala.webp",
+        avatar: "https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/links/image.8ok4l9tqge.webp",
         date: "2025-09-03",
         qrcode: "https://cdn.atao.cyou/Web/qrcode_zhilu.png",
         recommend: true,
