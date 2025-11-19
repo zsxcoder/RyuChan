@@ -9,26 +9,28 @@ export default [
         sitenick: "纸鹿摸鱼处",
         desc: "纸鹿至麓不知路，支炉制露不止漉",
         link: "https://blog.zhilu.site/",
-        avatar: "https://www.zhilu.site/api/avatar.png",
+        avatar: "https://mcyzsx.github.io/picx-images-hosting/links/image.mi5rnala.webp",
         date: "2025-09-03",
         qrcode: "https://cdn.atao.cyou/Web/qrcode_zhilu.png",
-        upstream: true,
+        recommend: true,
       },
       {
-        author: "Luxynth",
-        sitenick: "Luxynth",
-        desc: "我心匪石不可转",
-        link: "https://www.luxynth.cn",
-        avatar: "https://www.luxynth.cn/assets/images/avatar.jpg",
+        author: "ATao",
+        sitenick: "ATao-Blog",
+        desc: "做自己喜欢的事",
+        link: "https://blog.atao.cyou",
+        avatar: "https://cdn.atao.cyou/Web/Avatar.png",
+        qrcode: "https://mcyzsx.github.io/picx-images-hosting/links/atao.1hsn7l8mie.webp",
         date: "2025-09-09",
+        recommend: true,
       },
       // …想加继续往下写
     ],
   },
-  {
-    name: "程序猿",
-    entries: [
-      // 另一组
-    ],
-  },
+//   {
+//     name: "程序猿",
+//     entries: [
+//       // 另一组
+//     ],
+//   },
 ] satisfies FeedGroup[];

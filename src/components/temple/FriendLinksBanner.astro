@@ -1,0 +1,163 @@
+---
+/**
+ * FriendLinksBanner.astro
+ * 友链页顶部横幅 + 头像走马灯（深色模式适配）
+ */
+import feeds from "@/data/feeds";
+
+const FALLBACK_AVATAR = "https://img.314926.xyz/images/2025/08/19/404.gif";
+
+/* 工具函数 */
+const stripBang = (u: string) => (u.includes("!") ? u.split("!")[0] : u);
+const absolutize = (url: string) => {
+  if (!url) return url;
+  if (/^https?:\/\//i.test(url) || /^\/\//.test(url)) return url;
+  return url.startsWith("/") ? import.meta.env.SITE + url : url;
+};
+
+/* 构造 pairs（与 Vue 版逻辑一致） */
+const pairs = feeds.flatMap((g) => {
+  const even = g.entries.filter((_, i) => i % 2 === 0);
+  const odd = g.entries.filter((_, i) => i % 2 === 1);
+  const max = Math.min(even.length, odd.length);
+  const out: { left: any; right: any; leftSrc: string; rightSrc: string }[] = [];
+  for (let i = 0; i < max; i++) {
+    const a = even[i];
+    const b = odd[i];
+    const suffixA = (a as any).hundredSuffix || (g as any).hundredSuffix || "";
+    const suffixB = (b as any).hundredSuffix || (g as any).hundredSuffix || "";
+    out.push({
+      left: a,
+      right: b,
+      leftSrc: absolutize(stripBang(a.avatar) + suffixA),
+      rightSrc: absolutize(stripBang(b.avatar) + suffixB),
+    });
+  }
+  return out;
+});
+---
+
+<section class="flinks card">
+  <header class="flinks-hero">
+    <p class="flinks-eyebrow">友情链接</p>
+    <h2 class="flinks-title">与数百名博主无限进步</h2>
+  </header>
+
+  <div class="flinks-marquee" aria-label="friend links avatars">
+    <div class="flinks-track">
+      {/* 复制两份实现无缝循环 */}
+      {
+        Array.from({ length: 2 }).map((_, n) => (
+          <div class="flinks-seg">
+            {pairs.map((p, i) => (
+              <div class="flinks-pair">
+                <a class="face" href={absolutize(p.left.link)} target="_blank" rel="noopener" title={p.left.author}>
+                  <img
+                    src={p.leftSrc}
+                    alt={p.left.author}
+                    class="img"
+                    onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
+                  />
+                </a>
+                <a
+                  class="face offset"
+                  href={absolutize(p.right.link)}
+                  target="_blank"
+                  rel="noopener"
+                  title={p.right.author}
+                >
+                  <img
+                    src={p.rightSrc}
+                    alt={p.right.author}
+                    class="img"
+                    onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
+                  />
+                </a>
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  /* 深色变量跟随 html[data-theme="dark"] */
+  .flinks {
+    margin: 1rem;
+    padding: 1.25rem;
+    border: 1px solid var(--c-border, #e5e7eb);
+    border-radius: 12px;
+    box-shadow: 0 0.1em 0.2em var(--ld-shadow);
+    background: var(--ld-bg-card);
+  }
+  .flinks-hero {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .flinks-eyebrow {
+    font-size: 12px;
+    line-height: 1;
+    color: var(--c-text-3);
+  }
+  .flinks-title {
+    margin: 0 0 0.25rem;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--c-text-1);
+  }
+  .flinks-marquee {
+    overflow: hidden;
+    margin-top: 1.25rem;
+    margin-right: -1.25rem;
+    margin-left: -1.25rem;
+  }
+  .flinks-track {
+    display: flex;
+    width: max-content;
+    animation: ticker 120s linear infinite;
+  }
+  .flinks-seg {
+    display: flex;
+    gap: 1.25rem;
+    padding-left: 0;
+  }
+  .flinks-pair {
+    display: grid;
+    grid-auto-flow: row;
+    align-items: start;
+  }
+  .face {
+    display: inline-flex;
+    overflow: hidden;
+    width: 120px;
+    height: 120px;
+    border-radius: 999px;
+    box-shadow: 0 0.1em 0.2em var(--ld-shadow);
+  }
+  .face.offset {
+    margin-top: 1rem;
+    transform: translateX(-60px);
+  }
+  .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @keyframes ticker {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (max-width: 640px) {
+    .flinks-title {
+      font-size: 24px;
+    }
+    .face {
+      width: 96px;
+      height: 96px;
+    }
+  }
+</style>

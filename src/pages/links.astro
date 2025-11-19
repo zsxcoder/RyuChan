@@ -5,17 +5,18 @@ import Card from "@/components/temple/Card.astro";
 import CardGroup from "@/components/temple/CardGroup.astro";
 import { Icon } from "astro-icon/components";
 import FriendLinkCard from "@/components/FriendLinkCard.astro";
+import FriendLinksBanner from "@/components/temple/FriendLinksBanner.astro";
 
 /* 1. 读取分组数据（与 feeds.ts 同一格式） */
 import feeds from "@/data/feeds";
 
 /* 2. 构造「我的博客信息」常量，方便一键复制 */
 const myFeed = {
-  author: "Ryuchan",
-  title: "RyuChan Blog",
-  desc: "一个基于 Astro 的轻量级博客主题。",
-  link: "https://github.com/xz131714/Ryuchan",
-  avatar: "https://avatars.githubusercontent.com/u/52538259?v=4",
+  author: "钟神秀",
+  title: "ZSXの小站",
+  desc: "造化钟神秀，阴阳割昏晓。",
+  link: "https://boke.zsx815.top",
+  avatar: "https://cn.cravatar.com/avatar/56cd72b5460ecaa08ddffea9562f5629",
 };
 const copyFields = {
   博主: myFeed.author,
@@ -75,6 +76,8 @@ const activeCategory = feeds[0]?.name ?? "";
           </div>
         </section>
 
+        <FriendLinksBanner />
+
         <!-- ② 友链分类 -->
         <section>
           <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
@@ -119,6 +122,34 @@ const activeCategory = feeds[0]?.name ?? "";
           }
         </section>
 
+        <section class="rounded-box border border-base-300 bg-base-200/60 p-4 sm:p-6 shadow-sm">
+          <h2 id="small-circle" class="text-xl font-bold mb-4 flex items-center gap-2">
+            <Icon name="mdi:wechat" class="w-5 h-5 text-primary" />
+            友链朋友圈
+          </h2>
+
+          <!-- 加载容器 -->
+          <div
+            id="friend-circle-lite-root"
+            class="not-prose min-h-[8rem] grid place-content-center text-sm text-base-content/60"
+          >
+            加载中...
+          </div>
+        </section>
+
+        <script>
+          import "@/assets/styles/fc.css";
+          import { FriendCircle } from "@/plugins/friendCircle";
+
+          const fc = new FriendCircle();
+          fc.init({
+            private_api_url: "https://fc.kemeow.top/",
+            page_turning_number: 10,
+            error_img: "https://cn.cravatar.com/avatar/56cd72b5460ecaa08ddffea9562f5629",
+          });
+          fc.load();
+        </script>
+
         <!-- ③ 申请友链 -->
         <section>
           <Card>
@@ -143,12 +174,12 @@ const activeCategory = feeds[0]?.name ?? "";
                 </div>
                 <div>
                   <h3 class="font-semibold text-base-content mb-2">方式</h3>
-                  <p>在评论区留言或发送邮件至：</p>
+                  <p>发送邮件至：</p>
                   <div class="inline-flex items-center gap-2 mt-2 px-3 py-2 rounded-lg bg-base-200">
-                    <span class="font-mono">qiatao0305@163.com</span>
+                    <span class="font-mono">mcyzsx815@qq.com</span>
                     <button
                       class="btn btn-outline btn-primary btn-xs"
-                      onclick={`navigator.clipboard.writeText('qiatao0305@163.com').then(()=>alert('已复制邮箱'))`}
+                      onclick={`navigator.clipboard.writeText('mcyzsx815@qq.com').then(()=>alert('已复制邮箱'))`}
                     >
                       复制
                     </button>
@@ -157,6 +188,16 @@ const activeCategory = feeds[0]?.name ?? "";
                     邮件标题注明 <code class="code">友链申请: 你的昵称</code
                     >，并附上博客名称、描述、地址、头像等信息即可。
                   </p>
+                  <p>或者在下面的仓库里添加你的信息</p>
+                  <a
+                    class="btn btn-outline btn-primary btn-sm mt-2"
+                    href="https://github.com/mcyzsx/friends"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Icon name="lucide:github" class="w-4 h-4 mr-1" />
+                    去 GitHub 添加
+                  </a>
                 </div>
                 <div>
                   <h3 class="font-semibold text-base-content mb-2">注意事项</h3>
