@@ -1,0 +1,15 @@
+---
+const g = { tip: "爱好游戏", title: "饥荒", uid: "Krylin" };
+---
+
+<div
+  class="author-content-item game w-full text-white p-6 rounded-xl border shadow
+            bg-cover bg-center"
+  style="background:url('https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/jihuang.5fl0pt2urz.webp') no-repeat center/cover;"
+>
+  <div class="card-content">
+    <div class="text-xs opacity-80 mb-2">{g.tip}</div>
+    <div class="text-3xl font-bold mb-2">{g.title}</div>
+    {g.uid && <div class="text-sm opacity-90">ID: {g.uid}</div>}
+  </div>
+</div>

@@ -1,0 +1,21 @@
+---
+interface Props {
+  class?: string;
+}
+const { class: extra } = Astro.props;
+---
+
+<div class:list={["about-card", extra]}>
+  <slot />
+</div>
+
+<style>
+  .about-card {
+    background: var(--heo-card-bg);
+    border: var(--style-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--heo-shadow-lightblack);
+    overflow: hidden;
+  }
+</style>

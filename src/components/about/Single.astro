@@ -1,0 +1,55 @@
+---
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import rehypeStringify from "rehype-stringify";
+import rehypePrism from "@mapbox/rehype-prism"; // 代码高亮（可选）
+import { Icon } from "astro-icon/components";
+
+const { tip, title, lishi, content } = {
+  tip: "建站历程",
+  title: "我的建站经过",
+  lishi: "『ZSXの小站』历史进程",
+  content: `『ZSXの小站』是**钟神秀**的个人博客，博客的主题来自[RyuChan](https://github.com/xz131714/RyuChan)，我在此基础上进行了修改，您可以在[仓库](https://github.com/mcyzsx/RyuChan)查看源码。<br>
+  我的[友链页](/links)是参考[ATao-Blog](https://blog.atao.cyou/link)的[源码](https://github.com/ataoyan/blog-v3/blob/atao-blog/app/pages/link.vue)、
+cworld1的[友链组件](https://astro-pure.js.org/docs/integrations/links#integrated-with-friend-circle-lite)然后轮播图参考[仓库](https://github.com/Akuma-real/blog-v3/blob/blog/app/components/card/FriendLinksBanner.vue)。<br>
+然后是我的[日记页面](/diary)，参考[页面](https://blog.linux-qitong.top/essay)的[源码](https://github.com/Linux-qitong/Nuxt-blog)，参考了[blog-v3](https://github.com/L33Z22L11/blog-v3)的一些组件。<br>
+接下来是[相册页面](/albums)，参考[Mizuki](https://github.com/matsuzaka-yuki/Mizuki)的实现方式。
+我在这个博客里记录我的生活日常、踩坑教程和资源分享。我的资源皆来自网络，还是一句话，**用别怕，怕别用**。有什么想找的，可以[邮箱](mailto:mcyzsx815@qq.comz)私聊我。
+未完待续。。。
+`,
+};
+
+/* Markdown → HTML */
+const processed = await unified()
+  .use(remarkParse)
+  .use(remarkRehype, { allowDangerousHtml: true })
+  .use(rehypePrism) // 不需要可删掉
+  .use(rehypeStringify, { allowDangerousHtml: true })
+  .process(content);
+
+const html = processed.toString();
+---
+
+<div
+  class="author-content-item single
+         w-full p-6 rounded-xl border shadow
+         bg-base-100 dark:bg-base-200"
+>
+  <div class="text-xs opacity-60 mb-2">{tip}</div>
+  <div class="text-xl font-bold mb-2">{title}</div>
+  <div class="text-lg font-semibold mb-3">{lishi}</div>
+
+  <!-- 渲染 Markdown / HTML -->
+  <div
+    class="prose prose-sm md:prose-base
+           dark:prose-invert
+           max-w-none
+           prose-pre:bg-base-200 dark:prose-pre:bg-base-300
+           prose-pre:text-base-content
+           prose-blockquote:border-l-4 prose-blockquote:border-base-300
+           prose-blockquote:pl-4 prose-blockquote:italic
+           opacity-80"
+    set:html={html}
+  />
+</div>

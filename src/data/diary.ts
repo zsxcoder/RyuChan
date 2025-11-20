@@ -22,30 +22,32 @@ export interface DiaryEntry {
   images?: string[];
   tags?: string[];
   location?: string;
-  /** 与 VideoEmbed 保持一致 */
   video?: {
     type: VideoType;
     id: string;
     ratio?: string | number;
     poster?: string;
   };
-  /** 新增：音乐 */
   music?: MusicItem | MusicItem[];
   github?: string | string[];
+  /* 新增 */
+  url?: string | string[];
 }
 
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
-    text: "今天完善了友链页面，不确定还会不会继续美化，想添加友链最好去下面的仓库。",
+    text: "今天完善了关于页面，参考[博客的关于页面](https://www.myxz.top/about)",
     date: "2025-11-19 23:30",
-    github: ["https://github.com/mcyzsx/friends"],
+    github: ["https://github.com/661111/Myxz_Blog_Nuxt"],
     tags: ["日常"],
     location: "南京",
+    url: "https://www.myxz.top/about",
   },
   {
-    text: "今天完善了日记页面，然后添加了公告组件。",
-    date: "2025-11-17 21:52",
+    text: "今天完善了友链页面，想添加友链最好去下面的仓库。",
+    date: "2025-11-19 23:30",
+    github: ["https://github.com/mcyzsx/friends"],
     tags: ["日常"],
     location: "南京",
   },

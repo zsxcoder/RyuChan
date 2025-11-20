@@ -60,7 +60,7 @@ site:
       target: _self
     - id: friend
       text: 友人帐
-      href: /friend
+      href: /links
       svg: "material-symbols:supervisor-account-outline-rounded"
       target: _self
     # - id: blog
@@ -108,7 +108,7 @@ site:
       subItems:
         - id: about
           text: 关于
-          href: /me
+          href: /mcyzsx
           svg: "material-symbols:info-outline-rounded"
           target: _self
         - id: anime

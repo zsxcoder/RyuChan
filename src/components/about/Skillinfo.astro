@@ -1,0 +1,55 @@
+---
+const skills = [
+  { n: "Vue", c: "#b8f0ae", i: "/icon/Vue.svg" },
+  { n: "Astro", c: "#fff", i: "/icon/Astro.svg" },
+  //   { n: "Java", c: "#fff", i: "https://cdn.sxiaohe.top/img/banners/Java.webp" },
+  { n: "Docker", c: "#57b6e6", i: "/icon/Docker.svg" },
+  { n: "Webpack", c: "#2e3a41", i: "/icon/Webpack.svg" },
+  //   { n: "Photoshop", c: "#4082c3", i: "https://cdn.sxiaohe.top/img/banners/PS.webp" },
+  //   { n: "Swift", c: "#eb6840", i: "https://cdn.sxiaohe.top/img/banners/swift.webp" },
+  //   { n: "Python", c: "#fff", i: "https://cdn.sxiaohe.top/img/banners/python.webp" },
+  { n: "Node", c: "#333", i: "/icon/Node.svg" },
+  { n: "Git", c: "#df5b40", i: "/icon/Git.svg" },
+  { n: "Css", c: "#2c51db", i: "/icon/CSS.svg" },
+  { n: "Js", c: "#f7cb4f", i: "/icon/js.svg" },
+];
+---
+
+<div class="author-content-item skills w-full">
+  <div class="card-content p-5 rounded-xl border shadow
+              bg-base-100 dark:bg-base-200">
+    <div class="text-xs opacity-60 mb-2">开启创造力</div>
+    <div class="text-lg font-bold mb-4">技能</div>
+
+    <!-- 轮播 -->
+    <div class="flex gap-4 overflow-hidden">
+      <div class="flex gap-4 animate-rowleft">
+        {
+          skills.concat(skills).map((s) => (
+            <div
+              class="flex-shrink-0 w-20 h-20 rounded-xl flex items-center justify-center shadow"
+              style={`background:${s.c}`}
+            >
+              <img src={s.i} alt={s.n} class="w-12 h-12 object-contain" />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes rowleft {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  .animate-rowleft {
+    display: flex;
+    animation: rowleft 60s linear infinite;
+  }
+</style>

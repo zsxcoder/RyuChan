@@ -1,0 +1,24 @@
+---
+export interface Props {
+  url: string;
+}
+const { url } = Astro.props;
+/* 取域名当标题，也可自行解析 <title> */
+const hostname = new URL(url).hostname;
+import { Icon } from "astro-icon/components";
+---
+<a
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="bookmark inline-flex items-center gap-2 link link-hover
+         border border-base-300 rounded-box px-3 py-2
+         hover:border-primary transition-colors"
+>
+  <Icon name="lucide:external-link" class="w-4 h-4 text-primary" />
+  <span class="text-sm">{hostname}</span>
+</a>
+<style>
+  /* 让书签跟行内文字一样高，不会换行 */
+  .bookmark { display: inline-flex; vertical-align: middle; }
+</style>

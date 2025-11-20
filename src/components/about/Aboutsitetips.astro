@@ -1,0 +1,111 @@
+---
+/* 数据与 vue 版保持一致 */
+const card = {
+  tips: "追求",
+  conect1: "源于",
+  conect2: "热爱而去",
+  inlineword: "感受",
+  mask: [{ firstTips: "学习", span: "生活", up: "博客", show: "小说" }],
+};
+---
+
+<div
+  class="aboutsiteTips author-content-item w-full md:w-auto md:flex-1
+            p-6 rounded-xl border shadow
+            bg-base-100 dark:bg-base-200
+            flex flex-col items-start"
+>
+  <!-- 小标题 -->
+  <div class="author-content-item-tips text-xs opacity-60 mb-2">
+    {card.tips}
+  </div>
+
+  <!-- 主文案 -->
+  <h2 class="text-3xl font-bold leading-tight">
+    {card.conect1}
+    <br />
+    {card.conect2}
+    <span class="inline-word mx-1">{card.inlineword}</span>
+
+    {/* 彩色轮播文字 */}
+    <div class="mask h-9 mt-1 relative overflow-hidden">
+      {
+        card.mask.map((m) => (
+          <>
+            <span
+              class="absolute top-9 left-0
+                       bg-gradient-to-r from-[#0ecffe] to-[#07a6f1]
+                       bg-clip-text text-transparent
+                       translate-y-full data-show:translate-y-0
+                       transition-transform duration-500"
+            >
+              {m.firstTips}
+            </span>
+            <span
+              class="absolute top-9 left-0
+                       bg-gradient-to-r from-[#18e198] to-[#0ec15d]
+                       bg-clip-text text-transparent
+                       translate-y-full data-show:translate-y-0
+                       transition-transform duration-500"
+            >
+              {m.span}
+            </span>
+            <span
+              class="absolute top-9 left-0
+                       bg-gradient-to-r from-[#8a7cfb] to-[#633e9c]
+                       bg-clip-text text-transparent
+                       translate-y-full data-up:translate-y-[-200%]
+                       transition-transform duration-500"
+            >
+              {m.up}
+            </span>
+            <span
+              class="absolute top-9 left-0
+                       bg-gradient-to-r from-[#fa7671] to-[#f45f7f]
+                       bg-clip-text text-transparent
+                       translate-y-full data-show:translate-y-[-100%]
+                       transition-transform duration-500"
+            >
+              {m.show}
+            </span>
+          </>
+        ))
+      }
+    </div>
+  </h2>
+</div>
+
+<style>
+  /* 轮播动画：依次上移，4s 一个周期 */
+  .mask span:nth-of-type(1) {
+    animation: maskUp 4s infinite 0s;
+  }
+  .mask span:nth-of-type(2) {
+    animation: maskUp 4s infinite 1s;
+  }
+  .mask span:nth-of-type(3) {
+    animation: maskUp 4s infinite 2s;
+  }
+  .mask span:nth-of-type(4) {
+    animation: maskUp 4s infinite 3s;
+  }
+
+  @keyframes maskUp {
+    0%,
+    25% {
+      transform: translateY(100%);
+    } /* 0-1s  进入 */
+    25%,
+    50% {
+      transform: translateY(0);
+    } /* 1-2s  停留 */
+    50%,
+    75% {
+      transform: translateY(-100%);
+    } /* 2-3s  离开 */
+    75%,
+    100% {
+      transform: translateY(-200%);
+    } /* 3-4s  等待下一轮 */
+  }
+</style>

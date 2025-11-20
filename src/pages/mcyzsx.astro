@@ -1,0 +1,53 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import MainCard from "@/components/MainCard.astro";
+
+import Author from "@/components/about/Author.astro";
+import MyInfoAndSayHello from "@/components/about/MyInfoAndSayHello.astro";
+import Maxim from "@/components/about/Maxim.astro";
+import SkillInfo from "@/components/about/Skillinfo.astro";
+import Social from "@/components/about/Social.astro";
+import Technology from "@/components/about/Technology.astro";
+import Game from "@/components/about/Game.astro";
+import Single from "@/components/about/Single.astro";
+import Aboutsitetips from "@/components/about/Aboutsitetips.astro";
+---
+
+<BaseLayout title="关于 · 钟神秀">
+  <MainCard
+    title="关于 钟神秀"
+    description="学生 & 博客写作者"
+    textOverlay="关于"
+    image="https://img-api.zsx815.top/mc-pc"
+    infoIcon="lucide:user"
+  >
+    <div class="space-y-4 md:space-y-6">
+      <!-- 头像 + 标签 -->
+      <Author />
+
+      <!-- 第 1 行：独占 -->
+      <MyInfoAndSayHello />
+
+      <!-- 第 2 行：Aboutsitetips + Maxim -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Aboutsitetips />
+        <Maxim />
+      </div>
+
+      <!-- 第 3 行 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <SkillInfo />
+        <Social />
+      </div>
+
+      <!-- 第 4 行 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Technology />
+        <Game />
+      </div>
+
+      <!-- 底部历程 -->
+      <Single />
+    </div>
+  </MainCard>
+</BaseLayout>

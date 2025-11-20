@@ -1,0 +1,34 @@
+---
+const list = [
+  { n: "GitHub", h: "https://github.com/mcyzsx", i: "lucide:github" },
+  { n: "网易云", h: "https://music.163.com/#/user/home?id=1725716511", i: "lucide:music" },
+  { n: "Bilibili", h: "https://space.bilibili.com/396923563", i: "streamline-ultimate:bilibili-logo" },
+  {
+    n: "QQ",
+    h: "https://qm.qq.com/q/JgmdOoClYi",
+    i: "simple-icons:qq",
+  },
+  { n: "Telegram", h: "https://t.me/zhzsx_me", i: "mdi:telegram" },
+  { n: "Twitter", h: "https://x.com/kemiaosw", i: "mdi:twitter" },
+  { n: "Mail", h: "mailto:mcyzsx815@qq.com", i: "lucide:mail" },
+];
+
+import { Icon } from "astro-icon/components";
+---
+
+<div class="author-content-item social w-full">
+  <div class="card-content p-5 rounded-xl border shadow
+              bg-base-100 dark:bg-base-200">
+    <div class="text-xs opacity-60 mb-2">社交</div>
+    <div class="flex flex-wrap gap-3 mt-2">
+      {
+        list.map((s) => (
+          <a href={s.h} target="_blank" rel="noopener" class="btn btn-outline btn-sm gap-2">
+            <Icon name={s.i} class="w-4 h-4" />
+            {s.n}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</div>

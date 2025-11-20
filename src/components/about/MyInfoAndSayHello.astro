@@ -1,0 +1,24 @@
+---
+const info = {
+  t1: "你好，很高兴认识你👋",
+  t2: "我叫",
+  t3: "钟神秀",
+  t4: "是一名 学生、",
+  t5: "博主",
+};
+---
+
+<div
+  class="author-content-item myInfoAndSayHello
+            w-full p-6 rounded-xl border shadow
+            bg-gradient-to-br from-[#9a79fa] to-[#00d4ff]
+            text-white"
+>
+  <div class="title1 opacity-80">{info.t1}</div>
+  <div class="title2 text-3xl font-bold my-2">
+    {info.t2}<span class="inline-word mx-1">{info.t3}</span>
+  </div>
+  <div class="title1 opacity-80">
+    {info.t4}<span class="inline-word mx-1">{info.t5}</span>
+  </div>
+</div>
