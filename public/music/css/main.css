@@ -42,7 +42,7 @@ body {
 #heoMusic-page .aplayer{
   display: flex;
   flex-direction: row-reverse;
-  /* background: rgba(0, 0, 0, 0); */
+  background: rgba(0, 0, 0, 0);
   border: none;
   box-shadow: none;
   justify-content: space-between;
@@ -100,7 +100,7 @@ body {
 #heoMusic-page .aplayer {
   display: flex;
   flex-direction: row;
-  /* background: rgba(0, 0, 0, 0); */
+  background: rgba(0, 0, 0, 0);
   border: none;
   box-shadow: none;
   height: calc(100dvh - 170px);
@@ -120,7 +120,7 @@ body {
 #heoMusic-page.localMusic {
   display: flex;
   flex-direction: row;
-  /* background: rgba(0, 0, 0, 0); */
+  background: rgba(0, 0, 0, 0);
   border: none;
   box-shadow: none;
   height: calc(100dvh - 170px);
@@ -716,5 +716,32 @@ body .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-icon.apla
 
   .aplayer .aplayer-lrc .aplayer-lrc-contents {
     margin-left: 0;
+  }
+}
+
+/* 深色模式下的歌单字体颜色 */
+@media (prefers-color-scheme: dark) {
+  #heoMusic-page ol > li span {
+    color: #000000; /* 黑色字体 */
+  }
+
+  #heoMusic-page ol > li.aplayer-list-light span {
+    color: #000000; /* 黑色字体 */
+  }
+
+  #heoMusic-page ol > li span.aplayer-list-title {
+    color: #000000; /* 黑色字体 */
+  }
+
+  #heoMusic-page ol > li span.aplayer-list-author {
+    color: #000000; /* 黑色字体 */
+  }
+
+  #heoMusic-page ol > li.aplayer-list-light span.aplayer-list-title {
+    color: #000000; /* 黑色字体 */
+  }
+
+  #heoMusic-page ol > li.aplayer-list-light span.aplayer-list-author {
+    color: #000000; /* 黑色字体 */
   }
 }
