@@ -1,115 +1,247 @@
 ---
 import { Icon } from "astro-icon/components";
 import { SITE_TITLE, SITE_MENU } from "../config";
-
 const currentPath = Astro.url.pathname;
 
-type SubMenuItem = { id:string; text:string; href:string; svg:string; target?:string };
-type MenuItem   = { id:string; text:string; href:string; svg:string; target?:string; subItems?:SubMenuItem[] };
+type SubMenuItem = { id: string; text: string; href: string; svg: string; target?: string };
+type MenuItem = { id: string; text: string; href: string; svg: string; target?: string; subItems?: SubMenuItem[] };
 const typedMenu = SITE_MENU as MenuItem[];
 ---
 
-<!-- ===== 零 Tailwind 基础样式 ===== -->
+<!-- ===== 原生样式 ===== -->
 <style>
-  /* 桌面端导航栏 */
-  #navbar-desktop{position:fixed;top:0;left:0;right:0;z-index:50;display:none;transition:opacity .5s;}
-  @media (min-width:769px){#navbar-desktop{display:block}}
-  .nav-inner{max-width:1280px;margin:0 auto;padding:0 1rem}
-  .nav-bar{background:rgba(0,0,0,0);backdrop-filter:blur(12px);padding:.75rem 1.5rem;border-bottom-left-radius:1rem;border-bottom-right-radius:1rem}
-  .brand{display:flex;align-items:center;gap:.5rem;color:#fff;font-size:1.875rem;font-weight:700}
-  .brand:hover{transform:scale(1.05)}
-  .menu-box{display:flex;align-items:center;gap:.25rem}
-  .menu-item{background:transparent;color:#fff;font-size:1.125rem;font-weight:700;padding:.5rem 1rem;border-radius:.5rem;cursor:pointer;transition:background .2s}
-  .menu-item:hover{background:rgba(255,255,255,.1)}
-  .dropdown{position:relative}
-  .dropdown ul{position:absolute;top:100%;left:0;z-index:60;margin-top:.5rem;min-width:13rem;background:#fff;border-radius:.5rem;box-shadow:0 10px 15px -3px rgba(0,0,0,.1);padding:.5rem 0;display:none}
-  .dropdown:hover ul{display:block}
-  .dropdown a{display:block;padding:.5rem 1rem;color:#111;font-weight:700;border-radius:.375rem}
-  .dropdown a:hover{background:#f3f4f6}
+  /* ---- 顶部一级菜单（横向）---- */
+  #page-menu {
+    position: relative;
+    z-index: 40;
+    background: transparent;
+    backdrop-filter: blur(12px);
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .menu-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+  .menu-row .item {
+    flex-shrink: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 1.125rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .menu-row .item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  /* 子菜单面板 */
+  .sub-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: #fff;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+    display: none;
+    z-index: 50;
+  }
+  .sub-panel.open {
+    display: block;
+  }
+  .sub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 1rem;
+    padding: 0 1rem;
+    max-width: 80rem;
+    margin: 0 auto;
+  }
+  .sub-card {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    color: #111;
+    font-weight: 700;
+    transition: background 0.2s;
+  }
+  .sub-card:hover {
+    background: #f3f4f6;
+  }
+  @media (prefers-color-scheme: dark) {
+    .sub-panel {
+      background: #1f2937;
+    }
+    .sub-card {
+      color: #e5e7eb;
+    }
+    .sub-card:hover {
+      background: #374151;
+    }
+  }
 
-  /* 搜索框 */
-  .search-box{position:relative;margin-left:1rem}
-  .search-input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:.5rem;padding:.5rem .75rem .5rem 2.5rem;width:12rem;color:#fff;outline:none}
-  .search-input::placeholder{color:rgba(255,255,255,.7)}
-  .search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);width:1rem;height:1rem;color:rgba(255,255,255,.6)}
-
-  /* 移动端导航栏 */
-  #navbar{position:fixed;top:0;left:0;width:100%;padding:0 .5rem;z-index:50;background:transparent;backdrop-filter:blur(12px);box-shadow:0 1px 3px rgba(0,0,0,.1)}
-  @media (min-width:769px){#navbar{display:none}}
-  .nav-top{height:4rem;display:flex;align-items:center;justify-content:space-between}
-  .menu-btn{position:relative;width:3rem;height:3rem;border-radius:9999px;background:rgba(255,255,255,.1);border:none;cursor:pointer}
-  .menu-icon{width:1.25rem;height:1.25rem;color:#fff;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-  #menu-toggle{display:none}
-  #menu-toggle:checked ~ .menu-icon-off{display:none}
-  #menu-toggle:checked ~ .menu-icon-on{display:block}
-  .menu-icon-on{display:none}
-
-  /* 滑出菜单 */
-  #header-menu{position:fixed;top:4rem;left:0;width:100%;height:calc(100vh - 4rem);background:#fff;box-shadow:0 10px 15px -3px rgba(0,0,0,.1);transform:translateX(-100%);transition:transform .3s ease;overflow-y:auto}
-  #header-menu.open{transform:translateX(0)}
-  .menu-list{padding:1rem 0}
-  .menu-list li{list-style:none}
-  .menu-list a{display:flex;align-items:center;padding:.75rem 1rem;color:#111;font-size:1.125rem;font-weight:700;border-radius:.5rem}
-  .menu-list a:hover{background:#f3f4f6}
-  .menu-list summary{display:flex;align-items:center;padding:.75rem 1rem;cursor:pointer}
-  .menu-list ul{padding-left:1rem}
-  /* ===== 深色模式：移动端菜单黑字黑图标 ===== */
-@media (prefers-color-scheme: dark) {
-  /* 菜单背景可换成浅灰，避免全白刺眼（想要纯白可删） */
-  #header-menu{background:#f5f5f5}
-
-  /* 所有文字 */
-  #header-menu .menu-list a,
-  #header-menu .menu-list summary,
-  #header-menu .menu-list span{color:#000!important}
-
-  /* 所有图标 */
-  #header-menu .menu-list svg,
-  #header-menu summary svg{fill:#000!important;color:#000!important}
-
-  /* 当前高亮项背景加深一点，保持可读 */
-  #header-menu .menu-list .bg-base-200{background:#e5e7eb!important}
-}
+  /* ---- 移动端（沿用）---- */
+  #navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0 0.5rem;
+    z-index: 60;
+    background: transparent;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  @media (min-width: 769px) {
+    #navbar {
+      display: none;
+    }
+  }
+  .nav-top {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .menu-btn {
+    position: relative;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    cursor: pointer;
+  }
+  .menu-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #menu-toggle {
+    display: none;
+  }
+  #menu-toggle:checked ~ .menu-icon-off {
+    display: none;
+  }
+  #menu-toggle:checked ~ .menu-icon-on {
+    display: block;
+  }
+  .menu-icon-on {
+    display: none;
+  }
+  #header-menu {
+    position: fixed;
+    top: 4rem;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 4rem);
+    background: #fff;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+  }
+  #header-menu.open {
+    transform: translateX(0);
+  }
+  .menu-list {
+    padding: 1rem 0;
+  }
+  .menu-list li {
+    list-style: none;
+  }
+  .menu-list a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #111;
+    font-size: 1.125rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+  }
+  .menu-list a:hover {
+    background: #f3f4f6;
+  }
+  .menu-list summary {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+  }
+  .menu-list ul {
+    padding-left: 1rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    #header-menu {
+      background: #f5f5f5;
+    }
+    #header-menu .menu-list a,
+    #header-menu .menu-list summary,
+    #header-menu .menu-list span {
+      color: #000 !important;
+    }
+    #header-menu .menu-list svg,
+    #header-menu summary svg {
+      fill: #000 !important;
+      color: #000 !important;
+    }
+    #header-menu .menu-list .bg-base-200 {
+      background: #e5e7eb !important;
+    }
+  }
 </style>
 
-<!-- ---------------- 桌面端 ---------------- -->
-<nav id="navbar-desktop">
-  <div class="nav-inner">
-    <div class="nav-bar">
-      <div class="menu-box">
-        <a href="/" class="brand">
-          <Icon name="material-symbols:home-outline-rounded" class="text-4xl" />
-          <span>{SITE_TITLE}</span>
-        </a>
-
-        {typedMenu.map(item =>
-          item.subItems ? (
-            <div class="dropdown">
-              <label class="menu-item">
-                <span>{item.text}</span>
-                <Icon name="material-symbols:keyboard-arrow-down" class="ml-1" />
-              </label>
-              <ul>
-                {item.subItems.map(sub => (
-                  <li><a href={sub.href} target={sub.target||"_self"}>{sub.text}</a></li>
-                ))}
-              </ul>
-            </div>
+<!-- ---------------- 顶部一级菜单（横向）---------------- -->
+<nav id="page-menu" class="hidden md:block">
+  <div class="menu-row">
+    {
+      typedMenu.map((item) => (
+        <div class="has-panel">
+          {item.subItems ? (
+            <button class="item" data-menu={item.id}>
+              <Icon name="material-symbols:keyboard-arrow-down" class="mr-1 arrow" />
+              <span>{item.text}</span>
+            </button>
           ) : (
-            <a href={item.href} target={item.target||"_self"} class="menu-item">{item.text}</a>
-          )
-        )}
-
-        <form action="/blog/search" method="get" class="search-box">
-          <input type="text" name="q" placeholder="搜索..." class="search-input" aria-label="搜索" />
-          <Icon name="material-symbols:search" class="search-icon" />
-        </form>
-      </div>
-    </div>
+            <a href={item.href} target={item.target || "_self"} class="item">
+              <Icon name={item.svg} class="mr-1" />
+              <span>{item.text}</span>
+            </a>
+          )}
+          {item.subItems && (
+            <div class="sub-panel" data-panel={item.id}>
+              <div class="sub-grid">
+                {item.subItems.map((sub) => (
+                  <a href={sub.href} target={sub.target || "_self"} class="sub-card">
+                    <Icon name={sub.svg} class="w-5 h-5" />
+                    <span>{sub.text}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))
+    }
   </div>
 </nav>
 
-<!-- ---------------- 移动端 ---------------- -->
+<!-- ---------------- 移动端导航栏（不变）---------------- -->
 <nav id="navbar">
   <div class="nav-top">
     <label class="menu-btn">
@@ -117,87 +249,92 @@ const typedMenu = SITE_MENU as MenuItem[];
       <Icon name="material-symbols:menu" class="menu-icon menu-icon-off" />
       <Icon name="material-symbols:close" class="menu-icon menu-icon-on" />
     </label>
-
     <a href="/" class="text-2xl font-bold text-primary">{SITE_TITLE}</a>
-
     <div></div>
   </div>
-
   <div id="header-menu">
     <ul class="menu-list">
-      {typedMenu.map(item => (
-        <li>
-          {item.subItems ? (
-            <details open={currentPath.startsWith(item.href)}>
-              <summary>
+      {
+        typedMenu.map((item) => (
+          <li>
+            {item.subItems ? (
+              <details open={currentPath.startsWith(item.href)}>
+                <summary>
+                  <Icon name={item.svg} class="w-5 h-5 mr-2" />
+                  <span>{item.text}</span>
+                </summary>
+                <ul>
+                  {item.subItems.map((sub) => (
+                    <li>
+                      <a
+                        href={sub.href}
+                        target={sub.target || "_self"}
+                        class:list={{ "bg-base-200": currentPath === sub.href }}
+                      >
+                        <Icon name={sub.svg} class="w-4 h-4 mr-2" />
+                        <span>{sub.text}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ) : (
+              <a
+                href={item.href}
+                target={item.target || "_self"}
+                class:list={{ "bg-base-200": currentPath === item.href }}
+              >
                 <Icon name={item.svg} class="w-5 h-5 mr-2" />
                 <span>{item.text}</span>
-              </summary>
-              <ul>
-                {item.subItems.map(sub => (
-                  <li>
-                    <a
-                      href={sub.href}
-                      target={sub.target||"_self"}
-                      class:list={{ 'bg-base-200': currentPath === sub.href }}
-                    >
-                      <Icon name={sub.svg} class="w-4 h-4 mr-2" />
-                      <span>{sub.text}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          ) : (
-            <a
-              href={item.href}
-              target={item.target||"_self"}
-              class:list={{ 'bg-base-200': currentPath === item.href }}
-            >
-              <Icon name={item.svg} class="w-5 h-5 mr-2" />
-              <span>{item.text}</span>
-            </a>
-          )}
-        </li>
-      ))}
+              </a>
+            )}
+          </li>
+        ))
+      }
     </ul>
   </div>
 </nav>
 
 <script>
-  /* ===== 移动端滑入/滑出 ===== */
-  const toggle = document.getElementById('menu-toggle');
-  const menu   = document.getElementById('header-menu');
-  if (toggle && menu) {
-    toggle.addEventListener('change', () => menu.classList.toggle('open', toggle.checked));
-
-    /* 点菜单项收回 */
-    menu.querySelectorAll('a').forEach(a =>
-      a.addEventListener('click', () => {
-        toggle.checked = false;
-        menu.classList.remove('open');
-      })
-    );
-
-    /* 点外部收回 */
-    document.addEventListener('click', e => {
-      const nav = document.getElementById('navbar');
-      if (!nav) return;
-      if (!nav.contains(e.target) && menu.classList.contains('open')) {
-        toggle.checked = false;
-        menu.classList.remove('open');
-      }
+  /* ===== 顶部子菜单点击切换 ===== */
+  function initPageMenu() {
+    document.querySelectorAll(".has-panel button").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const panel = btn.nextElementSibling;
+        if (!panel) return;
+        document.querySelectorAll(".sub-panel").forEach((p) => p !== panel && p.classList.remove("open"));
+        panel.classList.toggle("open");
+      });
+    });
+    document.addEventListener("click", () => {
+      document.querySelectorAll(".sub-panel").forEach((p) => p.classList.remove("open"));
     });
   }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initPageMenu);
+  } else {
+    initPageMenu();
+  }
 
-  /* ===== 桌面端滚动淡入淡出 ===== */
-  let last = 0;
-  const desk = document.getElementById('navbar-desktop');
-  if (desk) {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > last && window.scrollY > 60) desk.classList.add('opacity-0', 'pointer-events-none');
-      else desk.classList.remove('opacity-0', 'pointer-events-auto');
-      last = window.scrollY;
-    }, { passive: true });
+  /* ===== 移动端滑入/滑出（不变） ===== */
+  const toggle = document.getElementById("menu-toggle");
+  const menu = document.getElementById("header-menu");
+  if (toggle && menu) {
+    toggle.addEventListener("change", () => menu.classList.toggle("open", toggle.checked));
+    menu.querySelectorAll("a").forEach((a) =>
+      a.addEventListener("click", () => {
+        toggle.checked = false;
+        menu.classList.remove("open");
+      }),
+    );
+    document.addEventListener("click", (e) => {
+      const nav = document.getElementById("navbar");
+      if (!nav) return;
+      if (!nav.contains(e.target) && menu.classList.contains("open")) {
+        toggle.checked = false;
+        menu.classList.remove("open");
+      }
+    });
   }
 </script>
