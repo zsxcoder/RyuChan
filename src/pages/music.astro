@@ -5,7 +5,6 @@
 // import Nav from "@/components/NavMusic.astro"
 ---
 
-<!DOCTYPE html>
 <html lang="zh-cn">
   <head>
     <meta charset="UTF-8" />
@@ -28,28 +27,23 @@
     <meta name="description" content="一个简单好用的音乐播放器。" />
     <!-- <link rel="manifest" href="/manifest.json" /> -->
     <meta name="theme-color" content="#000000" />
-    <!-- 根治：音乐页背景隔离 -->
-<style>
-  /* 隔离层：只针对音乐页 */
-  .music-isolate,
-  .music-isolate * {
-    background: transparent !important;
-    /* 如果还有黑色伪元素，一并清除 */
-    &::before,
-    &::after {
-      background: transparent !important;
-    }
-  }
-</style>
 
-<script>
-  /* 运行时给最外层加上隔离 class，确保权重最高 */
-  document.documentElement.classList.add('music-isolate');
-</script>
+    <!-- 根治：音乐页背景隔离 -->
+    <style>
+      .music-isolate,
+      .music-isolate * {
+        background: transparent !important;
+      }
+      .music-isolate::before,
+      .music-isolate *::before,
+      .music-isolate::after,
+      .music-isolate *::after {
+        background: transparent !important;
+      }
+    </style>
   </head>
 
   <body>
-
     <!-- <Nav /> -->
     <!-- 播放器根节点 -->
     <div id="heoMusic-page"></div>
@@ -58,5 +52,9 @@
     <script src="/music/config.js" is:inline></script>
     <script src="/music/js/APlayer.min.js" is:inline></script>
     <script async data-pjax src="/music/js/main.js" is:inline></script>
+
+    <script is:inline>
+      document.documentElement.classList.add('music-isolate');
+    </script>
   </body>
 </html>
