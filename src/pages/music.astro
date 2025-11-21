@@ -1,0 +1,62 @@
+---
+// music.astro
+// 如仍需在构建时注入一些变量，可在此写 Astro 前置代码
+// 本例保持空逻辑，实现 1:1 迁移
+import Nav from "@/components/NavMusic.astro"
+---
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZSX Music - 用音乐感染人心</title>
+
+    <!-- 样式 -->
+    <link rel="stylesheet" type="text/css" href="/music/css/APlayer.css" />
+    <link rel="stylesheet" type="text/css" href="/music/css/main.css" />
+
+    <!-- 图标 / PWA -->
+    <link rel="icon" type="image/x-icon" href="/music/img/icon.webp" />
+    <link rel="apple-touch-icon" href="/music/img/icon-r.webp" />
+    <meta name="apple-mobile-web-app-title" content="音乐" />
+    <link rel="bookmark" href="/music/img/icon.webp" />
+    <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/img/icon-r.webp" />
+
+    <!-- SEO -->
+    <meta name="description" content="一个简单好用的音乐播放器。" />
+    <!-- <link rel="manifest" href="/manifest.json" /> -->
+    <meta name="theme-color" content="#000000" />
+    <!-- 根治：音乐页背景隔离 -->
+<style>
+  /* 隔离层：只针对音乐页 */
+  .music-isolate,
+  .music-isolate * {
+    background: transparent !important;
+    /* 如果还有黑色伪元素，一并清除 */
+    &::before,
+    &::after {
+      background: transparent !important;
+    }
+  }
+</style>
+
+<script>
+  /* 运行时给最外层加上隔离 class，确保权重最高 */
+  document.documentElement.classList.add('music-isolate');
+</script>
+  </head>
+
+  <body>
+
+    <Nav />
+    <!-- 播放器根节点 -->
+    <div id="heoMusic-page"></div>
+
+    <!-- 配置 & 脚本 -->
+    <script src="/music/config.js" is:inline></script>
+    <script src="/music/js/APlayer.min.js" is:inline></script>
+    <script async data-pjax src="/music/js/main.js" is:inline></script>
+  </body>
+</html>

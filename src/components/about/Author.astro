@@ -1,6 +1,6 @@
 ---
 const leftTags = ["💻 博客写作者", "🥣 干饭魂 干饭人", "🕊 咕咕咕咕咕咕~", "🧱 自动化技术专业"];
-const rightTags = ["吃饭不如碎觉 💤", "乐观 积极 向上 🤝", "活到老，学到老 🔨", "空闲分享资源 🌐"];
+const rightTags = ["吃饭不如碎觉 💤", "乐观 积极 向上 🤝", "活到老，学到老 🔨", "空闲分享资源和教程🌐"];
 ---
 
 <div class="flex flex-wrap items-center justify-center gap-4 md:gap-6">
@@ -9,8 +9,8 @@ const rightTags = ["吃饭不如碎觉 💤", "乐观 积极 向上 🤝", "活�
     {
       leftTags.map((t) => (
         <span
-          class="px-3 py-1 text-xs font-bold rounded-full
-                   bg-base-200 dark:bg-base-300 border shadow-sm"
+          class="inline-block w-max max-w-xs px-3 py-1 text-xs font-bold rounded-full
+                 bg-base-200 dark:bg-base-300 border shadow-sm"
         >
           {t}
         </span>
@@ -34,8 +34,8 @@ const rightTags = ["吃饭不如碎觉 💤", "乐观 积极 向上 🤝", "活�
     {
       rightTags.map((t) => (
         <span
-          class="px-3 py-1 text-xs font-bold rounded-full
-                   bg-base-200 dark:bg-base-300 border shadow-sm"
+          class="inline-block w-max max-w-xs px-3 py-1 text-xs font-bold rounded-full
+                 bg-base-200 dark:bg-base-300 border shadow-sm"
         >
           {t}
         </span>

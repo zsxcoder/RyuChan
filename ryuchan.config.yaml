@@ -32,6 +32,9 @@ site:
         - "总有些事情，高于其他！"  
         - "少年曾许凌云志，曾许人间第一流！"  
         - "每一段旅行，都有终点~" 
+    music:
+      title: 音乐盒子
+      subtitle: 随节奏，慢下来
     friend:  
       title: "友人帐"  
       subtitle: "记录那些珍贵的友谊，分享彼此的故事"  
@@ -224,3 +227,4 @@ umami:
   shareId: "tsQMChFuvCHcWA1L"
   websiteId: "e4712ed9-35be-48ac-93ac-d81e3af5781f"
   timezone: "Asia/Shanghai"
+
