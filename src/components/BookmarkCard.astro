@@ -7,6 +7,7 @@ const { url } = Astro.props;
 const hostname = new URL(url).hostname;
 import { Icon } from "astro-icon/components";
 ---
+
 <a
   href={url}
   target="_blank"
@@ -20,5 +21,8 @@ import { Icon } from "astro-icon/components";
 </a>
 <style>
   /* 让书签跟行内文字一样高，不会换行 */
-  .bookmark { display: inline-flex; vertical-align: middle; }
+  .bookmark {
+    display: inline-flex;
+    vertical-align: middle;
+  }
 </style>

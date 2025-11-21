@@ -2,7 +2,7 @@
 // music.astro
 // 如仍需在构建时注入一些变量，可在此写 Astro 前置代码
 // 本例保持空逻辑，实现 1:1 迁移
-import Nav from "@/components/NavMusic.astro"
+import Nav from "@/components/NavMusic.astro";
 ---
 
 <html lang="zh-cn">
@@ -54,7 +54,7 @@ import Nav from "@/components/NavMusic.astro"
     <script async data-pjax src="/music/js/main.js" is:inline></script>
 
     <script is:inline>
-      document.documentElement.classList.add('music-isolate');
+      document.documentElement.classList.add("music-isolate");
     </script>
   </body>
 </html>

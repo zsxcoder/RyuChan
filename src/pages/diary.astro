@@ -32,9 +32,7 @@ async function mdToHtml(md: string): Promise<string> {
 async function renderText(raw?: string): Promise<string> {
   if (!raw) return "";
   const html = await mdToHtml(raw);
-  return html
-    .replace(/<br>/gi, "<br>")
-    .replace(/<b>(.*?)<\/b>/gi, "<strong>$1</strong>");
+  return html.replace(/<br>/gi, "<br>").replace(/<b>(.*?)<\/b>/gi, "<strong>$1</strong>");
 }
 /* ---------- /Markdown ---------- */
 
@@ -72,80 +70,121 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
       <div class="space-y-6">
         <section>
           <div class="diary-list space-y-4">
-            {diaryEntries.map(async (entry) => (
-              <div class="diary-item bg-base-200/50 rounded-lg p-6 shadow-sm border border-base-300">
-                {/* 头像/昵称/日期 */}
-                <div class="diary-meta flex items-center gap-3 mb-4">
-                  <img src={userInfo.avatar} alt={userInfo.name} class="avatar w-12 h-12 rounded-full shadow-lg" />
-                  <div class="info">
-                    <div class="nick font-semibold flex items-center gap-1">
-                      {userInfo.name}
-                      <Icon name="lucide:verified" class="w-4 h-4 text-primary" />
-                    </div>
-                    <div class="date text-sm text-base-content/60">{formatDate(entry.date)}</div>
-                  </div>
-                </div>
-
-                {/* 文字（Markdown+HTML） */}
-                {entry.text && <div class="text-content leading-relaxed mb-3" set:html={await renderText(entry.text)} />}
-
-                {/* 书签 */}
-                {entry.url && (
-                  <div class="bookmark-group space-x-2 mb-3">
-                    {Array.isArray(entry.url) ? entry.url.map(u => <BookmarkCard url={u} />) : <BookmarkCard url={entry.url} />}
-                  </div>
-                )}
-
-                {/* 音乐 */}
-                {entry.music && (
-                  <div class="music-box mb-3 space-y-2">
-                    {Array.isArray(entry.music) ? entry.music.map(m => <Meting {...m} />) : <Meting {...entry.music} />}
-                  </div>
-                )}
-
-                {/* 视频 */}
-                {entry.video && (
-                  <div class="video-box mb-3">
-                    <VideoEmbed type={entry.video.type} id={entry.video.id} ratio={entry.video.ratio} poster={entry.video.poster} />
-                  </div>
-                )}
-
-                {/* 图片 */}
-                {entry.images && entry.images.length > 0 && (
-                  <div class="images grid grid-cols-3 gap-2 mb-3">
-                    {entry.images.map(img => (
-                      <div class="image-container relative overflow-hidden rounded-lg">
-                        <img src={img} alt="日记图片" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy" />
+            {
+              diaryEntries.map(async (entry) => (
+                <div class="diary-item bg-base-200/50 rounded-lg p-6 shadow-sm border border-base-300">
+                  {/* 头像/昵称/日期 */}
+                  <div class="diary-meta flex items-center gap-3 mb-4">
+                    <img src={userInfo.avatar} alt={userInfo.name} class="avatar w-12 h-12 rounded-full shadow-lg" />
+                    <div class="info">
+                      <div class="nick font-semibold flex items-center gap-1">
+                        {userInfo.name}
+                        <Icon name="lucide:verified" class="w-4 h-4 text-primary" />
                       </div>
-                    ))}
+                      <div class="date text-sm text-base-content/60">{formatDate(entry.date)}</div>
+                    </div>
                   </div>
-                )}
 
-                {/* GitHub 卡片 */}
-                {entry.github && (
-                  <div class="mt-4">
-                    {Array.isArray(entry.github) ? entry.github.map(u => <GithubCard url={u} />) : <GithubCard url={entry.github} />}
-                  </div>
-                )}
+                  {/* 文字（Markdown+HTML） */}
+                  {entry.text && (
+                    <div class="text-content leading-relaxed mb-3" set:html={await renderText(entry.text)} />
+                  )}
 
-                {/* 标签/位置/评论按钮 */}
-                <div class="diary-bottom flex items-center justify-between text-sm">
-                  <div class="tags flex gap-2">
-                    {entry.tags?.map(tag => (
-                      <span class="tag badge badge-ghost gap-1"><Icon name="lucide:tag" class="w-3 h-3" />{tag}</span>
-                    ))}
-                    {entry.location && (
-                      <a href={`https://bing.com/maps?q=${encodeURIComponent(entry.location)}`} target="_blank" rel="noopener noreferrer" class="location badge badge-primary gap-1 hover:badge-primary-focus transition-colors" title={`搜索: ${entry.location}`}>
-                        <Icon name="lucide:map-pin" class="w-3 h-3" />{entry.location}
-                      </a>
-                    )}
+                  {/* 书签 */}
+                  {entry.url && (
+                    <div class="bookmark-group space-x-2 mb-3">
+                      {Array.isArray(entry.url) ? (
+                        entry.url.map((u) => <BookmarkCard url={u} />)
+                      ) : (
+                        <BookmarkCard url={entry.url} />
+                      )}
+                    </div>
+                  )}
+
+                  {/* 音乐 */}
+                  {entry.music && (
+                    <div class="music-box mb-3 space-y-2">
+                      {Array.isArray(entry.music) ? (
+                        entry.music.map((m) => <Meting {...m} />)
+                      ) : (
+                        <Meting {...entry.music} />
+                      )}
+                    </div>
+                  )}
+
+                  {/* 视频 */}
+                  {entry.video && (
+                    <div class="video-box mb-3">
+                      <VideoEmbed
+                        type={entry.video.type}
+                        id={entry.video.id}
+                        ratio={entry.video.ratio}
+                        poster={entry.video.poster}
+                      />
+                    </div>
+                  )}
+
+                  {/* 图片 */}
+                  {entry.images && entry.images.length > 0 && (
+                    <div class="images grid grid-cols-3 gap-2 mb-3">
+                      {entry.images.map((img) => (
+                        <div class="image-container relative overflow-hidden rounded-lg">
+                          <img
+                            src={img}
+                            alt="日记图片"
+                            class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* GitHub 卡片 */}
+                  {entry.github && (
+                    <div class="mt-4">
+                      {Array.isArray(entry.github) ? (
+                        entry.github.map((u) => <GithubCard url={u} />)
+                      ) : (
+                        <GithubCard url={entry.github} />
+                      )}
+                    </div>
+                  )}
+
+                  {/* 标签/位置/评论按钮 */}
+                  <div class="diary-bottom flex items-center justify-between text-sm">
+                    <div class="tags flex gap-2">
+                      {entry.tags?.map((tag) => (
+                        <span class="tag badge badge-ghost gap-1">
+                          <Icon name="lucide:tag" class="w-3 h-3" />
+                          {tag}
+                        </span>
+                      ))}
+                      {entry.location && (
+                        <a
+                          href={`https://bing.com/maps?q=${encodeURIComponent(entry.location)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="location badge badge-primary gap-1 hover:badge-primary-focus transition-colors"
+                          title={`搜索: ${entry.location}`}
+                        >
+                          <Icon name="lucide:map-pin" class="w-3 h-3" />
+                          {entry.location}
+                        </a>
+                      )}
+                    </div>
+                    <button
+                      class="comment-btn btn btn-ghost btn-xs gap-1"
+                      title="评论"
+                      data-reply-text={entry.text || ""}
+                    >
+                      <Icon name="lucide:message-circle" class="w-4 h-4" />
+                      评论
+                    </button>
                   </div>
-                  <button class="comment-btn btn btn-ghost btn-xs gap-1" title="评论" data-reply-text={entry.text || ""}>
-                    <Icon name="lucide:message-circle" class="w-4 h-4" />评论
-                  </button>
                 </div>
-              </div>
-            ))}
+              ))
+            }
           </div>
 
           <div class="diary-footer text-center mt-8">
@@ -158,26 +197,43 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
     <!-- 右侧信息卡片 -->
     <Card>
       <div class="p-6">
-        <h3 class="text-lg font-bold mb-4 flex items-center gap-2"><Icon name="lucide:info" class="w-5 h-5 text-primary" />关于日记</h3>
-        <p class="text-base-content/70 text-sm leading-relaxed">这里记录着我的日常生活感悟、技术学习心得和各种有趣的发现。</p>
+        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+          <Icon name="lucide:info" class="w-5 h-5 text-primary" />关于日记
+        </h3>
+        <p class="text-base-content/70 text-sm leading-relaxed">
+          这里记录着我的日常生活感悟、技术学习心得和各种有趣的发现。
+        </p>
         <div class="divider my-4"></div>
         <div class="stats stats-vertical shadow">
-          <div class="stat"><div class="stat-title">日记总数</div><div class="stat-value text-primary">{diaryEntries.length}</div></div>
-          <div class="stat"><div class="stat-title">最近更新</div><div class="stat-value text-sm">{diaryEntries[0] ? formatDate(diaryEntries[0].date) : "-"}</div></div>
+          <div class="stat">
+            <div class="stat-title">日记总数</div><div class="stat-value text-primary">{diaryEntries.length}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-title">最近更新</div><div class="stat-value text-sm">
+              {diaryEntries[0] ? formatDate(diaryEntries[0].date) : "-"}
+            </div>
+          </div>
         </div>
       </div>
     </Card>
   </CardGroup>
 
   {/* 评论区 */}
-  {commentsConfig?.enable && commentsConfig.type === "waline" && commentsConfig.waline && (
-    <section class="comments"><h2>评论区</h2><Waline {...commentsConfig.waline} /></section>
-  )}
+  {
+    commentsConfig?.enable && commentsConfig.type === "waline" && commentsConfig.waline && (
+      <section class="comments">
+        <>
+          <h2>评论区</h2>
+          <Waline {...commentsConfig.waline} />
+        </>
+      </section>
+    )
+  }
 </BaseLayout>
 
 <!-- 图片放大 & 音乐播放器 -->
 <script>
-  document.addEventListener("click", e => {
+  document.addEventListener("click", (e) => {
     const img = (e.target as HTMLElement).closest(".image-container img");
     if (!img) return;
     const src = img.getAttribute("src");

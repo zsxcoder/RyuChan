@@ -37,8 +37,16 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
+    text: "今天部署了音乐给页面，勉勉强强把，参考张洪大佬的HeoMusic~",
+    date: "2025-11-21 23:50",
+    github: ["https://github.com/zhheo/HeoMusict"],
+    tags: ["日常"],
+    location: "南京",
+    url: "https://boke.zsx815.top/music",
+  },
+  {
     text: "今天完善了关于页面，参考[博客的关于页面](https://www.myxz.top/about)",
-    date: "2025-11-19 23:30",
+    date: "2025-11-20 23:30",
     github: ["https://github.com/661111/Myxz_Blog_Nuxt"],
     tags: ["日常"],
     location: "南京",
