@@ -1,0 +1,23 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import MainCard from "@/components/MainCard.astro";
+import { Icon } from "astro-icon/components";
+import { fetchWeather } from "@/utils/weatherCache";
+
+const city = "南京市"; // 可改成任意城市
+const weatherHtml = await fetchWeather(city);
+---
+
+<BaseLayout title={`${city}实时天气`}>
+  <MainCard
+    title={`${city}实时天气`}
+    description="每 5 分钟更新"
+    textOverlay="WEATHER"
+    image="https://img.xiaozhangya.xin/file/1753261567796_bg1.jpg"
+    infoIcon="lucide:cloud-snow"
+  >
+    <div class="prose prose-sm max-w-none text-base-content">
+      <Fragment set:html={weatherHtml} />
+    </div>
+  </MainCard>
+</BaseLayout>

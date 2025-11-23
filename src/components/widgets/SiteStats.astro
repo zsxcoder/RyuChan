@@ -20,19 +20,9 @@ posts.forEach((p) => {
   totalWords += cn + en;
 });
 
-/* 3. 运行天数 & 最后更新：写死起点，客户端补动态 */
-const siteStartDate = "2025-11-15"; // 和你 config 保持一致
-const lastPubDate = posts[0]?.data.pubDate ?? new Date();
-
-/* 4. 统计项：label 直接写中文，图标用 Material 线性版 */
-const stats = [
-  { icon: "material-symbols:article-outline", label: "文章", value: posts.length },
-  { icon: "material-symbols:folder-outline", label: "分类", value: cateMap.size },
-  { icon: "material-symbols:label-outline", label: "标签", value: tagMap.size },
-  { icon: "material-symbols:text-ad-outline-rounded", label: "总字数", value: totalWords.toLocaleString("zh-CN") },
-  { icon: "material-symbols:calendar-clock-outline", label: "运行天数", value: 0, id: "running-days" },
-  { icon: "material-symbols:ecg-heart-outline", label: "最后更新", value: 0, id: "last-update" },
-];
+/* 3. 最后更新 = 本次构建时间（pnpm build 那一刻） */
+const siteStartTs = Date.UTC(2025, 10, 15); // 站点开张
+const buildTimeTs = Date.now(); // 构建瞬间
 ---
 
 <Card>
@@ -46,11 +36,24 @@ const stats = [
 
     <div class="flex flex-col gap-2">
       {
-        stats.map((s) => (
+        [
+          { icon: "material-symbols:article-outline", label: "文章", value: posts.length },
+          { icon: "material-symbols:folder-outline", label: "分类", value: cateMap.size },
+          { icon: "material-symbols:label-outline", label: "标签", value: tagMap.size },
+          {
+            icon: "material-symbols:text-ad-outline-rounded",
+            label: "总字数",
+            value: totalWords.toLocaleString("zh-CN"),
+          },
+          { icon: "material-symbols:calendar-clock-outline", label: "运行天数", value: 0, id: "running-days" },
+          { icon: "material-symbols:ecg-heart-outline", label: "最后更新", value: 0, id: "last-update" },
+        ].map((s) => (
           <div
-            class="flex items-center justify-between px-3 py-1.5 rounded-lg bg-[rgba(var(--c-bg-soft-rgb),0.6)]
-                    border border-[rgba(var(--c-border-rgb),0.12)] hover:border-[rgba(var(--c-primary-rgb),0.4)]
-                    transition-all duration-300"
+            class="flex items-center justify-between px-3 py-1.5 rounded-lg
+                   bg-[rgba(var(--c-bg-soft-rgb),0.6)]
+                   border border-[rgba(var(--c-border-rgb),0.12)]
+                   hover:border-[rgba(var(--c-primary-rgb),0.4)]
+                   transition-all duration-300"
           >
             <div class="flex items-center gap-2.5">
               <span class="text-[var(--c-primary)] text-xl">
@@ -68,24 +71,20 @@ const stats = [
   </div>
 </Card>
 
-<!-- 客户端脚本：只更新两个动态值 -->
-<script define:vars={{ siteStartDate, lastPubDate }}>
-  (function () {
-    const today = new Date();
-    const start = new Date(siteStartDate);
-    const running = Math.floor((today - start) / 86_400_000);
-    const last = new Date(lastPubDate);
-    const daysAgo = Math.floor((today - last) / 86_400_000);
+<!-- 客户端脚本：运行天数 & 最后更新（构建时间） -->
+<script define:vars={{ siteStartTs, buildTimeTs }}>
+  (() => {
+    const nowTs = Date.now();
+    const running = Math.floor((nowTs - siteStartTs) / 86400_000);
+    const daysAgo = Math.floor((nowTs - buildTimeTs) / 86400_000);
 
-    const runEl = document.querySelector('[data-stat-id="running-days"]');
+    document.querySelector('[data-stat-id="running-days"]').textContent = running;
     const updEl = document.querySelector('[data-stat-id="last-update"]');
-    if (runEl) runEl.textContent = running;
-    if (updEl) updEl.textContent = daysAgo + " 天前";
+    updEl.textContent = daysAgo === 0 ? "今天" : daysAgo + " 天前";
   })();
 </script>
 
 <style lang="scss">
-  /* 直接沿用你 Announcement 的动效与配色变量，无需重写 */
   .site-stats-widget {
     .stats-header {
       border-bottom: 1px solid rgba(var(--c-border-rgb), 0.1);

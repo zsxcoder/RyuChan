@@ -80,6 +80,9 @@ importers:
       dotenv:
         specifier: ^16.5.0
         version: 16.6.1
+      fast-xml-parser:
+        specifier: ^5.3.2
+        version: 5.3.2
       highlight.js:
         specifier: ^11.11.1
         version: 11.11.1

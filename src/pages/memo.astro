@@ -1,0 +1,354 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import MainCard from "@/components/MainCard.astro";
+import Card from "@/components/temple/Card.astro";
+import CardGroup from "@/components/temple/CardGroup.astro";
+import VideoEmbed from "@/components/VideoEmbed.astro";
+import { getRecentDiaryEntries } from "@/data/diary";
+import Waline from "@components/comments/Waline.astro";
+import GithubCard from "@components/GitHubCard.astro";
+import { commentsConfig } from "@config";
+import Meting from "@/components/Meting.astro";
+import DiaryBanner from "@/components/DiaryBanner.astro";
+import BookmarkCard from "@/components/BookmarkCard.astro";
+
+/* ---------- Markdown ---------- */
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import rehypeStringify from "rehype-stringify";
+import rehypeSanitize from "rehype-sanitize";
+
+async function mdToHtml(md: string): Promise<string> {
+  const file = await unified()
+    .use(remarkParse)
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeSanitize)
+    .use(rehypeStringify, { allowDangerousHtml: true })
+    .process(md);
+  return String(file);
+}
+async function renderText(raw?: string): Promise<string> {
+  if (!raw) return "";
+  const html = await mdToHtml(raw);
+  return html.replace(/<br>/gi, "<br>").replace(/<b>(.*?)<\/b>/gi, "<strong>$1</strong>");
+}
+/* ---------- /Markdown ---------- */
+
+const diaryEntries = getRecentDiaryEntries(30);
+
+const userInfo = {
+  name: "钟神秀",
+  avatar: "/profile.png",
+  site: "https://boke.zsx815.top",
+};
+
+function formatDate(dateString: string): string {
+  return new Date(dateString)
+    .toLocaleString("zh-CN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+    .replace(/\//g, "-");
+}
+
+const title = "日记";
+const description = "记录生活点滴，分享日常感悟。";
+const bannerImage = "https://img-api.zsx815.top/mc-pc";
+---
+
+<BaseLayout title={title}>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" />
+  <DiaryBanner title={title} description={description} image={bannerImage} />
+
+  <CardGroup cols="1">
+    <MainCard infoIcon="lucide:book-open">
+      <div class="space-y-6">
+        <section>
+          <div class="diary-list space-y-4">
+            {
+              diaryEntries.map(async (entry, idx) => (
+                <div
+                  class="diary-item bg-base-200/50 rounded-lg p-6 shadow-sm border border-base-300"
+                  data-diary-id={entry.id || `diary-${idx}`}
+                >
+                  {/* 头像/昵称/日期 */}
+                  <div class="diary-meta flex items-center gap-3 mb-4">
+                    <img src={userInfo.avatar} alt={userInfo.name} class="avatar w-12 h-12 rounded-full shadow-lg" />
+                    <div class="info">
+                      <div class="nick font-semibold flex items-center gap-1">
+                        {userInfo.name}
+                        <Icon name="lucide:verified" class="w-4 h-4 text-primary" />
+                      </div>
+                      <div class="date text-sm text-base-content/60">{formatDate(entry.date)}</div>
+                    </div>
+                  </div>
+
+                  {/* 文字（Markdown+HTML） */}
+                  {entry.text && (
+                    <div class="text-content leading-relaxed mb-3" set:html={await renderText(entry.text)} />
+                  )}
+
+                  {/* 书签 */}
+                  {entry.url && (
+                    <div class="bookmark-group space-x-2 mb-3">
+                      {Array.isArray(entry.url) ? (
+                        entry.url.map((u) => <BookmarkCard url={u} />)
+                      ) : (
+                        <BookmarkCard url={entry.url} />
+                      )}
+                    </div>
+                  )}
+
+                  {/* 音乐 */}
+                  {entry.music && (
+                    <div class="music-box mb-3 space-y-2">
+                      {Array.isArray(entry.music) ? (
+                        entry.music.map((m) => <Meting {...m} />)
+                      ) : (
+                        <Meting {...entry.music} />
+                      )}
+                    </div>
+                  )}
+
+                  {/* 视频 */}
+                  {entry.video && (
+                    <div class="video-box mb-3">
+                      <VideoEmbed
+                        type={entry.video.type}
+                        id={entry.video.id}
+                        ratio={entry.video.ratio}
+                        poster={entry.video.poster}
+                      />
+                    </div>
+                  )}
+
+                  {/* 图片 */}
+                  {entry.images && entry.images.length > 0 && (
+                    <div class="images grid grid-cols-3 gap-2 mb-3">
+                      {entry.images.map((img) => (
+                        <div class="image-container relative overflow-hidden rounded-lg">
+                          <img
+                            src={img}
+                            alt="日记图片"
+                            class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* GitHub 卡片 */}
+                  {entry.github && (
+                    <div class="mt-4">
+                      {Array.isArray(entry.github) ? (
+                        entry.github.map((u) => <GithubCard url={u} />)
+                      ) : (
+                        <GithubCard url={entry.github} />
+                      )}
+                    </div>
+                  )}
+
+                  {/* 标签/位置/评论按钮 */}
+                  <div class="diary-bottom flex items-center justify-between text-sm">
+                    <div class="tags flex gap-2">
+                      {entry.tags?.map((tag) => (
+                        <span class="tag badge badge-ghost gap-1">
+                          <Icon name="lucide:tag" class="w-3 h-3" />
+                          {tag}
+                        </span>
+                      ))}
+                      {entry.location && (
+                        <a
+                          href={`https://bing.com/maps?q=${encodeURIComponent(entry.location)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="location badge badge-primary gap-1 hover:badge-primary-focus transition-colors"
+                          title={`搜索: ${entry.location}`}
+                        >
+                          <Icon name="lucide:map-pin" class="w-3 h-3" />
+                          {entry.location}
+                        </a>
+                      )}
+                    </div>
+                    <button
+                      class="comment-btn btn btn-ghost btn-xs gap-1"
+                      title="评论"
+                      data-reply-text={entry.text || ""}
+                    >
+                      <Icon name="lucide:message-circle" class="w-4 h-4" />
+                      评论
+                    </button>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+
+          <div class="diary-footer text-center mt-8">
+            <p class="text-base-content/60 text-sm">仅显示最近 30 条记录</p>
+          </div>
+        </section>
+      </div>
+    </MainCard>
+
+    <!-- 右侧信息卡片 -->
+    <Card>
+      <div class="p-6">
+        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+          <Icon name="lucide:info" class="w-5 h-5 text-primary" />关于日记
+        </h3>
+        <p class="text-base-content/70 text-sm leading-relaxed">
+          这里记录着我的日常生活感悟、技术学习心得和各种有趣的发现。
+        </p>
+        <div class="divider my-4"></div>
+        <div class="stats stats-vertical shadow">
+          <div class="stat">
+            <div class="stat-title">日记总数</div><div class="stat-value text-primary">{diaryEntries.length}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-title">最近更新</div><div class="stat-value text-sm">
+              {diaryEntries[0] ? formatDate(diaryEntries[0].date) : "-"}
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  </CardGroup>
+
+  {/* 评论区 */}
+  {
+    commentsConfig?.enable && commentsConfig.type === "waline" && commentsConfig.waline && (
+      <section id="comments" class="comments mt-10">
+        <h2 class="text-2xl font-bold mb-4">评论区</h2>
+        <Waline {...commentsConfig.waline} path={"/diary"} />
+      </section>
+    )
+  }
+</BaseLayout>
+
+<!-- 图片放大 & 音乐播放器 & 评论交互 -->
+<script>
+  /* ----------  图片放大  ---------- */
+  document.addEventListener("click", (e) => {
+    const img = (e.target as HTMLElement).closest(".image-container img");
+    if (!img) return;
+    const src = img.getAttribute("src");
+    if (!src) return;
+    const modal = document.createElement("div");
+    modal.className = "fixed inset-0 z-50 flex items-center justify-center bg-black/80";
+    modal.innerHTML = `
+    <img src="${src}" class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl" />
+    <button class="absolute top-4 right-4 btn btn-circle btn-ghost text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>`;
+    document.body.appendChild(modal);
+    modal.addEventListener("click", () => modal.remove());
+  });
+
+  /* ----------  音乐播放器  ---------- */
+  function loadPlayer() {
+    if ((window as any).APlayer && (window as any).Meting) return;
+    const js1 = document.createElement("script");
+    js1.src = "https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js";
+    const js2 = document.createElement("script");
+    js2.src = "https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js";
+    js1.onload = () => document.head.appendChild(js2);
+    document.head.appendChild(js1);
+  }
+  document.addEventListener("DOMContentLoaded", loadPlayer);
+
+  /* ----------  方案 1：就地展开评论框  ---------- */
+  (() => {
+    async function sendWalineComment(
+      serverURL: string,
+      path: string,
+      comment: string,
+      nick: string,
+      mail = "",
+      link = "",
+    ) {
+      const resp = await fetch(`${serverURL}/api/comment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path, comment, nick, mail, link }),
+      });
+      return resp.json();
+    }
+
+    document.addEventListener("click", async (e) => {
+      const btn = (e.target as HTMLElement).closest(".comment-btn");
+      if (!btn) return;
+      const card = btn.closest(".diary-item") as HTMLElement;
+      const existed = card.querySelector(".quick-comment") as HTMLElement;
+      if (existed) {
+        existed.remove();
+        return;
+      }
+      const wrapper = document.createElement("div");
+      wrapper.className = "quick-comment mt-4";
+      wrapper.innerHTML = `
+      <textarea class="textarea textarea-bordered w-full" rows="3" placeholder="说点什么…"></textarea>
+      <div class="flex justify-end gap-2 mt-2">
+        <button class="btn btn-sm btn-ghost cancel">取消</button>
+        <button class="btn btn-sm btn-primary submit">发送</button>
+      </div>`;
+      const bottom = card.querySelector(".diary-bottom");
+      bottom?.after(wrapper);
+      (wrapper.querySelector("textarea") as HTMLTextAreaElement).focus();
+
+      wrapper.querySelector(".cancel")!.addEventListener("click", () => wrapper.remove());
+      wrapper.querySelector(".submit")!.addEventListener("click", async () => {
+        const text = (wrapper.querySelector("textarea") as HTMLTextAreaElement).value.trim();
+        if (!text) return;
+        const serverURL = (window as any).__WALINE_SERVER__ || "https://your-waline.vercel.app";
+        const path = location.pathname;
+        const nick = "访客";
+        try {
+          await sendWalineComment(serverURL, path, text, nick);
+          const bubble = document.createElement("div");
+          bubble.className = "chat chat-start mt-3";
+          bubble.innerHTML = `
+          <div class="chat-image avatar">
+            <div class="w-8 rounded-full"><img src="/profile.png" /></div>
+          </div>
+          <div class="chat-bubble">${text}</div>`;
+          wrapper.after(bubble);
+          wrapper.remove();
+        } catch (e) {
+          alert("发送失败，请稍后再试");
+        }
+      });
+    });
+  })();
+
+  /* ----------  方案 2：滚动到 Waline 并切换线程  ---------- */
+  (() => {
+    function switchWalinePath(path: string) {
+      const waline = (window as any).WalineInstance;
+      if (waline) {
+        waline.update({ path });
+      } else {
+        setTimeout(() => switchWalinePath(path), 300);
+      }
+    }
+
+    document.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest(".comment-btn");
+      if (!btn) return;
+      const card = btn.closest(".diary-item") as HTMLElement;
+      const id = card.dataset.diaryId;
+      if (!id) return;
+      const path = `/diary/${id}`;
+      location.hash = "#comments";
+      switchWalinePath(path);
+    });
+  })();
+</script>

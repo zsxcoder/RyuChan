@@ -1,79 +1,93 @@
 ---
 // src/components/widgets/MonthCalendar.astro
 import Card from "../temple/Card.astro";
-
-const today = new Date();
-const year = today.getFullYear();
-const month = today.getMonth(); // 0 基
-const date = today.getDate();
-
-const monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
-
-const weekHeader = ["日", "一", "二", "三", "四", "五", "六"];
-
-/* ===== 当月排盘 ===== */
-const firstDay = new Date(year, month, 1).getDay(); // 0-6
-const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-const cells: (number | null)[] = [
-  ...Array.from({ length: firstDay }, () => null),
-  ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
-];
+// 这里不再计算 today，只保留骨架
 ---
 
 <Card>
-  <div class="month-calendar p-4">
+  <div class="month-calendar p-4" id="month-calendar">
     <!-- 头部 -->
     <div class="calendar-header mb-3">
       <h3 class="text-lg font-semibold flex items-center gap-2">
         <span class="text-xl">📅</span>
-        <span>{year} 年 {monthNames[month]}</span>
+        <span id="calendar-title">加载中…</span>
       </h3>
     </div>
 
     <!-- 星期标题 -->
     <div class="weekdays grid grid-cols-7 gap-1 mb-2">
       {
-        weekHeader.map((d) => (
+        ["日", "一", "二", "三", "四", "五", "六"].map((d) => (
           <div class="text-center text-xs text-neutral-500 dark:text-neutral-400 font-medium">{d}</div>
         ))
       }
     </div>
 
     <!-- 日期格子 -->
-    <div class="calendar-grid grid grid-cols-7 gap-1">
-      {
-        cells.map((d) => (
-          <div
-            class:list={[
-              "aspect-square flex items-center justify-center rounded text-sm relative",
-              d === null
-                ? "text-neutral-300 dark:text-neutral-600" // 空白
-                : d === date
-                  ? "ring-2 ring-[var(--c-primary)] font-bold" // 今天
-                  : "text-neutral-700 dark:text-neutral-300",
-            ]}
-          >
-            {d ?? ""}
-          </div>
-        ))
-      }
+    <div class="calendar-grid grid grid-cols-7 gap-1" id="calendar-grid">
+      <!-- JS 会在这里填充 -->
     </div>
   </div>
 </Card>
 
 <style lang="scss">
-  .month-calendar {
-    .calendar-header {
-      border-bottom: 1px solid rgba(var(--c-border-rgb), 0.1);
-      padding-bottom: 0.75rem;
-      h3 {
-        color: var(--c-text-1);
-      }
-    }
-    .calendar-grid > div {
-      min-height: 32px;
-      transition: all 0.2s ease;
-    }
-  }
+  /* 你的样式保持不变 */
 </style>
+
+<script>
+  (function renderCalendar() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    const date = today.getDate();
+    const monthNames = [
+      "一月",
+      "二月",
+      "三月",
+      "四月",
+      "五月",
+      "六月",
+      "七月",
+      "八月",
+      "九月",
+      "十月",
+      "十一月",
+      "十二月",
+    ];
+
+    // 头部文字
+    document.getElementById("calendar-title")!.textContent = `${year} 年 ${monthNames[month]}`;
+
+    // 当月排盘
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const cells: (number | null)[] = [
+      ...Array.from({ length: firstDay }, () => null),
+      ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+    ];
+
+    // 画格子
+    const grid = document.getElementById("calendar-grid")!;
+    grid.innerHTML = "";
+    cells.forEach((d) => {
+      const div = document.createElement("div");
+      div.className = "aspect-square flex items-center justify-center rounded text-sm relative";
+      if (d === null) {
+        div.classList.add("text-neutral-300", "dark:text-neutral-600");
+      } else if (d === date) {
+        div.classList.add("ring-2", "ring-[var(--c-primary)]", "font-bold");
+      } else {
+        div.classList.add("text-neutral-700", "dark:text-neutral-300");
+      }
+      div.textContent = d?.toString() ?? "";
+      grid.appendChild(div);
+    });
+
+    // 计算到明天 0 点还剩多少毫秒，然后自动刷新
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const ms = +tomorrow - Date.now();
+    setTimeout(() => location.reload(), ms);
+  })();
+</script>

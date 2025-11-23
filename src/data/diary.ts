@@ -37,6 +37,14 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
+    text: "今天部署了news和天气页面，感谢60S项目~",
+    date: "2025-11-23 23:22",
+    github: ["https://github.com/vikiboss/60s"],
+    tags: ["日常"],
+    location: "南京",
+    url: ["https://boke.zsx815.top/weather", "https://boke.zsx815.top/news"],
+  },
+  {
     text: "今天部署了我的装备页面，日历和站点信息组件，参考mizuki项目~",
     date: "2025-11-22 23:17",
     github: ["https://github.com/matsuzaka-yuki/Mizuki"],

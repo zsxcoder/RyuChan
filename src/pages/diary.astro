@@ -69,122 +69,127 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
     <MainCard infoIcon="lucide:book-open">
       <div class="space-y-6">
         <section>
-          <div class="diary-list space-y-4">
-            {
-              diaryEntries.map(async (entry) => (
-                <div class="diary-item bg-base-200/50 rounded-lg p-6 shadow-sm border border-base-300">
-                  {/* 头像/昵称/日期 */}
-                  <div class="diary-meta flex items-center gap-3 mb-4">
-                    <img src={userInfo.avatar} alt={userInfo.name} class="avatar w-12 h-12 rounded-full shadow-lg" />
-                    <div class="info">
-                      <div class="nick font-semibold flex items-center gap-1">
-                        {userInfo.name}
-                        <Icon name="lucide:verified" class="w-4 h-4 text-primary" />
+          {/* 瀑布流列表 */}
+          <div class="diary-list">
+            <div class="memos-grid">
+              {
+                diaryEntries.map(async (entry, idx) => {
+                  const id = entry.id || `diary-${idx}`;
+                  return (
+                    <article class="memos-item" data-diary-id={id}>
+                      {/* 头像/昵称/日期 */}
+                      <div class="diary-meta flex items-center gap-2 mb-3">
+                        <img src={userInfo.avatar} alt={userInfo.name} class="avatar w-8 h-8 rounded-full" />
+                        <div class="info">
+                          <div class="nick font-semibold text-sm flex items-center gap-1">
+                            {userInfo.name}
+                            <Icon name="lucide:verified" class="w-3 h-3 text-primary" />
+                          </div>
+                          <div class="date text-xs text-base-content/60">{formatDate(entry.date)}</div>
+                        </div>
                       </div>
-                      <div class="date text-sm text-base-content/60">{formatDate(entry.date)}</div>
-                    </div>
-                  </div>
 
-                  {/* 文字（Markdown+HTML） */}
-                  {entry.text && (
-                    <div class="text-content leading-relaxed mb-3" set:html={await renderText(entry.text)} />
-                  )}
-
-                  {/* 书签 */}
-                  {entry.url && (
-                    <div class="bookmark-group space-x-2 mb-3">
-                      {Array.isArray(entry.url) ? (
-                        entry.url.map((u) => <BookmarkCard url={u} />)
-                      ) : (
-                        <BookmarkCard url={entry.url} />
+                      {/* 正文 */}
+                      {entry.text && (
+                        <div
+                          class="text-content prose dark:prose-invert mb-3"
+                          set:html={await renderText(entry.text)}
+                        />
                       )}
-                    </div>
-                  )}
 
-                  {/* 音乐 */}
-                  {entry.music && (
-                    <div class="music-box mb-3 space-y-2">
-                      {Array.isArray(entry.music) ? (
-                        entry.music.map((m) => <Meting {...m} />)
-                      ) : (
-                        <Meting {...entry.music} />
+                      {/* 书签 */}
+                      {entry.url && (
+                        <div class="bookmark-group mb-3">
+                          {Array.isArray(entry.url) ? (
+                            entry.url.map((u) => <BookmarkCard url={u} />)
+                          ) : (
+                            <BookmarkCard url={entry.url} />
+                          )}
+                        </div>
                       )}
-                    </div>
-                  )}
 
-                  {/* 视频 */}
-                  {entry.video && (
-                    <div class="video-box mb-3">
-                      <VideoEmbed
-                        type={entry.video.type}
-                        id={entry.video.id}
-                        ratio={entry.video.ratio}
-                        poster={entry.video.poster}
-                      />
-                    </div>
-                  )}
+                      {/* 音乐 */}
+                      {entry.music && (
+                        <div class="music-box mb-3 space-y-2">
+                          {Array.isArray(entry.music) ? (
+                            entry.music.map((m) => <Meting {...m} />)
+                          ) : (
+                            <Meting {...entry.music} />
+                          )}
+                        </div>
+                      )}
 
-                  {/* 图片 */}
-                  {entry.images && entry.images.length > 0 && (
-                    <div class="images grid grid-cols-3 gap-2 mb-3">
-                      {entry.images.map((img) => (
-                        <div class="image-container relative overflow-hidden rounded-lg">
-                          <img
-                            src={img}
-                            alt="日记图片"
-                            class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                            loading="lazy"
+                      {/* 视频 */}
+                      {entry.video && (
+                        <div class="video-box mb-3">
+                          <VideoEmbed
+                            type={entry.video.type}
+                            id={entry.video.id}
+                            ratio={entry.video.ratio}
+                            poster={entry.video.poster}
                           />
                         </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* GitHub 卡片 */}
-                  {entry.github && (
-                    <div class="mt-4">
-                      {Array.isArray(entry.github) ? (
-                        entry.github.map((u) => <GithubCard url={u} />)
-                      ) : (
-                        <GithubCard url={entry.github} />
                       )}
-                    </div>
-                  )}
 
-                  {/* 标签/位置/评论按钮 */}
-                  <div class="diary-bottom flex items-center justify-between text-sm">
-                    <div class="tags flex gap-2">
-                      {entry.tags?.map((tag) => (
-                        <span class="tag badge badge-ghost gap-1">
-                          <Icon name="lucide:tag" class="w-3 h-3" />
-                          {tag}
-                        </span>
-                      ))}
-                      {entry.location && (
-                        <a
-                          href={`https://bing.com/maps?q=${encodeURIComponent(entry.location)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="location badge badge-primary gap-1 hover:badge-primary-focus transition-colors"
-                          title={`搜索: ${entry.location}`}
-                        >
-                          <Icon name="lucide:map-pin" class="w-3 h-3" />
-                          {entry.location}
-                        </a>
+                      {/* 图片 */}
+                      {entry.images && entry.images.length > 0 && (
+                        <div class="images grid grid-cols-3 gap-2 mb-3">
+                          {entry.images.map((img) => (
+                            <div class="image-container relative overflow-hidden rounded-lg">
+                              <img
+                                src={img}
+                                alt="日记图片"
+                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                loading="lazy"
+                              />
+                            </div>
+                          ))}
+                        </div>
                       )}
-                    </div>
-                    <button
-                      class="comment-btn btn btn-ghost btn-xs gap-1"
-                      title="评论"
-                      data-reply-text={entry.text || ""}
-                    >
-                      <Icon name="lucide:message-circle" class="w-4 h-4" />
-                      评论
-                    </button>
-                  </div>
-                </div>
-              ))
-            }
+
+                      {/* GitHub 卡片 */}
+                      {entry.github && (
+                        <div class="mt-4">
+                          {Array.isArray(entry.github) ? (
+                            entry.github.map((u) => <GithubCard url={u} />)
+                          ) : (
+                            <GithubCard url={entry.github} />
+                          )}
+                        </div>
+                      )}
+
+                      {/* 底部栏 */}
+                      <footer class="diary-bottom flex items-center justify-between text-xs">
+                        <div class="tags flex gap-2">
+                          {entry.tags?.map((tag) => (
+                            <span class="badge badge-ghost gap-1">
+                              <Icon name="lucide:tag" class="w-3 h-3" />
+                              {tag}
+                            </span>
+                          ))}
+                          {entry.location && (
+                            <a
+                              href={`https://bing.com/maps?q=${encodeURIComponent(entry.location)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              class="badge badge-primary gap-1 hover:badge-primary-focus transition-colors"
+                              title={`搜索: ${entry.location}`}
+                            >
+                              <Icon name="lucide:map-pin" class="w-3 h-3" />
+                              {entry.location}
+                            </a>
+                          )}
+                        </div>
+                        <button class="comment-btn btn btn-ghost btn-xs gap-1" title="评论" data-diary-id={id}>
+                          <Icon name="lucide:message-circle" class="w-4 h-4" />
+                          评论
+                        </button>
+                      </footer>
+                    </article>
+                  );
+                })
+              }
+            </div>
           </div>
 
           <div class="diary-footer text-center mt-8">
@@ -206,10 +211,12 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
         <div class="divider my-4"></div>
         <div class="stats stats-vertical shadow">
           <div class="stat">
-            <div class="stat-title">日记总数</div><div class="stat-value text-primary">{diaryEntries.length}</div>
+            <div class="stat-title">日记总数</div>
+            <div class="stat-value text-primary">{diaryEntries.length}</div>
           </div>
           <div class="stat">
-            <div class="stat-title">最近更新</div><div class="stat-value text-sm">
+            <div class="stat-title">最近更新</div>
+            <div class="stat-value text-sm">
               {diaryEntries[0] ? formatDate(diaryEntries[0].date) : "-"}
             </div>
           </div>
@@ -221,44 +228,297 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
   {/* 评论区 */}
   {
     commentsConfig?.enable && commentsConfig.type === "waline" && commentsConfig.waline && (
-      <section class="comments">
-        <>
-          <h2>评论区</h2>
-          <Waline {...commentsConfig.waline} />
-        </>
+      <section id="comments" class="comments mt-10">
+        <h2 class="text-2xl font-bold mb-4">评论区</h2>
+        <Waline {...commentsConfig.waline} path={"/diary"} />
       </section>
     )
   }
 </BaseLayout>
 
-<!-- 图片放大 & 音乐播放器 -->
 <script>
-  document.addEventListener("click", (e) => {
-    const img = (e.target as HTMLElement).closest(".image-container img");
-    if (!img) return;
-    const src = img.getAttribute("src");
-    if (!src) return;
-    const modal = document.createElement("div");
-    modal.className = "fixed inset-0 z-50 flex items-center justify-center bg-black/80";
-    modal.innerHTML = `
-      <img src="${src}" class="max-w-[90vw] max-h-[90vh] rounded-lg shadow-2xl" />
-      <button class="absolute top-4 right-4 btn btn-circle btn-ghost text-white">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>`;
-    document.body.appendChild(modal);
-    modal.addEventListener("click", () => modal.remove());
-  });
-
-  function loadPlayer() {
-    if ((window as any).APlayer && (window as any).Meting) return;
-    const js1 = document.createElement("script");
-    js1.src = "https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js";
-    const js2 = document.createElement("script");
-    js2.src = "https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js";
-    js1.onload = () => document.head.appendChild(js2);
-    document.head.appendChild(js1);
+  /* ==================  工具：统一 fetch 封装  ================== */
+  async function GET(url: string) {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(r.statusText);
+    return r.json();
   }
-  document.addEventListener("DOMContentLoaded", loadPlayer);
+  async function POST(url: string, body: any) {
+    const r = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    if (!r.ok) throw new Error(r.statusText);
+    return r.json();
+  }
+
+  /* ==================  全局变量  ================== */
+  const serverURL = (window as any).__WALINE_SERVER__ || "https://ryuchan-comment.zsx815.top";
+  let currentPath = "";
+  let currentPage = 1;
+  const pageSize = 20;
+
+  /* ==================  渲染函数  ================== */
+  function renderCommentList(list: any[]) {
+    const box = document.getElementById("cmt-list")!;
+    if (!list.length) {
+      box.innerHTML = '<li class="text-sm text-base-content/60">暂无评论</li>';
+      return;
+    }
+    box.innerHTML = list
+      .map(
+        (c: any) => `
+      <li class="flex gap-3 items-start">
+        <img src="${c.avatar || "/profile.png"}" class="w-8 h-8 rounded-full"/>
+        <div class="flex-1">
+          <div class="text-sm font-semibold">${c.nick}</div>
+          <div class="text-xs text-base-content/60 mb-1">
+            ${new Date(c.time).toLocaleString("zh-CN")}
+          </div>
+          <div class="text-sm prose prose-sm">${c.comment}</div>
+        </div>
+      </li>`,
+      )
+      .join("");
+  }
+
+  async function loadComments(path: string, page = 1) {
+    currentPath = path;
+    currentPage = page;
+    const params = new URLSearchParams({
+      path,
+      page: String(page),
+      pageSize: String(pageSize),
+    });
+    const { data } = await GET(`${serverURL}/api/comment?${params}`);
+    renderCommentList(data);
+    const moreBox = document.getElementById("cmt-more")!;
+    moreBox.style.display = data.length === pageSize ? "block" : "none";
+  }
+
+  /* ==================  发送函数  ================== */
+  async function submitComment() {
+    const nick = (document.getElementById("cmt-nick") as HTMLInputElement).value.trim() || "访客";
+    const mail = (document.getElementById("cmt-mail") as HTMLInputElement).value.trim();
+    const link = (document.getElementById("cmt-link") as HTMLInputElement).value.trim();
+    const text = (document.getElementById("cmt-text") as HTMLTextAreaElement).value.trim();
+    if (!text) return alert("请输入内容");
+    await POST(`${serverURL}/api/comment`, {
+      path: currentPath,
+      comment: text,
+      nick,
+      mail,
+      link,
+    });
+    (document.getElementById("cmt-text") as HTMLTextAreaElement).value = "";
+    await loadComments(currentPath, 1); // 刷新第一页
+  }
+
+  /* ==================  弹窗 DOM（仅创建一次）  ================== */
+  function ensureModal() {
+    if (document.getElementById("comment-modal")) return;
+    const div = document.createElement("div");
+    div.id = "comment-modal";
+    div.innerHTML = `
+    <div class="modal modal-middle modal-open">
+      <div class="modal-box w-11/12 max-w-2xl">
+        <h3 class="font-bold text-lg mb-3">全部评论</h3>
+
+        <!-- 评论列表 -->
+        <ul id="cmt-list" class="space-y-3 max-h-80 overflow-y-auto mb-3"></ul>
+        <div id="cmt-more" class="text-center mb-3 hidden">
+          <button class="btn btn-sm btn-ghost">加载更多</button>
+        </div>
+
+        <!-- 发表 -->
+        <div class="border-t border-base-300 pt-3 grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
+          <input id="cmt-nick" type="text" placeholder="昵称（可选）" class="input input-bordered input-sm" />
+          <input id="cmt-mail" type="email" placeholder="邮箱（可选）" class="input input-bordered input-sm" />
+          <input id="cmt-link" type="url" placeholder="网址（可选）" class="input input-bordered input-sm" />
+        </div>
+        <textarea id="cmt-text" class="textarea textarea-bordered w-full" rows="3" placeholder="说点什么…"></textarea>
+
+        <div class="modal-action">
+          <button id="cmt-cancel" class="btn btn-ghost btn-sm">取消</button>
+          <button id="cmt-submit" class="btn btn-primary btn-sm">发送</button>
+        </div>
+      </div>
+    </div>`;
+    document.body.appendChild(div);
+
+    /* 事件 */
+    div.querySelector("#cmt-cancel")!.addEventListener("click", closeModal);
+    div.querySelector("#cmt-submit")!.addEventListener("click", submitComment);
+    div.querySelector("#cmt-more button")!.addEventListener("click", async () => {
+      currentPage++;
+      const { data } = await GET(
+        `${serverURL}/api/comment?path=${currentPath}&page=${currentPage}&pageSize=${pageSize}`,
+      );
+      document.getElementById("cmt-list")!.insertAdjacentHTML(
+        "beforeend",
+        data
+          .map(
+            (c: any) => `
+            <li class="flex gap-3 items-start">
+              <img src="${c.avatar || "/profile.png"}" class="w-8 h-8 rounded-full"/>
+              <div class="flex-1">
+                <div class="text-sm font-semibold">${c.nick}</div>
+                <div class="text-xs text-base-content/60 mb-1">
+                  ${new Date(c.time).toLocaleString("zh-CN")}
+                </div>
+                <div class="text-sm prose prose-sm">${c.comment}</div>
+              </div>
+            </li>`,
+          )
+          .join(""),
+      );
+      document.getElementById("cmt-more")!.style.display = data.length === pageSize ? "block" : "none";
+    });
+    div.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).id === "comment-modal") closeModal();
+    });
+  }
+
+  function closeModal() {
+    document.getElementById("comment-modal")?.remove();
+  }
+
+  /* ==================  绑定到所有评论按钮  ================== */
+  document.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest(".comment-btn");
+    if (!btn) return;
+
+    // ✅ 同时支持列表/瀑布流两种结构，并做空值保护
+    const card = btn.closest(".diary-item, .memos-item") as HTMLElement;
+    if (!card) return;
+    const id = card.dataset.diaryId;
+    if (!id) return;
+
+    ensureModal();
+    loadComments(`/diary/${id}`, 1);
+  });
 </script>
+
+<!-- 说说视觉风格 -->
+<style is:inline>
+  :root {
+    --color-border: var(--line-divider);
+    --color-bg-1: var(--content-pane-bg);
+    --text-muted: var(--text-secondary);
+    --color-link: var(--text-link);
+    --grid-gap: 16px;
+    --card-min-width: 220px;
+  }
+  .dark {
+    --color-border: var(--line-divider);
+    --color-bg-1: var(--content-pane-bg);
+    --text-muted: var(--text-secondary);
+    --color-link: var(--text-link);
+  }
+
+  /* 瀑布流 */
+  .memos-grid {
+    column-count: 2;
+    column-gap: var(--grid-gap);
+    column-width: var(--card-min-width);
+  }
+  @media (max-width: 1024px) {
+    .memos-grid {
+      column-count: 2;
+    }
+  }
+  @media (max-width: 640px) {
+    .memos-grid {
+      column-count: 1;
+    }
+  }
+
+  /* 卡片 */
+  .memos-item {
+    break-inside: avoid;
+    margin-bottom: var(--grid-gap);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: var(--color-bg-1);
+    transition: box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .memos-item:hover {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  }
+
+  /* 头像/昵称/日期 */
+  .diary-meta {
+    margin-bottom: 0.5rem;
+  }
+  .diary-meta .avatar {
+    width: 2rem;
+    height: 2rem;
+  }
+  .diary-meta .nick {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .diary-meta .date {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  /* 正文 */
+  .text-content {
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0 !important;
+    word-break: break-all;
+  }
+  .text-content p {
+    margin: 0.2rem 0 !important;
+  }
+  .text-content img {
+    max-width: 100%;
+    border-radius: 6px;
+    margin: 0.3rem 0;
+  }
+
+  /* 底部栏 */
+  .diary-bottom {
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* 评论按钮 */
+  .comment-btn {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: var(--theme-color);
+    background: var(--tag-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .comment-btn:hover {
+    background: var(--theme-color);
+    color: #fff;
+    border-color: var(--theme-color);
+  }
+
+  /* 标签 & 位置 */
+  .tags .badge {
+    font-size: 0.7rem;
+  }
+
+  /* 评论区全局容器 */
+  #comments {
+    column-span: all;
+    margin-top: 1rem;
+  }
+</style>

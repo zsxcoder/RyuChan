@@ -1,0 +1,82 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import MainCard from "@/components/MainCard.astro";
+import Pagination from "@/components/widgets/Pagination.astro";
+import { Icon } from "astro-icon/components";
+import { fetchNews, type NewsItem } from "@/utils/newsCache";
+
+/* ---------- 1. 仅保留「今天」 ---------- */
+const startDate = new Date();
+startDate.setHours(0, 0, 0, 0); // 当天 00:00:00
+
+/* ---------- 2. 拉取 & 过滤 ---------- */
+const all = await fetchNews();
+const today = all.filter((i) => i.pubDate >= startDate).sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+
+/* ---------- 3. 按天分组（仅 1 天） ---------- */
+type DayPage = { date: string; list: NewsItem[] };
+const pages: DayPage[] = [];
+const dateFmt = (d: Date) => d.toLocaleDateString("zh-CN");
+if (today.length) pages.push({ date: dateFmt(startDate), list: today });
+
+/* ---------- 4. 分页 ---------- */
+const total = pages.length;
+let currentPage = Number(Astro.url.pathname.match(/\/news(?:\/(\d+))?/)?.[1] || "1");
+if (currentPage < 1 || currentPage > total) currentPage = 1;
+
+const pageData = pages[currentPage - 1] ?? { date: dateFmt(startDate), list: [] };
+
+const baseUrl = `/news`;
+const pageUrl = (p: number) => (p === 1 ? baseUrl : `${baseUrl}/${p}`);
+
+const paginationProps = {
+  page: {
+    current: currentPage,
+    url: {
+      prev: currentPage > 1 ? pageUrl(currentPage - 1) : undefined,
+      next: currentPage < total ? pageUrl(currentPage + 1) : undefined,
+    },
+    data: [],
+    size: 1,
+    total,
+  },
+  totalPages: total,
+  pageLinks: { active: Array.from({ length: total }, (_, i) => i + 1), hidden: [] },
+  baseUrl,
+};
+---
+
+<BaseLayout title="今日 60s 新闻">
+  <MainCard
+    title="今日 60 秒新闻"
+    description="每天 60 秒，读懂世界"
+    textOverlay="NEWS"
+    image="https://img.xiaozhangya.xin/file/1753261567796_bg1.jpg"
+    infoIcon="lucide:newspaper"
+  >
+    <!-- 日期 -->
+    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+      <Icon name="lucide:calendar" class="w-6 h-6 text-primary" />
+      <span>{pageData.date}</span>
+    </h2>
+
+    <!-- 新闻列表（无折叠，直接展开） -->
+    <ul class="space-y-4">
+      {
+        pageData.list.map((it) => (
+          <li class="p-4 rounded-box bg-base-200">
+            <div class="font-medium mb-2" set:html={it.title} />
+            <div class="text-base-content/80 mb-3" set:html={it.description} />
+            <a href={it.link} target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline gap-2">
+              <Icon name="lucide:external-link" class="w-4 h-4" />
+              查看原文
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- 分页（仅当当天多条时显示） -->
+    {total > 1 && <Pagination {...paginationProps} />}
+  </MainCard>
+</BaseLayout>

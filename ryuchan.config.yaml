@@ -144,6 +144,11 @@ site:
           href: /device
           svg: "material-symbols:devices-other-outline-rounded"
           target: _self
+        - id: news
+          text: 每天60S
+          href: /news
+          svg: "lucide:newspaper"
+          target: _self
     # - id: contact
     #   text: 联系
     #   href: /contact
