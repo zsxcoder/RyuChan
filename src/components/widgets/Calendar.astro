@@ -35,7 +35,7 @@ import Card from "../temple/Card.astro";
 </style>
 
 <script>
-  (function renderCalendar() {
+  function renderCalendar() {
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth();
@@ -55,10 +55,8 @@ import Card from "../temple/Card.astro";
       "十二月",
     ];
 
-    // 头部文字
     document.getElementById("calendar-title")!.textContent = `${year} 年 ${monthNames[month]}`;
 
-    // 当月排盘
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const cells: (number | null)[] = [
@@ -66,7 +64,6 @@ import Card from "../temple/Card.astro";
       ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
     ];
 
-    // 画格子
     const grid = document.getElementById("calendar-grid")!;
     grid.innerHTML = "";
     cells.forEach((d) => {
@@ -83,11 +80,17 @@ import Card from "../temple/Card.astro";
       grid.appendChild(div);
     });
 
-    // 计算到明天 0 点还剩多少毫秒，然后自动刷新
+    // 每天 0 点自动刷新
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
     const ms = +tomorrow - Date.now();
     setTimeout(() => location.reload(), ms);
-  })();
+  }
+
+  // 第一次直接跑
+  renderCalendar();
+
+  // 之后每次软导航后再跑
+  document.addEventListener("astro:page-load", renderCalendar);
 </script>
