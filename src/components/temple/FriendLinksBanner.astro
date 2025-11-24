@@ -1,34 +1,35 @@
 ---
-import feeds from "@/data/feeds";
+import feeds from "@/data/feeds"; // 你的友链数据
 
 const FALLBACK_AVATAR = "https://img.314926.xyz/images/2025/08/19/404.gif";
 
-/* 工具函数 */
+/* ---------- 工具函数 ---------- */
 const stripBang = (u: string) => (u.includes("!") ? u.split("!")[0] : u);
 const absolutize = (url: string) => {
   if (!url) return url;
   if (/^https?:\/\//i.test(url) || /^\/\//.test(url)) return url;
-  return url.startsWith("/") ? import.meta.env.SITE + url : url;
+  return url.startsWith("/") ? import.meta.env.SITE + url : `${import.meta.env.SITE}/${url}`;
 };
 
-/* 1. 把所有分组的 entries 打平成一条数组 */
-const allEntries = feeds.flatMap(g =>
-  g.entries.map(e => {
+/* ---------- 1. 打平所有条目 ---------- */
+const allEntries = feeds.flatMap((g) =>
+  g.entries.map((e) => {
     const suffix = (e as any).hundredSuffix || (g as any).hundredSuffix || "";
     return {
       ...e,
       avatarSrc: absolutize(stripBang(e.avatar) + suffix),
     };
-  })
+  }),
 );
 
-/* 2. 两两分组，落单的自己占左边 */
-const pairs: {
+/* ---------- 2. 两两分组 ---------- */
+type Pair = {
   left: any;
   right: any | null;
   leftSrc: string;
   rightSrc: string | null;
-}[] = [];
+};
+const pairs: Pair[] = [];
 for (let i = 0; i < allEntries.length; i += 2) {
   const a = allEntries[i];
   const b = allEntries[i + 1] ?? null;
@@ -47,88 +48,89 @@ for (let i = 0; i < allEntries.length; i += 2) {
     <h2 class="flinks-title">与数百名博主无限进步</h2>
   </header>
 
- <div class="flinks-track">
-  <!-- 复制两份实现无缝循环 -->
-  <div class="flinks-seg">
-    {pairs.map(({ left, right, leftSrc, rightSrc }) => (
-      <div class="flinks-pair">
-        <!-- 左边头像 -->
-        <a
-          class="face"
-          href={absolutize(left.link)}
-          target="_blank"
-          rel="noopener"
-          title={left.author}
-        >
-          <img
-            src={leftSrc}
-            alt={left.author}
-            class="img"
-            onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
-          />
-        </a>
+  <!-- 关键：这一层负责裁剪 -->
+  <div class="flinks-marquee">
+    <div class="flinks-track">
+      <!-- 复制两份实现无缝循环 -->
+      <div class="flinks-seg">
+        {
+          pairs.map(({ left, right, leftSrc, rightSrc }) => (
+            <div class="flinks-pair">
+              <a class="face" href={absolutize(left.link)} target="_blank" rel="noopener" title={left.author}>
+                <img
+                  src={leftSrc}
+                  alt={left.author}
+                  class="img"
+                  onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
+                />
+              </a>
 
-        <!-- 右边头像（可能没有） -->
-        {right && (
-          <a
-            class="face offset"
-            href={absolutize(right.link)}
-            target="_blank"
-            rel="noopener"
-            title={right.author}
-          >
-            <img
-              src={rightSrc}
-              alt={right.author}
-              class="img"
-              onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
-            />
-          </a>
-        )}
+              {right && (
+                <a
+                  class="face offset"
+                  href={absolutize(right.link)}
+                  target="_blank"
+                  rel="noopener"
+                  title={right.author}
+                >
+                  <img
+                    src={rightSrc}
+                    alt={right.author}
+                    class="img"
+                    onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
+                  />
+                </a>
+              )}
+            </div>
+          ))
+        }
       </div>
-    ))}
-  </div>
-  <div class="flinks-seg">
-    {pairs.map(({ left, right, leftSrc, rightSrc }) => (
-      <div class="flinks-pair">
-        <!-- 左边头像 -->
-        <a
-          class="face"
-          href={absolutize(left.link)}
-          target="_blank"
-          rel="noopener"
-          title={left.author}
-        >
-          <img
-            src={leftSrc}
-            alt={left.author}
-            class="img"
-            onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
-          />
-        </a>
 
-        <!-- 右边头像（可能没有） -->
-        {right && (
-          <a
-            class="face offset"
-            href={absolutize(right.link)}
-          >
-            <img
-              src={rightSrc}
-              alt={right.author}
-              class="img"
-              onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
-            />
-          </a>
-        )}
+      <div class="flinks-seg">
+        {
+          pairs.map(({ left, right, leftSrc, rightSrc }) => (
+            <div class="flinks-pair">
+              <a class="face" href={absolutize(left.link)} target="_blank" rel="noopener" title={left.author}>
+                <img
+                  src={leftSrc}
+                  alt={left.author}
+                  class="img"
+                  onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
+                />
+              </a>
+
+              {right && (
+                <a
+                  class="face offset"
+                  href={absolutize(right.link)}
+                  target="_blank"
+                  rel="noopener"
+                  title={right.author}
+                >
+                  <img
+                    src={rightSrc}
+                    alt={right.author}
+                    class="img"
+                    onerror={`this.onerror=null;this.src='${FALLBACK_AVATAR}'`}
+                  />
+                </a>
+              )}
+            </div>
+          ))
+        }
       </div>
-    ))}
+    </div>
   </div>
-</div>
 </section>
 
 <style>
-  /* 深色变量跟随 html[data-theme="dark"] */
+  /* -------------- 变量 -------------- */
+  .flinks {
+    --face-size: 120px;
+    --face-size-m: 96px;
+  }
+
+  /* -------------- 卡片 -------------- */
   .flinks {
     margin: 1rem;
     padding: 1.25rem;
@@ -137,6 +139,8 @@ for (let i = 0; i < allEntries.length; i += 2) {
     box-shadow: 0 0.1em 0.2em var(--ld-shadow);
     background: var(--ld-bg-card);
   }
+
+  /* -------------- 头部 -------------- */
   .flinks-hero {
     display: grid;
     gap: 0.25rem;
@@ -153,10 +157,12 @@ for (let i = 0; i < allEntries.length; i += 2) {
     line-height: 1.1;
     color: var(--c-text-1);
   }
+
+  /* -------------- 轮播容器 -------------- */
   .flinks-marquee {
-    overflow: hidden;
+    overflow: hidden; /* 核心：裁剪 */
     margin-top: 1.25rem;
-    margin-right: -1.25rem;
+    margin-right: -1.25rem; /* 贴边 */
     margin-left: -1.25rem;
   }
   .flinks-track {
@@ -169,6 +175,8 @@ for (let i = 0; i < allEntries.length; i += 2) {
     gap: 1.25rem;
     padding-left: 0;
   }
+
+  /* -------------- 头像 -------------- */
   .flinks-pair {
     display: grid;
     grid-auto-flow: row;
@@ -177,32 +185,35 @@ for (let i = 0; i < allEntries.length; i += 2) {
   .face {
     display: inline-flex;
     overflow: hidden;
-    width: 120px;
-    height: 120px;
+    width: var(--face-size);
+    height: var(--face-size);
     border-radius: 999px;
     box-shadow: 0 0.1em 0.2em var(--ld-shadow);
   }
   .face.offset {
     margin-top: 1rem;
-    transform: translateX(-60px);
+    transform: translateX(calc(var(--face-size) * -0.5));
   }
   .img {
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
+
+  /* -------------- 动画 -------------- */
   @keyframes ticker {
     to {
       transform: translateX(-50%);
     }
   }
+
+  /* -------------- 移动端 -------------- */
   @media (max-width: 640px) {
     .flinks-title {
       font-size: 24px;
     }
     .face {
-      width: 96px;
-      height: 96px;
+      --face-size: var(--face-size-m);
     }
   }
 </style>
