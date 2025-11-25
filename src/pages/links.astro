@@ -97,12 +97,12 @@ const activeCategory = feeds[0]?.name ?? "";
             }
           </div>
 
-          {/* ③ 分组渲染 */}
+          {/* ③ 分组渲染 – 关键：加 friend-grid 让卡片居中 */}
           {
             feeds.map((group) => (
               <div id={`feed-${group.name}`} class="mb-8">
                 <h3 class="text-lg font-semibold mb-3 text-primary">{group.name}</h3>
-                <div class="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-4">
+                <div class="friend-grid grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-4">
                   {group.entries.map((e) => (
                     <FriendLinkCard
                       siteName={e.author}
@@ -127,8 +127,6 @@ const activeCategory = feeds[0]?.name ?? "";
             <Icon name="mdi:wechat" class="w-5 h-5 text-primary" />
             友链朋友圈
           </h2>
-
-          <!-- 加载容器 -->
           <div
             id="friend-circle-lite-root"
             class="not-prose min-h-[8rem] grid place-content-center text-sm text-base-content/60"
@@ -164,11 +162,11 @@ const activeCategory = feeds[0]?.name ?? "";
                   <ul class="list-disc pl-5 space-y-1">
                     <li>能够长期更新维护，并输出有价值的原创内容；</li>
                     <li>
-                      可参考 <a
-                        class="link link-primary"
-                        href="https://www.travellings.cn/docs/join.html"
-                        target="_blank">开往</a
-                      > 规则。
+                      可参考{" "}
+                      <a class="link link-primary" href="https://www.travellings.cn/docs/join.html" target="_blank">
+                        开往
+                      </a>{" "}
+                      规则。
                     </li>
                   </ul>
                 </div>
@@ -185,8 +183,8 @@ const activeCategory = feeds[0]?.name ?? "";
                     </button>
                   </div>
                   <p class="mt-2">
-                    邮件标题注明 <code class="code">友链申请: 你的昵称</code
-                    >，并附上博客名称、描述、地址、头像等信息即可。
+                    邮件标题注明 <code class="code">友链申请: 你的昵称</code>
+                    ，并附上博客名称、描述、地址、头像等信息即可。
                   </p>
                   <p>或者在下面的仓库里添加你的信息</p>
                   <a
@@ -222,5 +220,10 @@ const activeCategory = feeds[0]?.name ?? "";
   }
   .category-tab.active {
     @apply bg-primary text-white border-primary;
+  }
+
+  /* 关键：让卡片在「不足一行」时整体居中 */
+  .friend-grid {
+    justify-content: center;
   }
 </style>
