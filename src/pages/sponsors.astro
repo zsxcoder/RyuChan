@@ -1,0 +1,130 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import MainCard from "@/components/MainCard.astro";
+import { sponsors } from "@/data/sponsors";
+---
+
+<BaseLayout title="赞助我">
+  <MainCard
+    title="赞助支持"
+    description="给 RyuChan 买杯咖啡"
+    textOverlay="SPONSOR"
+    image="https://img.xiaozhangya.xin/file/1753261567796_bg1.jpg"
+    infoIcon="lucide:coffee"
+  >
+    <div class="space-y-10 mb-8 text-base-content">
+      <!-- 头部说明 -->
+      <section>
+        <p class="text-lg mb-2">
+          如果本站的内容帮到了您，欢迎请作者喝杯咖啡 ☕️！<br />
+          所有收入将用于域名、服务器与持续更新。
+        </p>
+        <p class="text-sm opacity-60">扫码即可，金额随意，感谢每一份支持。</p>
+      </section>
+
+      <!-- 二维码 -->
+      <section class="grid md:grid-cols-2 gap-6 max-w-2xl">
+        <!-- 支付宝 -->
+        <div class="card bg-base-200 border border-base-300 rounded-xl p-4">
+          <div class="flex items-center gap-3 mb-3">
+            <Icon name="simple-icons:alipay" class="w-7 h-7 text-blue-500" />
+            <div>
+              <h3 class="font-bold">支付宝</h3>
+              <p class="text-xs opacity-60">推荐 / 即时到账</p>
+            </div>
+          </div>
+          <img
+            src="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/links/alipay.webp"
+            alt="支付宝二维码"
+            class="w-48 h-48 mx-auto rounded-lg"
+          />
+        </div>
+
+        <!-- 微信 -->
+        <div class="card bg-base-200 border border-base-300 rounded-xl p-4">
+          <div class="flex items-center gap-3 mb-3">
+            <Icon name="simple-icons:wechat" class="w-7 h-7 text-green-500" />
+            <div>
+              <h3 class="font-bold">微信支付</h3>
+              <p class="text-xs opacity-60">扫码即可</p>
+            </div>
+          </div>
+          <img
+            src="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/links/weixin.webp"
+            alt="微信二维码"
+            class="w-48 h-48 mx-auto rounded-lg"
+          />
+        </div>
+      </section>
+
+      <!-- 其他支持 -->
+      <section>
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+          <Icon name="lucide:heart" class="text-primary" />
+          其它支持方式
+        </h2>
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="card bg-base-200 p-4 text-center">
+            <Icon name="lucide:share-2" class="mx-auto mb-2 text-primary" />
+            <p class="font-semibold">转发分享</p>
+            <p class="text-xs opacity-60">把文章分享给需要的朋友</p>
+          </div>
+          <div class="card bg-base-200 p-4 text-center">
+            <Icon name="lucide:message-circle" class="mx-auto mb-2 text-primary" />
+            <p class="font-semibold">留言互动</p>
+            <p class="text-xs opacity-60">在评论区留下您的想法</p>
+          </div>
+          <div class="card bg-base-200 p-4 text-center">
+            <Icon name="lucide:rss" class="mx-auto mb-2 text-primary" />
+            <p class="font-semibold">订阅 RSS</p>
+            <p class="text-xs opacity-60">持续关注更新</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 赞助名单 -->
+      <section>
+        <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+          <Icon name="lucide:users" class="text-primary" />
+          感谢名单
+        </h2>
+        <p class="text-xs opacity-60 mb-4">已赞助且愿意公开的小伙伴（按时间倒序）：</p>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {
+            sponsors.map((s) => (
+              <div class="card card-side bg-base-200 border border-base-300 items-center p-3">
+                <div class="avatar mr-3">
+                  <div class="w-10 h-10 rounded-full">
+                    {s.avatar ? (
+                      <img src={s.avatar} alt={s.name} loading="lazy" />
+                    ) : (
+                      <Icon name="lucide:user" class="w-6 h-6 m-auto opacity-60" />
+                    )}
+                  </div>
+                </div>
+                <div class="flex-1">
+                  <p class="font-semibold text-sm">{s.name}</p>
+                  <p class="text-xs opacity-60">{s.date}</p>
+                </div>
+                <div class="text-sm font-bold text-primary">{s.amount}</div>
+              </div>
+            ))
+          }
+        </div>
+        <p class="text-xs opacity-60 mt-4">
+          想上墙？直接
+          <a
+            class="link link-primary"
+            href="https://github.com/mcyzsx/RyuChan/edit/main/src/data/sponsors.ts"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            提交 PR
+          </a>
+          即可。
+        </p>
+      </section>
+    </div>
+  </MainCard>
+</BaseLayout>

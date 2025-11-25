@@ -1,0 +1,128 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import MainCard from "@/components/MainCard.astro";
+import Giscus from "@/components/comments/Giscus.astro";
+---
+
+<BaseLayout title="留言板 - 与xiaozhang互动">
+  <MainCard
+    title="留言板"
+    description="欢迎在这里留下你的想法、建议或任何问题"
+    textOverlay="留言"
+    image="https://img.xiaozhangya.xin/file/1753261567796_bg1.jpg"
+    infoIcon="lucide:message-circle"
+  >
+    <div class="space-y-8">
+      <!-- 留言板介绍 -->
+      <section class="text-center">
+        <div class="max-w-3xl mx-auto">
+          <h1 class="text-3xl md:text-4xl font-bold mb-4">欢迎来到我的留言板</h1>
+          <p class="text-lg text-base-content/80 mb-6">这里是一个开放的空间，你可以：</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+            <div class="bg-base-200 p-4 rounded-lg">
+              <Icon name="lucide:message-square" class="w-6 h-6 text-primary mb-2" />
+              <h3 class="font-semibold mb-1">分享想法</h3>
+              <p class="text-sm text-base-content/70">对博客内容有任何想法或见解，欢迎分享</p>
+            </div>
+            <div class="bg-base-200 p-4 rounded-lg">
+              <Icon name="lucide:help-circle" class="w-6 h-6 text-primary mb-2" />
+              <h3 class="font-semibold mb-1">提出问题</h3>
+              <p class="text-sm text-base-content/70">有任何技术问题或建议，尽管提问</p>
+            </div>
+            <div class="bg-base-200 p-4 rounded-lg">
+              <Icon name="lucide:heart" class="w-6 h-6 text-primary mb-2" />
+              <h3 class="font-semibold mb-1">互相交流</h3>
+              <p class="text-sm text-base-content/70">与其他访客一起交流技术心得</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 评论准则 -->
+      <section>
+        <div class="bg-gradient-to-r from-base-200 to-base-300 p-6 rounded-lg">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <Icon name="lucide:file-text" class="w-5 h-5 text-primary" />
+            <span>留言准则</span>
+          </h2>
+          <ul class="space-y-2 text-base-content/80">
+            <li class="flex items-start gap-2">
+              <Icon name="lucide:check-circle" class="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+              <span>请保持友善和尊重，营造良好的交流氛围</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <Icon name="lucide:check-circle" class="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+              <span>技术问题请尽量描述清楚，方便大家帮助解答</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <Icon name="lucide:check-circle" class="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+              <span>避免发布广告、灌水或其他无关内容</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <Icon name="lucide:check-circle" class="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+              <span>支持 Markdown 格式，可以方便地格式化你的留言</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Giscus 评论系统 -->
+      <section>
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <Icon name="lucide:messages-square" class="w-6 h-6 text-primary" />
+          <span>留下你的足迹</span>
+        </h2>
+
+        <div class="giscus-wrapper">
+          <Giscus
+            repo="mcyzsx/RyuChan"
+            repoId="R_kgDOQUwpKw"
+            category="Q&A"
+            categoryId="DIC_kwDOQUwpK84CzBZw"
+            mapping="pathname"
+            reactionsEnabled="1"
+            inputPosition="top"
+            lang="zh-CN"
+            loading="lazy"
+          />
+        </div>
+      </section>
+
+      <!-- 快速链接 -->
+      <section class="text-center">
+        <h3 class="text-lg font-semibold mb-4">快速链接</h3>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <a href="/mcyzsx" class="btn btn-sm btn-outline gap-2">
+            <Icon name="lucide:user" class="w-4 h-4" />
+            <span>关于我</span>
+          </a>
+          <a href="/blog/archives" class="btn btn-sm btn-outline gap-2">
+            <Icon name="lucide:pen-tool" class="w-4 h-4" />
+            <span>博客文章</span>
+          </a>
+          <a
+            href="https://github.com/mcyzsx"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-sm btn-outline gap-2"
+          >
+            <Icon name="lucide:github" class="w-4 h-4" />
+            <span>GitHub</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </MainCard>
+</BaseLayout>
+
+<style>
+  .giscus-wrapper {
+    @apply mt-8;
+  }
+
+  /* 自定义 Giscus 样式 */
+  :global(.giscus-frame) {
+    @apply rounded-lg;
+  }
+</style>
