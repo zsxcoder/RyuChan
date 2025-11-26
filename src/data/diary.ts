@@ -37,6 +37,13 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
+    text: "今天算是完成了实训的第一部分，然后搞了icefox的v3.0版本。",
+    date: "2025-11-26 22:51",
+    tags: ["日常"],
+    location: "南京",
+    url: ["https://pyq.mcyzsx.top"],
+  },
+  {
     text: "今天完成了实训的任务一，然后搞了博客的赞助和留言板页面。",
     date: "2025-11-25 23:51",
     tags: ["日常"],

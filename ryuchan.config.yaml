@@ -134,6 +134,16 @@ site:
           href: /albums
           svg: "heroicons:photo"
           target: _self
+        - id: sponsors
+          text: 赞助
+          href: /sponsors
+          svg: "simple-icons:githubsponsors"
+          target: _self
+        - id: message
+          text: 留言板
+          href: /message
+          svg: "mdi:message"
+          target: _self
         - id: music
           text: 音乐馆
           href: /music
@@ -148,6 +158,11 @@ site:
           text: 每天60S
           href: /news
           svg: "lucide:newspaper"
+          target: _self
+        - id: weather
+          text: 实时天气
+          href: /weather
+          svg: "meteocons:fog-day-fill"
           target: _self
     # - id: contact
     #   text: 联系

@@ -72,7 +72,7 @@ import { commentsConfig } from "@/config";
         commentsConfig?.enable && commentsConfig.type === "waline" && commentsConfig.waline && (
           <section id="comments" class="comments mt-10">
             <h2 class="text-2xl font-bold mb-4">评论区</h2>
-            <Waline {...commentsConfig.waline} path={"/message"} />
+            <Waline {...commentsConfig.waline} />
           </section>
         )
       }
