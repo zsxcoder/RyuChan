@@ -2,7 +2,8 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Icon } from "astro-icon/components";
 import MainCard from "@/components/MainCard.astro";
-import Giscus from "@/components/comments/Giscus.astro";
+import Waline from "@/components/comments/Waline.astro";
+import { commentsConfig } from "@/config";
 ---
 
 <BaseLayout title="留言板 - 与xiaozhang互动">
@@ -67,27 +68,14 @@ import Giscus from "@/components/comments/Giscus.astro";
         </div>
       </section>
 
-      <!-- Giscus 评论系统 -->
-      <section>
-        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
-          <Icon name="lucide:messages-square" class="w-6 h-6 text-primary" />
-          <span>留下你的足迹</span>
-        </h2>
-
-        <div class="giscus-wrapper">
-          <Giscus
-            repo="mcyzsx/RyuChan"
-            repoId="R_kgDOQUwpKw"
-            category="Q&A"
-            categoryId="DIC_kwDOQUwpK84CzBZw"
-            mapping="pathname"
-            reactionsEnabled="1"
-            inputPosition="top"
-            lang="zh-CN"
-            loading="lazy"
-          />
-        </div>
-      </section>
+      {
+        commentsConfig?.enable && commentsConfig.type === "waline" && commentsConfig.waline && (
+          <section id="comments" class="comments mt-10">
+            <h2 class="text-2xl font-bold mb-4">评论区</h2>
+            <Waline {...commentsConfig.waline} path={"/message"} />
+          </section>
+        )
+      }
 
       <!-- 快速链接 -->
       <section class="text-center">
