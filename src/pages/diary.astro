@@ -180,7 +180,11 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
                             </a>
                           )}
                         </div>
-                        <button class="comment-btn btn btn-ghost btn-xs gap-1" title="评论" data-diary-id={id}>
+                        <button
+                          class="comment-btn btn btn-ghost btn-xs gap-1"
+                          title="评论"
+                          onclick={`switchWalineWithQuote(${JSON.stringify(entry.text ?? '').replace(/`/g, '\\`')})`}
+                        >
                           <Icon name="lucide:message-circle" class="w-4 h-4" />
                           评论
                         </button>
@@ -236,168 +240,61 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
   }
 </BaseLayout>
 
+<!-- 把用户信息打到 window -->
+<script define:vars={{ avatar: userInfo.avatar, name: userInfo.name }}>
+  window.__USER_INFO__ = { avatar: avatar, name: name };
+</script>
+
+<!-- 核心：带引用文本切换 Waline -->
 <script>
-  /* ==================  工具：统一 fetch 封装  ================== */
-  async function GET(url: string) {
-    const r = await fetch(url);
-    if (!r.ok) throw new Error(r.statusText);
-    return r.json();
-  }
-  async function POST(url: string, body: any) {
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (!r.ok) throw new Error(r.statusText);
-    return r.json();
-  }
+  /* 切换 Waline 实例到指定 path 并滚动到底部评论区 */
+  async function switchWalinePath(path: string) {
+    // 1. 让全局 Waline 使用新 path
+    window.__WALINE_FORCED_PATH__ = path;
 
-  /* ==================  全局变量  ================== */
-  const serverURL = (window as any).__WALINE_SERVER__ || "https://ryuchan-comment.zsx815.top";
-  let currentPath = "";
-  let currentPage = 1;
-  const pageSize = 20;
-
-  /* ==================  渲染函数  ================== */
-  function renderCommentList(list: any[]) {
-    const box = document.getElementById("cmt-list")!;
-    if (!list.length) {
-      box.innerHTML = '<li class="text-sm text-base-content/60">暂无评论</li>';
-      return;
+    // 2. 销毁旧实例（如存在）
+    if (window.__WALINE_INSTANCE__) {
+      window.__WALINE_INSTANCE__.destroy();
     }
-    box.innerHTML = list
-      .map(
-        (c: any) => `
-      <li class="flex gap-3 items-start">
-        <img src="${c.avatar || "/profile.png"}" class="w-8 h-8 rounded-full"/>
-        <div class="flex-1">
-          <div class="text-sm font-semibold">${c.nick}</div>
-          <div class="text-xs text-base-content/60 mb-1">
-            ${new Date(c.time).toLocaleString("zh-CN")}
-          </div>
-          <div class="text-sm prose prose-sm">${c.comment}</div>
-        </div>
-      </li>`,
-      )
-      .join("");
-  }
 
-  async function loadComments(path: string, page = 1) {
-    currentPath = path;
-    currentPage = page;
-    const params = new URLSearchParams({
-      path,
-      page: String(page),
-      pageSize: String(pageSize),
+    // 3. 重新初始化 Waline（读 __WALINE_FORCED_PATH__）
+    const walineConf = (window as any).__WALINE_CONFIG__ || {};
+    const { init } = await import("https://unpkg.com/@waline/client@v3/dist/waline.js");
+    window.__WALINE_INSTANCE__ = init({
+      el: "#waline-container",
+      serverURL: (window as any).__WALINE_SERVER__ || "https://ryuchan-comment.zsx815.top",
+      path: window.__WALINE_FORCED_PATH__,
+      ...walineConf,
     });
-    const { data } = await GET(`${serverURL}/api/comment?${params}`);
-    renderCommentList(data);
-    const moreBox = document.getElementById("cmt-more")!;
-    moreBox.style.display = data.length === pageSize ? "block" : "none";
+
+    // 4. 平滑滚动
+    document.getElementById("comments")?.scrollIntoView({ behavior: "smooth" });
   }
 
-  /* ==================  发送函数  ================== */
-  async function submitComment() {
-    const nick = (document.getElementById("cmt-nick") as HTMLInputElement).value.trim() || "访客";
-    const mail = (document.getElementById("cmt-mail") as HTMLInputElement).value.trim();
-    const link = (document.getElementById("cmt-link") as HTMLInputElement).value.trim();
-    const text = (document.getElementById("cmt-text") as HTMLTextAreaElement).value.trim();
-    if (!text) return alert("请输入内容");
-    await POST(`${serverURL}/api/comment`, {
-      path: currentPath,
-      comment: text,
-      nick,
-      mail,
-      link,
-    });
-    (document.getElementById("cmt-text") as HTMLTextAreaElement).value = "";
-    await loadComments(currentPath, 1); // 刷新第一页
+  /* 带引用文本滚动到底部 Waline */
+  function switchWalineWithQuote(quote: string) {
+    // 用原文当 path，可再简化
+    switchWalinePath(`/diary/${quote}`);
+
+    // 等 Waline 渲染完再写引用
+    setTimeout(() => {
+      const ta = document.querySelector<HTMLTextAreaElement>('.wl-editor');
+      if (!ta) return;
+      const quoted = quote
+        .split('\n')
+        .map(l => '> ' + l)
+        .join('\n');
+      ta.value = quoted + '\n\n';
+      ta.focus();
+      ta.setSelectionRange(ta.value.length, ta.value.length); // 光标放末尾
+    }, 300); // 300 ms 足够 Waline 重新渲染
   }
 
-  /* ==================  弹窗 DOM（仅创建一次）  ================== */
-  function ensureModal() {
-    if (document.getElementById("comment-modal")) return;
-    const div = document.createElement("div");
-    div.id = "comment-modal";
-    div.innerHTML = `
-    <div class="modal modal-middle modal-open">
-      <div class="modal-box w-11/12 max-w-2xl">
-        <h3 class="font-bold text-lg mb-3">全部评论</h3>
+  /* 暴露到全局，供模板 onclick 调用 */
+  (window as any).switchWalineWithQuote = switchWalineWithQuote;
 
-        <!-- 评论列表 -->
-        <ul id="cmt-list" class="space-y-3 max-h-80 overflow-y-auto mb-3"></ul>
-        <div id="cmt-more" class="text-center mb-3 hidden">
-          <button class="btn btn-sm btn-ghost">加载更多</button>
-        </div>
-
-        <!-- 发表 -->
-        <div class="border-t border-base-300 pt-3 grid grid-cols-1 md:grid-cols-3 gap-2 mb-3">
-          <input id="cmt-nick" type="text" placeholder="昵称（可选）" class="input input-bordered input-sm" />
-          <input id="cmt-mail" type="email" placeholder="邮箱（可选）" class="input input-bordered input-sm" />
-          <input id="cmt-link" type="url" placeholder="网址（可选）" class="input input-bordered input-sm" />
-        </div>
-        <textarea id="cmt-text" class="textarea textarea-bordered w-full" rows="3" placeholder="说点什么…"></textarea>
-
-        <div class="modal-action">
-          <button id="cmt-cancel" class="btn btn-ghost btn-sm">取消</button>
-          <button id="cmt-submit" class="btn btn-primary btn-sm">发送</button>
-        </div>
-      </div>
-    </div>`;
-    document.body.appendChild(div);
-
-    /* 事件 */
-    div.querySelector("#cmt-cancel")!.addEventListener("click", closeModal);
-    div.querySelector("#cmt-submit")!.addEventListener("click", submitComment);
-    div.querySelector("#cmt-more button")!.addEventListener("click", async () => {
-      currentPage++;
-      const { data } = await GET(
-        `${serverURL}/api/comment?path=${currentPath}&page=${currentPage}&pageSize=${pageSize}`,
-      );
-      document.getElementById("cmt-list")!.insertAdjacentHTML(
-        "beforeend",
-        data
-          .map(
-            (c: any) => `
-            <li class="flex gap-3 items-start">
-              <img src="${c.avatar || "/profile.png"}" class="w-8 h-8 rounded-full"/>
-              <div class="flex-1">
-                <div class="text-sm font-semibold">${c.nick}</div>
-                <div class="text-xs text-base-content/60 mb-1">
-                  ${new Date(c.time).toLocaleString("zh-CN")}
-                </div>
-                <div class="text-sm prose prose-sm">${c.comment}</div>
-              </div>
-            </li>`,
-          )
-          .join(""),
-      );
-      document.getElementById("cmt-more")!.style.display = data.length === pageSize ? "block" : "none";
-    });
-    div.addEventListener("click", (e) => {
-      if ((e.target as HTMLElement).id === "comment-modal") closeModal();
-    });
-  }
-
-  function closeModal() {
-    document.getElementById("comment-modal")?.remove();
-  }
-
-  /* ==================  绑定到所有评论按钮  ================== */
-  document.addEventListener("click", (e) => {
-    const btn = (e.target as HTMLElement).closest(".comment-btn");
-    if (!btn) return;
-
-    // ✅ 同时支持列表/瀑布流两种结构，并做空值保护
-    const card = btn.closest(".diary-item, .memos-item") as HTMLElement;
-    if (!card) return;
-    const id = card.dataset.diaryId;
-    if (!id) return;
-
-    ensureModal();
-    loadComments(`/diary/${id}`, 1);
-  });
+  /* 默认加载 /diary（瀑布流首页） */
+  switchWalinePath("/diary");
 </script>
 
 <!-- 说说视觉风格 -->
