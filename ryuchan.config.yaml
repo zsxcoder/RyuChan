@@ -139,6 +139,11 @@ site:
           href: /sponsors
           svg: "simple-icons:githubsponsors"
           target: _self
+        - id: steam
+          text: Steam
+          href: /steam
+          svg: "mdi:steam"
+          target: _self
         - id: message
           text: 留言板
           href: /message
@@ -175,6 +180,11 @@ site:
     #   href: "mailto:contact.evesunmaple@outlook.com"
     #   target: _blank # 在新标签页打开
     #   svg: "material-symbols:attach-email-outline-rounded"
+    - id: trevel
+      text: 开往
+      href: https://www.travellings.cn/go.html
+      svg: "mdi:subway"
+      target: _blank
 
 # 用户的个人信息
 user:
@@ -191,22 +201,30 @@ user:
         ariaLabel: Github
         title: Github
         svg: "ri:github-line"
-      - href: "https://space.bilibili.com/1536411565"
+      - href: "https://space.bilibili.com/396923563"
         ariaLabel: BiliBili
         title: BiliBili
         svg: "ri:bilibili-line"
-      - href: "https://x.com/xzz_ya"
+      - href: "https://x.com/kemiao"
         ariaLabel: X(twitter)
         title: X(twitter)
         svg: "ri:twitter-line"
-      # - href: "https://t.me/xzz_ya"
-      #   ariaLabel: Telegram
-      #   title: Telegram
-      #   svg: "ri:telegram-line"
-      - href: "https://app.folo.is/share/feeds/172229198194932736"  
-        ariaLabel: Subscribe via Folo  
-        title: Folo  
-        svg: "ri:rss-fill"
+      - href: "https://t.me/KemiaoJun"
+        ariaLabel: Telegram
+        title: Telegram
+        svg: "ri:telegram-line"
+      - href: "mailto:me@mcyzsx.top"
+        ariaLabel: Mail
+        title: Mail
+        svg: "material-symbols:mail"
+      - href: "https://qm.qq.com/q/Ha1GZQtMgE"
+        ariaLabel: QQ
+        title: QQ
+        svg: "ri:qq-fill"
+      # - href: "https://app.folo.is/share/feeds/172229198194932736"  
+      #   ariaLabel: Subscribe via Folo  
+      #   title: Folo  
+      #   svg: "ri:rss-fill"
 
   footer:
     social:
@@ -214,22 +232,30 @@ user:
       #   ariaLabel: Support my work # 图标的可访问性标签
       #   title: Support my work # 图标的悬浮标题
       #   svg: "ri:cup-line"
-      - href: "https://github.com/xz131714"
+      - href: "https://github.com/mcyzsx"
         ariaLabel: Github
         title: Github
         svg: "ri:github-line"
-      - href: "https://space.bilibili.com/1536411565"
+      - href: "https://space.bilibili.com/396923563"
         ariaLabel: BiliBili
         title: BiliBili
         svg: "ri:bilibili-line"
-      - href: "https://x.com/xzz_ya"
+      - href: "https://x.com/kemiao"
         ariaLabel: X(twitter)
         title: X(twitter)
         svg: "ri:twitter-line"
-      - href: "https://t.me/xzz_ya"
+      - href: "https://t.me/KemiaoJun"
         ariaLabel: Telegram
         title: Telegram
         svg: "ri:telegram-line"
+      - href: "mailto:me@mcyzsx.top"
+        ariaLabel: Mail
+        title: Mail
+        svg: "material-symbols:mail"
+      - href: "https://qm.qq.com/q/Ha1GZQtMgE"
+        ariaLabel: QQ
+        title: QQ
+        svg: "ri:qq-fill"
 
 # 评论系统配置
 comments:

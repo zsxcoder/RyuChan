@@ -3,86 +3,87 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Icon } from "astro-icon/components";
 import MainCard from "@/components/MainCard.astro";
 import BaseCard from "@/components/BaseCard.astro";
-import FriendCard from "@/components/mdx/FriendCard.astro";
+import GitHubRepo from "@/components/mdx/GithubRepoCard.astro";
 import GitHubStats from "@/components/mdx/GitHubStats.astro";
 import RepositoryCard from "@/components/mdx/RepositoryCard.astro";
 ---
 
 <BaseLayout title="Projects">
-  <MainCard
-    infoIcon="lucide:code-2"
-  >
-       <!-- My Repositories -->
+  <MainCard infoIcon="lucide:code-2">
+    <!-- My Repositories -->
     <section class="py-4">
       <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
         <Icon name="lucide:folder" class="w-6 h-6 text-primary" />
-        <span>My Projects</span>
+        <span>我部署的项目</span>
       </h2>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <FriendCard
-              name="HomePage"
-              avatar="https://img.xiaozhangya.xin/file/Avatar/1753366550828_avatar1.jpg"
-              description="🏠 小张的个人主页！"
-              url="https://xiaozhangya.xin"
-              type="friend"
-        />
-        <FriendCard
-              name="Blog"
-              avatar="https://img.xiaozhangya.xin/file/Avatar/1753366547338_avatar2.jpg"
-              description="🚂 二次元风格的Blog,第一次加载可能比较慢~ (ﾉ>ω<)ﾉ"
-              url="https://blog.xiaozhangya.xin"
-              type="friend"
-        />
-        <FriendCard
-              name="ImgBed"
-              avatar="https://img.xiaozhangya.xin/file/Avatar/1753366548855_avatar3.jpg"
-              description="🌄 Cloudflare-ImgBed + Telegram实现的无限存储图床~"
-              url="https://img.xiaozhangya.xin"
-              type="friend"
-        />
-        <FriendCard
-              name="OpenList"
-              avatar="https://img.xiaozhangya.xin/file/Avatar/1753366556506_avatar4.jpg"
-              description="✨ 网盘挂载器~当然也可以添加本机的存储哇 (≧∇≦)ﾉ"
-              url="https://op.xiaozhangya.xin"
-              type="friend"
-        />
-        <FriendCard
-              name="LibreTV"
-              avatar="https://picbed.xiaozhangya.xin/picbed/20250726182011085.png"
-              description="📺 LibreTV - 个人视频点播站，支持多种格式"
-              url="https://libretv.131714.xyz"
-              type="friend"
+        <GitHubRepo
+          name="Mizuki Blog"
+          avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/mizuki.webp"
+          description="Astro 博客主题 Mizuki 自用"
+          repoUrl="https://github.com/mcyzsx/Mizuki"
+          language="Astro"
+          demoUrl="https://blog.zsx815.top"
         />
 
-        <FriendCard
-              name="MoonTV"
-              avatar="https://img.xiaozhangya.xin/file/Avatar/1753524992480_avatar11.jpg"
-              description="🌙 MoonTV - 个人视频点播站，支持多种格式"
-              url="https://moontv.131714.xyz"
-              type="friend"
+        <GitHubRepo
+          name="RyuChan Blog"
+          avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/ryuchan.webp"
+          description="RyuChan 博客自用"
+          repoUrl="https://github.com/mcyzsx/RyuChan"
+          language="Astro"
+          demoUrl="https://boke.zsx815.top"
         />
 
-        <FriendCard
-              name="Tipdm"
-              avatar="https://img.xiaozhangya.xin/file/Avatar/1753366554462_avatar5.jpg"
-              description="🏆 泰迪杯的一些项目代码🌷"
-              url="https://github.com/xz131714/Tipdm"
-              type="friend"
+        <GitHubRepo
+          name="random-pictures"
+          avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/random-picture.webp"
+          description="可以在 Vercel 一键免费部署的随机图 API"
+          repoUrl="https://github.com/mcyzsx/random-pictures"
+          language="JavaScript"
+          demoUrl="https://img-api.zsx815.top"
         />
-        <FriendCard
-              name="PicBed"
-              avatar="https://img.xiaozhangya.xin/file/Avatar/1753366550329_avatar6.jpg"
-              description="🌄 PicGo+Github仓库的小图床awa"
-              url="https://github.com/xz131714/PicBed"
-              type="friend"
+
+        <GitHubRepo
+          name="NeteaseMiniPlayer"
+          avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/netease-player.webp"
+          description="基于 NeteaseCloudMusicApi 的网易云 API 二次开发 CDN 可插入式音乐播放器 UI 组件库"
+          repoUrl="https://github.com/mcyzsx/NeteaseMiniPlayer"
+          language="Vue"
+        />
+
+        <GitHubRepo
+          name="memos-cloudflare"
+          avatar="https://favicon.im/usememos.com?larger=true"
+          description="运行在 Cloudflare 平台上的 memos 复刻程序"
+          repoUrl="https://github.com/mcyzsx/memos-cloudflare"
+          language="TypeScript"
+          demoUrl="https://memos.zsx815.top"
+        />
+
+        <GitHubRepo
+          name="HanAnalytics"
+          avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/hananalystics.99tsiywo08.webp"
+          description="一个简单的网络分析跟踪器和仪表板，在 Cloudflare Pages 上即可快速部署的网站分析仪表板，无成本稳定运行"
+          repoUrl="https://github.com/mcyzsx/HanAnalytics"
+          language="TypeScript"
+          demoUrl="https://han.zsx815.top"
+        />
+
+        <GitHubRepo
+          name="Heo-Music"
+          avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/heo-music.1sfhcf90kc.webp"
+          description="一个基于 Aplayer 和 MetingJS 的静态音乐播放器"
+          repoUrl="https://github.com/mcyzsx/ZSX-Music-MCY"
+          language="HTML"
+          demoUrl="https://music.zsx815.top"
         />
       </div>
 
       <div class="flex justify-center mt-10">
         <a
-          href="https://github.com/xz131714?tab=repositories"
+          href="https://github.com/mcyzsx?tab=repositories"
           target="_blank"
           rel="noopener noreferrer"
           class="btn btn-outline gap-2"
@@ -92,7 +93,5 @@ import RepositoryCard from "@/components/mdx/RepositoryCard.astro";
         </a>
       </div>
     </section>
-
-    
   </MainCard>
 </BaseLayout>

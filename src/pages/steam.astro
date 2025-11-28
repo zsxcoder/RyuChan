@@ -1,0 +1,146 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+import MainCard from "@/components/MainCard.astro";
+
+/* ---------- 拿数据 ---------- */
+const STEAM_API_USER = "https://steam-api.zsx815.top/api/steam-user";
+const STEAM_API_GAMES = "https://steam-api.zsx815.top/api/steam-games";
+
+let user: any = null;
+let games: any = null;
+
+try {
+  const [u, g] = await Promise.all([
+    fetch(STEAM_API_USER, { signal: AbortSignal.timeout(6000) }).then((r) => r.json()),
+    fetch(STEAM_API_GAMES, { signal: AbortSignal.timeout(6000) }).then((r) => r.json()),
+  ]);
+  if (u?.success) user = u.data.user;
+  if (g?.success) games = g.data.games;
+} catch (e) {
+  console.warn("[Steam] 接口超时或解析失败，已降级", e);
+}
+/* ---------- /拿数据 ---------- */
+---
+
+<BaseLayout title="Steam">
+  <MainCard
+    title="My Steam Profile"
+    description="Game library & recent activities"
+    textOverlay="STEAM"
+    image="https://img-api.zsx815.top/mc-pc"
+    infoIcon="simple-icons:steam"
+  >
+    <div class="space-y-10 mb-8">
+      {/* --------  用户信息  -------- */}
+      {
+        user && (
+          <section class="flex flex-col md:flex-row gap-8 items-center md:items-start">
+            <div class="avatar">
+              <div class="w-32 h-32 md:w-40 md:h-40 rounded-xl ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+                <img src={user.avatar.large} alt={user.username} width="160" height="160" loading="eager" />
+              </div>
+            </div>
+
+            <div class="flex-1 text-center md:text-left">
+              <h1 class="text-3xl md:text-4xl font-bold mb-2">{user.username}</h1>
+              <p class="text-xl text-base-content/80 mb-4">{user.statusMessage}</p>
+
+              <div class="flex flex-wrap gap-3 justify-center md:justify-start mb-6">
+                <a
+                  href={user.profileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-sm btn-outline gap-2"
+                >
+                  <Icon name="simple-icons:steam" class="w-4 h-4" />
+                  <span>Steam 主页</span>
+                </a>
+              </div>
+
+              <p class="text-base-content/80">
+                总游戏时长：<strong>{Math.round(user.playtimeStats.totalForever / 60)} h</strong>
+                <br />
+                近两周：<strong>{Math.round(user.playtimeStats.totalTwoWeeks / 60)} h</strong>
+              </p>
+            </div>
+          </section>
+        )
+      }
+
+      {/* --------  最近游玩  -------- */}
+      {
+        games?.recentGames?.length > 0 && (
+          <section>
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Icon name="lucide:history" class="w-6 h-6 text-primary" />
+              <span>Recently Played</span>
+            </h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {games.recentGames.map((g: any) => (
+                <a
+                  href={`https://store.steampowered.com/app/${g.appid}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="card card-compact bg-base-200 hover:bg-base-300 transition-shadow shadow hover:shadow-xl"
+                >
+                  <figure>
+                    <img src={g.images.headerImage} alt={g.name} class="w-full h-32 object-cover" loading="lazy" />
+                  </figure>
+                  <div class="card-body">
+                    <h3 class="card-title text-sm">{g.name}</h3>
+                    <p class="text-xs text-base-content/70">
+                      总时长 {Math.round(g.playtimeForever / 60)} h
+                      {g.achievements && ` | 成就 ${g.achievements.unlocked}/${g.achievements.total}`}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {/* --------  全部游戏  -------- */}
+      {
+        games?.allGames?.length > 0 && (
+          <section>
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+              <Icon name="lucide:library" class="w-6 h-6 text-primary" />
+              <span>All Games ({games.totalCount})</span>
+            </h2>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {games.allGames.map((g: any) => (
+                <a
+                  href={`https://store.steampowered.com/app/${g.appid}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex flex-col items-center p-3 bg-base-200 rounded-lg hover:bg-base-300 transition-all"
+                  title={g.name}
+                >
+                  <img src={g.images.icon} alt={g.name} class="w-16 h-16 rounded-md mb-2" loading="lazy" />
+                  <span class="text-xs text-center truncate w-full">{g.name}</span>
+                  <span class="text-[10px] text-base-content/60">{Math.round(g.playtimeForever / 60)} h</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      {/* --------  异常提示  -------- */}
+      {
+        !user && !games && (
+          <section>
+            <div class="alert alert-warning">
+              <Icon name="lucide:alert-triangle" class="w-5 h-5" />
+              <span>Steam 数据加载失败，请稍后刷新页面。</span>
+            </div>
+          </section>
+        )
+      }
+    </div>
+  </MainCard>
+</BaseLayout>

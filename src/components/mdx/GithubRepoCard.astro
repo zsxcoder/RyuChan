@@ -1,0 +1,155 @@
+---
+import { Icon } from "astro-icon/components";
+
+export interface Props {
+  name: string;
+  avatar?: string;
+  description: string;
+  repoUrl: string;
+  demoUrl?: string;
+  language?: string;
+  stars?: number;
+  forks?: number;
+}
+
+const {
+  name,
+  avatar = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
+  description,
+  repoUrl,
+  demoUrl,
+  language,
+  stars,
+  forks,
+} = Astro.props;
+
+/* 头像容错 */
+const safeAvatar = avatar?.trim() || "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg";
+---
+
+<div class="github-repo-card">
+  <!-- 顶部 -->
+  <div class="card-header">
+    <img class="avatar" src={safeAvatar} alt={name} loading="lazy" />
+    <div class="info">
+      <h3 class="title">{name}</h3>
+      <p class="desc">{description}</p>
+    </div>
+  </div>
+
+  <!-- 语言 & 统计 -->
+  <div class="meta">
+    {
+      language && (
+        <span class="lang">
+          <span class="lang-dot" />
+          <span>{language}</span>
+        </span>
+      )
+    }
+    {
+      stars !== undefined && (
+        <span class="stat">
+          <Icon name="lucide:star" class="w-3 h-3" /> {stars}
+        </span>
+      )
+    }
+    {
+      forks !== undefined && (
+        <span class="stat">
+          <Icon name="lucide:git-fork" class="w-3 h-3" /> {forks}
+        </span>
+      )
+    }
+  </div>
+
+  <!-- 按钮 -->
+  <div class="actions">
+    <a class="btn btn-repo" href={repoUrl} target="_blank" rel="noopener noreferrer">
+      <Icon name="lucide:github" class="w-4 h-4" /> Repo
+    </a>
+    {
+      demoUrl && (
+        <a class="btn btn-demo" href={demoUrl} target="_blank" rel="noopener noreferrer">
+          <Icon name="lucide:external-link" class="w-4 h-4" /> Demo
+        </a>
+      )
+    }
+  </div>
+</div>
+
+<style>
+  /* 基础卡片 */
+  .github-repo-card {
+    @apply rounded-box border bg-base-100 text-base-content shadow hover:shadow-xl transition-all duration-300 hover:-translate-y-1 p-4 flex flex-col gap-3;
+  }
+
+  /* 顶部 */
+  .card-header {
+    @apply flex items-center gap-3;
+  }
+  .avatar {
+    @apply w-14 h-14 rounded-full object-cover;
+  }
+  .info {
+    @apply flex-1;
+  }
+  .title {
+    @apply font-bold text-base;
+  }
+  .desc {
+    @apply text-sm text-base-content/70 mt-1 line-clamp-2;
+  }
+
+  /* 语言 / 统计 */
+  .meta {
+    @apply flex items-center gap-3 text-xs text-base-content/60;
+  }
+  .lang {
+    @apply flex items-center gap-1;
+  }
+  .lang-dot {
+    @apply w-2 h-2 rounded-full bg-accent;
+  }
+  .stat {
+    @apply flex items-center gap-1;
+  }
+
+  /* 按钮 */
+  .actions {
+    @apply flex items-center justify-end gap-2 mt-2;
+  }
+  .btn {
+    @apply btn-sm gap-1;
+  }
+  .btn-repo {
+    @apply btn-outline;
+  }
+  .btn-demo {
+    @apply btn-primary;
+  }
+
+  /* =====  深色模式微调  ===== */
+  @media (prefers-color-scheme: dark) {
+    .github-repo-card {
+      @apply bg-base-200 border-neutral-700;
+    }
+    .desc {
+      @apply text-base-content/80;
+    }
+    .meta {
+      @apply text-base-content/70;
+    }
+  }
+
+  /* 如果你博客用 data-theme 切换，再补一套选择器即可 */
+  [data-theme="dark"] .github-repo-card {
+    @apply bg-base-200 border-neutral-700;
+  }
+  [data-theme="dark"] .desc {
+    @apply text-base-content/80;
+  }
+  [data-theme="dark"] .meta {
+    @apply text-base-content/70;
+  }
+</style>

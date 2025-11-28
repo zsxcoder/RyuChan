@@ -9,6 +9,87 @@ import { Icon } from "astro-icon/components";
 <BaseLayout title="导航">
   <MainCard infoIcon="lucide:compass">
     <div class="space-y-10">
+      <!-- 我的部署项目 -->
+      <section>
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+          <Icon name="mdi:blogger" class="w-6 h-6 text-primary" />
+          <span>我部署的网站</span>
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <NavigationCard
+            name="RyuChan博客"
+            avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/ryuchan.webp"
+            description="Astro博客的RyuChan主题自用"
+            url="https://boke.zsx815.top/"
+            category="博客"
+            id="Site001"
+          />
+
+          <NavigationCard
+            name="Mizuki博客"
+            avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/mizuki.webp"
+            description="Astro博客的Mizuki主题自用"
+            url="https://blog.zsx815.top/"
+            category="博客"
+            id="Site002"
+          />
+
+          <NavigationCard
+            name="Memos-CloudFlare"
+            avatar="https://favicon.im/usememos.com?larger=true"
+            description="Memos的CloudFlare部署版本"
+            url="https://memos.zsx815.top/"
+            category="微博客"
+            id="Site003"
+          />
+
+          <NavigationCard
+            name="Ech0"
+            avatar="https://favicon.im/memo.vaaat.com?larger=true"
+            description="Ech0 即刻短文"
+            url="https://ech0.050815.xyz/"
+            category="微博客"
+            id="Site004"
+          />
+
+          <NavigationCard
+            name="Hugo Moment"
+            avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/86035589-(1).8vncrycu2c.webp"
+            description="Hugo的即刻短文主题"
+            url="https://moment.zsx815.top/"
+            category="微博客"
+            id="Site005"
+          />
+
+          <NavigationCard
+            name="Icefox"
+            avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/icefox.7zqvcjs1nb.webp"
+            description="Typecho的即刻短文主题"
+            url="https://pyq.mcyzsx.top/"
+            category="微博客"
+            id="Site006"
+          />
+
+          <NavigationCard
+            name="Heo-Music"
+            avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/heo-music.1sfhcf90kc.webp"
+            description="Heo的音乐播放器自用"
+            url="https://music.zsx815.top/"
+            category="音乐播放器"
+            id="Site007"
+          />
+
+          <NavigationCard
+            name="vhan-analystics"
+            avatar="https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/custom/hananalystics.99tsiywo08.webp"
+            description="简单的网络分析跟踪器和仪表板"
+            url="https://han.zsx815.top/"
+            category="统计分析"
+            id="Site008"
+          />
+        </div>
+      </section>
       <!-- 开发工具 -->
       <section>
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
@@ -154,7 +235,7 @@ import { Icon } from "astro-icon/components";
           />
 
           <NavigationCard
-            name="shengdaoyun"
+            name="圣道云"
             avatar="https://imgbed.kemeow.top/file/img/logo/nav/JBsnx5mY.png"
             description="圣道云"
             url="https://www.shengdaoyun.cn/"
@@ -225,27 +306,27 @@ import { Icon } from "astro-icon/components";
             id="ENT001"
           />
           <NavigationCard
-            name="网盘资源社"
-            avatar="https://img.xiaozhangya.xin/file/Logo/RwkDhIdV.png"
-            description="网盘资源分享平台"
-            url="https://www.wpzysq.com/"
-            category="网盘资源"
+            name="GO 音乐平台"
+            avatar="https://favicon.im/music.gdstudio.xyz?larger=true"
+            description="音乐下载网站"
+            url="https://music.gdstudio.xyz/"
+            category="音乐资源"
             id="ENT002"
           />
 
           <NavigationCard
-            name="BiliBili"
-            avatar="https://52pokemon.huxx.top/favicon.ico"
-            description="网络代理服务"
-            url="https://52pokemon.huxx.top/login"
-            category="代理服务"
+            name="BiliBili 视频"
+            avatar="https://favicon.im/www.bilibili.com?larger=true"
+            description="B站视频"
+            url="https://www.bilibili.com"
+            category="视频网站"
             id="ENT003"
           />
         </div>
       </section>
 
       <!-- Useful Resources Section -->
-      <section>
+      <!-- <section>
         <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
           <Icon name="lucide:bookmark" class="w-6 h-6 text-primary" />
           <span>Useful Resources</span>
@@ -284,7 +365,7 @@ import { Icon } from "astro-icon/components";
             id="RES004"
           />
         </div>
-      </section>
+      </section> -->
       <div class="divider my-8">
         <Icon name="lucide:heart" class="w-10 h-10 text-primary" />
       </div>
