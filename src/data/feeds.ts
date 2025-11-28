@@ -20,7 +20,7 @@ export default [
         desc: "做自己喜欢的事",
         link: "https://blog.atao.cyou",
         avatar: "https://cdn.atao.cyou/Web/Avatar.png",
-        qrcode: "https://mcyzsx.github.io/picx-images-hosting/links/atao.1hsn7l8mie.webp",
+        qrcode: "https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/links/atao.1hsn7l8mie.webp",
         date: "2025-09-09",
         recommend: true,
       },

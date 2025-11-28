@@ -17,9 +17,6 @@ site:
       - "/image/banner/1.webp"  
       - "/image/banner/2.webp"  
       - "/image/banner/3.webp"  
-      - "/image/banner/4.webp"  
-      - "/image/banner/5.webp"  
-      - "/image/banner/6.webp"  
  
     height: "60vh"
   # Banner 页面标题配置
