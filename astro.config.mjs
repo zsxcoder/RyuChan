@@ -40,6 +40,15 @@ export default defineConfig({
     }),
     playformCompress(),
   ],
+  prefetch: {
+    prefetchAll: false, // 禁用自动预获取
+    // 或者使用更保守的配置
+    // prefetchAll: true,
+    // throttle: 10
+  },
+  viewTransitions: {
+    fallback: "swap",
+  },
   markdown: {
     shikiConfig: {
       theme: CODE_THEME,

@@ -86,22 +86,140 @@ const bannerSubtitle = pageConfig?.subtitle || "";
       })();
     </script>
 
+    <!-- 导航生命周期处理 -->
+    <script is:inline>
+      // 导航状态跟踪
+      let navigationInProgress = false;
+      let navigationTimeout = null;
+
+      // 清除导航超时
+      function clearNavigationTimeout() {
+        if (navigationTimeout) {
+          clearTimeout(navigationTimeout);
+          navigationTimeout = null;
+        }
+      }
+
+      // 导航开始处理
+      document.addEventListener("astro:before-preparation", (event) => {
+        console.log("Navigation starting...");
+        navigationInProgress = true;
+
+        // 设置导航超时保护（5秒后强制完成）
+        clearNavigationTimeout();
+        navigationTimeout = setTimeout(() => {
+          console.warn("Navigation timeout, forcing completion");
+          navigationInProgress = false;
+          // 强制隐藏加载器
+          const loader = document.getElementById("globalLoader");
+          if (loader) {
+            loader.style.opacity = "0";
+            setTimeout(() => loader.remove(), 300);
+          }
+        }, 5000);
+      });
+
+      // 导航内容加载完成
+      document.addEventListener("astro:after-preparation", (event) => {
+        console.log("Navigation content loaded...");
+      });
+
+      // 导航完成处理
+      document.addEventListener("astro:page-load", () => {
+        console.log("Page loaded");
+        navigationInProgress = false;
+        clearNavigationTimeout();
+
+        // 重新初始化导航链接处理
+        initializeNavigationLinks();
+      });
+
+      // 导航错误处理
+      document.addEventListener("astro:navigation-error", (event) => {
+        console.error("Navigation error:", event.error);
+        navigationInProgress = false;
+        clearNavigationTimeout();
+
+        // 错误时强制刷新页面
+        if (confirm("导航失败，是否刷新页面？")) {
+          window.location.reload();
+        }
+      });
+
+      // 初始化导航链接处理
+      function initializeNavigationLinks() {
+        const links = document.querySelectorAll("a[href]");
+
+        links.forEach((link) => {
+          // 移除旧的事件监听器（避免重复绑定）
+          const newLink = link.cloneNode(true);
+          link.parentNode.replaceChild(newLink, link);
+
+          newLink.addEventListener("click", (e) => {
+            const currentUrl = window.location.href;
+            const targetUrl = newLink.href;
+
+            // 如果点击的是当前页面链接，阻止默认行为
+            if (targetUrl === currentUrl) {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log("Prevented navigation to current page");
+              return;
+            }
+
+            // 如果导航正在进行中，阻止重复点击
+            if (navigationInProgress) {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log("Navigation already in progress");
+              return;
+            }
+
+            // 检查是否是外部链接
+            const isExternal = newLink.hostname !== window.location.hostname;
+            const hasTargetBlank = newLink.target === "_blank";
+
+            if (isExternal || hasTargetBlank) {
+              // 外部链接或新窗口链接，不处理
+              return;
+            }
+
+            console.log("Allowing navigation to:", targetUrl);
+          });
+        });
+      }
+
+      // 页面加载完成后初始化
+      document.addEventListener("DOMContentLoaded", () => {
+        initializeNavigationLinks();
+      });
+
+      // 处理浏览器后退/前进按钮
+      window.addEventListener("popstate", () => {
+        if (navigationInProgress) {
+          console.log("Browser navigation detected during transition");
+          navigationInProgress = false;
+          clearNavigationTimeout();
+        }
+      });
+    </script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css" />
 
     <!-- 移除上边距，让Banner从顶部开始 -->
   </head><body class="flex flex-col min-h-screen" {...isIndexed ? { "data-pagefind-body": true } : {}}>
     <!-- 🚀 新增：全局加载动画 -->
-    <div
+    <!-- <div
       id="globalLoader"
       class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-neutral-900"
-    >
+    > -->
       <!-- 头像 -->
-      <img src="/profile.png" id="loaderAvatar" class="w-20 h-20 rounded-full mb-4 animate-pulse" alt="loading" />
+      <!-- <img src="/profile.png" id="loaderAvatar" class="w-20 h-20 rounded-full mb-4 animate-pulse" alt="loading" /> -->
       <!-- 进度条容器 -->
-      <div class="w-56 h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+      <!-- <div class="w-56 h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
         <div id="loaderBar" class="h-full bg-accent rounded-full" style="width: 0%"></div>
       </div>
-    </div>
+    </div> -->
     <Banner title={bannerTitle} subtitle={bannerSubtitle} />
     <Navbar />
     <div class="max-w-blog mx-auto w-full flex-grow">
@@ -123,42 +241,93 @@ const bannerSubtitle = pageConfig?.subtitle || "";
 
     <MobileTOC headings={headings} showTOC={showTOC} />
 
-    <script is:inline>
+    <!-- <script is:inline>
       let barWidth = 0;
       const bar = document.getElementById("loaderBar");
       const loader = document.getElementById("globalLoader");
+      let loaderInterval = null;
 
-      /* 1. 0 → 90% 匀速往前跑 */
-      const interval = setInterval(() => {
-        if (barWidth >= 90) {
-          clearInterval(interval);
-          return;
-        }
-        barWidth += Math.random() * 12 + 2;
-        if (bar) bar.style.width = Math.min(barWidth, 90) + "%";
-      }, 200);
+      // 重置加载器状态
+      function resetLoader() {
+        barWidth = 0;
+        if (bar) bar.style.width = "0%";
+      }
 
-      /* 2. 统一在 astro:page-load 里收尾（ Astro 自己的 DOM 已经渲染完）*/
-      document.addEventListener("astro:page-load", () => {
-        /* 2-1 先补到 100% */
+      // 启动加载器动画
+      function startLoader() {
+        resetLoader();
+
+        /* 1. 0 → 90% 匀速往前跑 */
+        loaderInterval = setInterval(() => {
+          if (barWidth >= 90) {
+            clearInterval(loaderInterval);
+            return;
+          }
+          barWidth += Math.random() * 12 + 2;
+          if (bar) bar.style.width = Math.min(barWidth, 90) + "%";
+        }, 200);
+      }
+
+      // 完成加载器动画
+      function completeLoader() {
+        clearInterval(loaderInterval);
+
+        /* 先补到 100% */
         if (bar) bar.style.width = "100%";
-        /* 2-2 让用户看清 100% 再淡出 */
+
+        /* 让用户看清 100% 再淡出 */
         setTimeout(() => {
           if (!loader) return;
           loader.style.opacity = "0";
-          loader.addEventListener("transitionend", () => loader.remove(), { once: true });
+          loader.addEventListener(
+            "transitionend",
+            () => {
+              loader.remove();
+              resetLoader(); // 重置状态以便下次使用
+            },
+            { once: true },
+          );
         }, 200);
+      }
+
+      // 监听 Astro 导航事件
+      document.addEventListener("astro:before-preparation", () => {
+        console.log("Navigation started - showing loader");
+        // 重新创建加载器元素（如果已被移除）
+        if (!document.getElementById("globalLoader")) {
+          const newLoader = document.createElement("div");
+          newLoader.id = "globalLoader";
+          newLoader.className =
+            "fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-neutral-900";
+          newLoader.innerHTML = `
+        <img src="/profile.png" id="loaderAvatar" class="w-20 h-20 rounded-full mb-4 animate-pulse" alt="loading" />
+        <div class="w-56 h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
+          <div id="loaderBar" class="h-full bg-accent rounded-full" style="width: 0%"></div>
+        </div>
+      `;
+          document.body.appendChild(newLoader);
+        }
+
+        // 显示加载器并开始动画
+        const loaderElement = document.getElementById("globalLoader");
+        if (loaderElement) {
+          loaderElement.style.opacity = "1";
+          loaderElement.style.display = "flex";
+          startLoader();
+        }
       });
 
-      /* 3. 兜底：万一没启用 ClientRouter，仍靠 window.load */
+      // 统一在 astro:page-load 里收尾
+      document.addEventListener("astro:page-load", () => {
+        console.log("Navigation completed - hiding loader");
+        completeLoader();
+      });
+
+      // 兜底：万一没启用 ClientRouter
       window.addEventListener(
         "load",
         () => {
-          if (barWidth < 100) {
-            // 如果还没走完，就立即补满
-            if (bar) bar.style.width = "100%";
-            setTimeout(() => loader?.remove(), 200);
-          }
+          completeLoader();
         },
         { once: true },
       );
@@ -169,7 +338,7 @@ const bannerSubtitle = pageConfig?.subtitle || "";
       #globalLoader {
         transition: opacity 0.3s ease-out;
       }
-    </style>
+    </style> -->
 
     <!-- 全局樱花飘落特效 -->
     <!-- <script is:inline>
@@ -446,5 +615,85 @@ const bannerSubtitle = pageConfig?.subtitle || "";
     </style>
 
     <script is:inline src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/js/lightbox.min.js"></script>
+
+    <!-- 导航降级处理 -->
+    <script is:inline>
+      // 首次访问检测和降级处理
+      (function () {
+        const NAVIGATION_DEBUG = true; // 调试模式，生产环境可以设为 false
+
+        function log(...args) {
+          if (NAVIGATION_DEBUG) {
+            console.log("[Navigation Debug]", ...args);
+          }
+        }
+
+        // 检测是否是首次访问
+        const isFirstVisit = !sessionStorage.getItem("ryuchan_visited");
+        if (isFirstVisit) {
+          sessionStorage.setItem("ryuchan_visited", "true");
+          log("First visit detected");
+        }
+
+        // 检测导航是否卡住
+        let navigationStartTime = 0;
+        const NAVIGATION_TIMEOUT = 3000; // 3秒导航超时
+
+        document.addEventListener("astro:before-preparation", () => {
+          navigationStartTime = Date.now();
+          log("Navigation started at:", navigationStartTime);
+        });
+
+        document.addEventListener("astro:page-load", () => {
+          const navigationTime = Date.now() - navigationStartTime;
+          log("Navigation completed in:", navigationTime + "ms");
+
+          // 如果导航时间异常长，记录警告
+          if (navigationTime > NAVIGATION_TIMEOUT) {
+            console.warn("Navigation took unusually long:", navigationTime + "ms");
+          }
+        });
+
+        // 强制导航函数（降级到传统导航）
+        function forceTraditionalNavigation(link) {
+          log("Forcing traditional navigation to:", link.href);
+          window.location.href = link.href;
+        }
+
+        // 为所有导航链接添加降级处理
+        function addFallbackNavigation() {
+          const navLinks = document.querySelectorAll("nav a[href], .navbar a[href], .menu a[href]");
+
+          navLinks.forEach((link) => {
+            link.addEventListener("click", function (e) {
+              const currentTime = Date.now();
+              const timeSinceNavigationStart = currentTime - navigationStartTime;
+
+              // 如果导航进行中超时，强制使用传统导航
+              if (navigationStartTime > 0 && timeSinceNavigationStart > NAVIGATION_TIMEOUT) {
+                log("Navigation timeout detected, using fallback");
+                e.preventDefault();
+                forceTraditionalNavigation(this);
+                return;
+              }
+
+              // 首次访问时的特殊处理
+              if (isFirstVisit && Math.random() > 0.5) {
+                // 50% 概率强制传统导航
+                log("First visit fallback triggered");
+                e.preventDefault();
+                forceTraditionalNavigation(this);
+              }
+            });
+          });
+        }
+
+        // 页面加载完成后添加降级处理
+        document.addEventListener("DOMContentLoaded", addFallbackNavigation);
+        document.addEventListener("astro:page-load", addFallbackNavigation);
+
+        log("Navigation fallback system initialized");
+      })();
+    </script>
   </body>
 </html>
