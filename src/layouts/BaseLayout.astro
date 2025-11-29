@@ -208,18 +208,6 @@ const bannerSubtitle = pageConfig?.subtitle || "";
 
     <!-- 移除上边距，让Banner从顶部开始 -->
   </head><body class="flex flex-col min-h-screen" {...isIndexed ? { "data-pagefind-body": true } : {}}>
-    <!-- 🚀 新增：全局加载动画 -->
-    <!-- <div
-      id="globalLoader"
-      class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-neutral-900"
-    > -->
-      <!-- 头像 -->
-      <!-- <img src="/profile.png" id="loaderAvatar" class="w-20 h-20 rounded-full mb-4 animate-pulse" alt="loading" /> -->
-      <!-- 进度条容器 -->
-      <!-- <div class="w-56 h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
-        <div id="loaderBar" class="h-full bg-accent rounded-full" style="width: 0%"></div>
-      </div>
-    </div> -->
     <Banner title={bannerTitle} subtitle={bannerSubtitle} />
     <Navbar />
     <div class="max-w-blog mx-auto w-full flex-grow">
@@ -240,105 +228,6 @@ const bannerSubtitle = pageConfig?.subtitle || "";
     <script is:inline defer src="https://han.zsx815.top/tracker.min.js" data-website-id="ryu"></script>
 
     <MobileTOC headings={headings} showTOC={showTOC} />
-
-    <!-- <script is:inline>
-      let barWidth = 0;
-      const bar = document.getElementById("loaderBar");
-      const loader = document.getElementById("globalLoader");
-      let loaderInterval = null;
-
-      // 重置加载器状态
-      function resetLoader() {
-        barWidth = 0;
-        if (bar) bar.style.width = "0%";
-      }
-
-      // 启动加载器动画
-      function startLoader() {
-        resetLoader();
-
-        /* 1. 0 → 90% 匀速往前跑 */
-        loaderInterval = setInterval(() => {
-          if (barWidth >= 90) {
-            clearInterval(loaderInterval);
-            return;
-          }
-          barWidth += Math.random() * 12 + 2;
-          if (bar) bar.style.width = Math.min(barWidth, 90) + "%";
-        }, 200);
-      }
-
-      // 完成加载器动画
-      function completeLoader() {
-        clearInterval(loaderInterval);
-
-        /* 先补到 100% */
-        if (bar) bar.style.width = "100%";
-
-        /* 让用户看清 100% 再淡出 */
-        setTimeout(() => {
-          if (!loader) return;
-          loader.style.opacity = "0";
-          loader.addEventListener(
-            "transitionend",
-            () => {
-              loader.remove();
-              resetLoader(); // 重置状态以便下次使用
-            },
-            { once: true },
-          );
-        }, 200);
-      }
-
-      // 监听 Astro 导航事件
-      document.addEventListener("astro:before-preparation", () => {
-        console.log("Navigation started - showing loader");
-        // 重新创建加载器元素（如果已被移除）
-        if (!document.getElementById("globalLoader")) {
-          const newLoader = document.createElement("div");
-          newLoader.id = "globalLoader";
-          newLoader.className =
-            "fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-neutral-900";
-          newLoader.innerHTML = `
-        <img src="/profile.png" id="loaderAvatar" class="w-20 h-20 rounded-full mb-4 animate-pulse" alt="loading" />
-        <div class="w-56 h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
-          <div id="loaderBar" class="h-full bg-accent rounded-full" style="width: 0%"></div>
-        </div>
-      `;
-          document.body.appendChild(newLoader);
-        }
-
-        // 显示加载器并开始动画
-        const loaderElement = document.getElementById("globalLoader");
-        if (loaderElement) {
-          loaderElement.style.opacity = "1";
-          loaderElement.style.display = "flex";
-          startLoader();
-        }
-      });
-
-      // 统一在 astro:page-load 里收尾
-      document.addEventListener("astro:page-load", () => {
-        console.log("Navigation completed - hiding loader");
-        completeLoader();
-      });
-
-      // 兜底：万一没启用 ClientRouter
-      window.addEventListener(
-        "load",
-        () => {
-          completeLoader();
-        },
-        { once: true },
-      );
-    </script>
-
-    <!-- 🚀 遮罩淡出过渡 -->
-    <style is:inline>
-      #globalLoader {
-        transition: opacity 0.3s ease-out;
-      }
-    </style> -->
 
     <!-- 全局樱花飘落特效 -->
     <!-- <script is:inline>
