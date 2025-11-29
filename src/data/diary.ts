@@ -37,11 +37,18 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
-    text: "今天算是完成了ryuchan博客的魔改吧。",
+    text: "今天解决了博客的一部分问题，算是可以了。然后开始blog-v3的魔改。",
     date: "2025-11-28 22:18",
     tags: ["日常"],
     location: "南京",
     url: ["https://boke.zsx815.top/steam"],
+  },
+  {
+    text: "今天算是完成了ryuchan博客的魔改吧。",
+    date: "2025-11-29 23:54",
+    tags: ["日常"],
+    location: "南京",
+    github: ["https://github.com/mcyzsx/Nuxt-blog-v3"],
   },
   {
     text: "今天算是完成了实训的第一部分，然后搞了icefox的v3.0版本。",
