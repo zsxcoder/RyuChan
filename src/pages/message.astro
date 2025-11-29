@@ -1,8 +1,8 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { Icon } from "astro-icon/components";
 import MainCard from "@/components/MainCard.astro";
-import Waline from "@/components/comments/Waline.astro";
+import Waline from "@/components/comments/CommentWaline.astro";
+import { Icon } from "astro-icon/components";
 import { commentsConfig } from "@/config";
 ---
 
@@ -68,6 +68,7 @@ import { commentsConfig } from "@/config";
         </div>
       </section>
 
+      <!-- Waline 评论区 -->
       {
         commentsConfig?.enable && commentsConfig.type === "waline" && commentsConfig.waline && (
           <section id="comments" class="comments mt-10">
@@ -103,14 +104,3 @@ import { commentsConfig } from "@/config";
     </div>
   </MainCard>
 </BaseLayout>
-
-<style>
-  .giscus-wrapper {
-    @apply mt-8;
-  }
-
-  /* 自定义 Giscus 样式 */
-  :global(.giscus-frame) {
-    @apply rounded-lg;
-  }
-</style>
