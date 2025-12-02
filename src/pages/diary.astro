@@ -183,7 +183,7 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
                         <button
                           class="comment-btn btn btn-ghost btn-xs gap-1"
                           title="评论"
-                          onclick={`switchWalineWithQuote(${JSON.stringify(entry.text ?? '').replace(/`/g, '\\`')})`}
+                          onclick={`switchWalineWithQuote(${JSON.stringify(entry.text ?? "").replace(/`/g, "\\`")})`}
                         >
                           <Icon name="lucide:message-circle" class="w-4 h-4" />
                           评论
@@ -248,16 +248,14 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
 <!-- 核心：带引用文本切换 Waline -->
 <script>
   /* 切换 Waline 实例到指定 path 并滚动到底部评论区 */
-  async function switchWalinePath(path: string) {
-    // 1. 让全局 Waline 使用新 path
+  /* 切换 Waline 实例到指定 path，scroll 参数控制是否滚动 */
+  async function switchWalinePath(path: string, scroll = false) {
     window.__WALINE_FORCED_PATH__ = path;
 
-    // 2. 销毁旧实例（如存在）
     if (window.__WALINE_INSTANCE__) {
       window.__WALINE_INSTANCE__.destroy();
     }
 
-    // 3. 重新初始化 Waline（读 __WALINE_FORCED_PATH__）
     const walineConf = (window as any).__WALINE_CONFIG__ || {};
     const { init } = await import("https://unpkg.com/@waline/client@v3/dist/waline.js");
     window.__WALINE_INSTANCE__ = init({
@@ -267,34 +265,33 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
       ...walineConf,
     });
 
-    // 4. 平滑滚动
-    document.getElementById("comments")?.scrollIntoView({ behavior: "smooth" });
+    if (scroll) {
+      document.getElementById("comments")?.scrollIntoView({ behavior: "smooth" });
+    }
   }
 
   /* 带引用文本滚动到底部 Waline */
   function switchWalineWithQuote(quote: string) {
-    // 用原文当 path，可再简化
-    switchWalinePath(`/diary/${quote}`);
+    // 传 true，表示需要滚动
+    switchWalinePath(`/diary/${quote}`, true);
 
-    // 等 Waline 渲染完再写引用
     setTimeout(() => {
-      const ta = document.querySelector<HTMLTextAreaElement>('.wl-editor');
+      const ta = document.querySelector<HTMLTextAreaElement>(".wl-editor");
       if (!ta) return;
       const quoted = quote
-        .split('\n')
-        .map(l => '> ' + l)
-        .join('\n');
-      ta.value = quoted + '\n\n';
+        .split("\n")
+        .map((l) => "> " + l)
+        .join("\n");
+      ta.value = quoted + "\n\n";
       ta.focus();
-      ta.setSelectionRange(ta.value.length, ta.value.length); // 光标放末尾
-    }, 300); // 300 ms 足够 Waline 重新渲染
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+    }, 300);
   }
 
-  /* 暴露到全局，供模板 onclick 调用 */
   (window as any).switchWalineWithQuote = switchWalineWithQuote;
 
-  /* 默认加载 /diary（瀑布流首页） */
-  switchWalinePath("/diary");
+  /* 首次进入只初始化，不滚动 */
+  switchWalinePath("/diary", false);
 </script>
 
 <!-- 说说视觉风格 -->
