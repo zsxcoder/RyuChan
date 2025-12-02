@@ -37,6 +37,14 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
+    text: "今天完成了实训的4、5任务，然后搞了。",
+    date: "2025-12-2 23:27",
+    tags: ["日常"],
+    location: "南京",
+    github: ["https://github.com/mcyzsx/Friend-Circle-Lite"],
+    url: ["https://fc.mcyzsx.top"],
+  },
+  {
     text: "今天完成了日记页面的渲染测试，最近事多。",
     date: "2025-12-1 23:27",
     tags: ["日常"],
