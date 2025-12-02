@@ -37,7 +37,7 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
-    text: "今天完成了实训的4、5任务，然后搞了。",
+    text: "今天完成了实训的4、5任务，然后搞了友链朋友圈。",
     date: "2025-12-2 23:27",
     tags: ["日常"],
     location: "南京",
