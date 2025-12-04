@@ -73,6 +73,15 @@ export default [
         qrcode: "https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/links/liushen-link.77dzp14uks.webp",
         date: "2025-11-23",
         recommend: true,
+        },
+      {
+        author: "Cynosura",
+        sitenick: "Cynosura",
+        desc: "Trying to light up the dark.",
+        link: "https://cynosura.one/",
+        avatar: "https://cynosura.one/img/avatar.webp",
+        qrcode: "https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/links/cyno.6t7kdbrnvk.webp",
+        date: "2025-12-4",
       },
       // …想加继续往下写
     ],
