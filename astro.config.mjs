@@ -1,7 +1,7 @@
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
-import vercel from "@astrojs/vercel";
+import vercel from "@astrojs/vercel/serverless"; 
 import playformCompress from "@playform/compress";
 import terser from "@rollup/plugin-terser";
 // --------------  只加这一行：Expressive Code --------------
@@ -20,7 +20,7 @@ import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 // https://astro.build/config
 export default defineConfig({
   site: USER_SITE,
-  output: "static",
+  output: "server",
   adapter: vercel(),
   style: { scss: { includePaths: ["./src/styles"] } },
   integrations: [
