@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "functions": {
+    "dist/pagefind/**/*.js": { "runtime": "static" },
+    "dist/pagefind/**/*.wasm": { "runtime": "static" }
+  },
+  "routes": [
+    { "src": "/pagefind/(.*)", "dest": "/pagefind/$1" }
+  ]
+}
