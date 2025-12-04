@@ -20,7 +20,7 @@ import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 // https://astro.build/config
 export default defineConfig({
   site: USER_SITE,
-  output: "hybrid",
+  output: "server",
   adapter: vercel(),
   style: { scss: { includePaths: ["./src/styles"] } },
   integrations: [
