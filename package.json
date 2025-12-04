@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-    "build": "astro build && pagefind --site dist --output public/pagefind",
+    "build": "astro build && pagefind --site dist --output-path public/pagefind && cpy 'public/pagefind/**' dist/pagefind",
     "search:clean": "rimraf public/pagefind",
     "search:index": "npm run build && cpy 'dist/pagefind/**' public/pagefind",
     "preview": "astro preview",
