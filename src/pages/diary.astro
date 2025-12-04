@@ -1,4 +1,5 @@
 ---
+// src/pages/diary.astro
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { Icon } from "astro-icon/components";
 import MainCard from "@/components/MainCard.astro";
@@ -36,7 +37,20 @@ async function renderText(raw?: string): Promise<string> {
 }
 /* ---------- /Markdown ---------- */
 
-const diaryEntries = getRecentDiaryEntries(30);
+/* 1. 显式声明 DiaryEntry 类型 */
+interface DiaryEntry {
+  id?: string;
+  date: string;
+  text?: string;
+  images?: string[];
+  music?: any | any[];
+  video?: any;
+  url?: string | string[];
+  github?: string | string[];
+  tags?: string[];
+  location?: string;
+}
+const diaryEntries: DiaryEntry[] = getRecentDiaryEntries(30);
 
 const userInfo = {
   name: "钟神秀",
@@ -241,13 +255,22 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
 </BaseLayout>
 
 <!-- 把用户信息打到 window -->
-<script define:vars={{ avatar: userInfo.avatar, name: userInfo.name }}>
-  window.__USER_INFO__ = { avatar: avatar, name: name };
+<script define:vars={{ avatar: userInfo.avatar, userName: userInfo.name }}>
+  window.__USER_INFO__ = { avatar: avatar, name: userName };
 </script>
 
 <!-- 核心：带引用文本切换 Waline -->
 <script>
-  /* 切换 Waline 实例到指定 path 并滚动到底部评论区 */
+  /* 扩展全局变量类型 */
+  declare global {
+    interface Window {
+      __WALINE_FORCED_PATH__?: string;
+      __WALINE_INSTANCE__?: any;
+      __WALINE_CONFIG__?: any;
+      __WALINE_SERVER__?: string;
+    }
+  }
+
   /* 切换 Waline 实例到指定 path，scroll 参数控制是否滚动 */
   async function switchWalinePath(path: string, scroll = false) {
     window.__WALINE_FORCED_PATH__ = path;
@@ -256,11 +279,12 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
       window.__WALINE_INSTANCE__.destroy();
     }
 
-    const walineConf = (window as any).__WALINE_CONFIG__ || {};
+    const walineConf = window.__WALINE_CONFIG__ || {};
+    // @ts-ignore
     const { init } = await import("https://unpkg.com/@waline/client@v3/dist/waline.js");
     window.__WALINE_INSTANCE__ = init({
       el: "#waline-container",
-      serverURL: (window as any).__WALINE_SERVER__ || "https://ryuchan-comment.zsx815.top",
+      serverURL: window.__WALINE_SERVER__ || "https://ryuchan-comment.zsx815.top",
       path: window.__WALINE_FORCED_PATH__,
       ...walineConf,
     });
@@ -272,7 +296,6 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
 
   /* 带引用文本滚动到底部 Waline */
   function switchWalineWithQuote(quote: string) {
-    // 传 true，表示需要滚动
     switchWalinePath(`/diary/${quote}`, true);
 
     setTimeout(() => {

@@ -2,7 +2,6 @@
 // src/components/widgets/Announcement.astro
 import Card from "../temple/Card.astro";
 import { marked } from "marked";
-import DOMPurify from "dompurify"; // 仅浏览器端引用
 
 export interface Props {
   message?: string;
@@ -14,37 +13,42 @@ const {
   enabled = true,
 } = Astro.props;
 
-/* 允许 Markdown + HTML 混写 */
-marked.setOptions({ html: true });
-const rawHtml = marked.parse(message); // 生成 HTML
+/* 服务端先把 Markdown 转成 HTML（marked 5.x 返回 Promise） */
+marked.use({ gfm: true, breaks: false }); // 相当于 html:true
+const rawHtml = await marked.parse(message);
 ---
 
-{
-  enabled && message && (
-    <Card>
-      <div class="announcement-widget p-4">
-        <div class="announcement-header mb-3">
-          <h3 class="text-lg font-semibold flex items-center gap-2">
-            <span class="text-xl">📢</span>
-            <span>公告</span>
-          </h3>
-        </div>
-
-        <div class="announcement-content">
-          <div class="speaker-icon">
-            <>{/* <span class="speaker-emoji">📢</span> */}</>
-          </div>
-          {/* 客户端渲染：先消毒再插入 */}
-          <div
-            class="announcement-text"
-            data-raw={rawHtml}
-            set:html={typeof window !== "undefined" ? DOMPurify.sanitize(rawHtml, { ADD_TAGS: ["kbd"] }) : rawHtml}
-          />
-        </div>
+{enabled && message && (
+  <Card>
+    <div class="announcement-widget p-4">
+      <div class="announcement-header mb-3">
+        <h3 class="text-lg font-semibold flex items-center gap-2">
+          <span class="text-xl">📢</span>
+          <span>公告</span>
+        </h3>
       </div>
-    </Card>
-  )
-}
+
+      <div class="announcement-content">
+        <!-- 浏览器端再用 DOMPurify 消毒 -->
+        <div
+          class="announcement-text"
+          data-raw={rawHtml}
+          set:html={rawHtml}
+        />
+      </div>
+    </div>
+  </Card>
+)}
+
+<script>
+  /* 客户端仅做消毒，避免 XSS */
+  import DOMPurify from "dompurify";
+
+  document.querySelectorAll<HTMLElement>(".announcement-text").forEach((el) => {
+    const dirty = el.dataset.raw || el.innerHTML;
+    el.innerHTML = DOMPurify.sanitize(dirty, { ADD_TAGS: ["kbd"] });
+  });
+</script>
 
 <style lang="scss">
   /* 样式与之前完全一致，不再重复 */

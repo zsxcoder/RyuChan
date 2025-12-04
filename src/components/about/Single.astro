@@ -30,7 +30,6 @@ cworld1的[友链组件](https://astro-pure.js.org/docs/integrations/links#integ
 const processed = await unified()
   .use(remarkParse)
   .use(remarkRehype, { allowDangerousHtml: true })
-  .use(rehypePrism) // 不需要可删掉
   .use(rehypeStringify, { allowDangerousHtml: true })
   .process(content);
 

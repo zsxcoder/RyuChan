@@ -11,7 +11,7 @@ export async function fetchWeather(city: string): Promise<string> {
 
   const url = `https://60s.kemeow.top/v2/weather?query=${encodeURIComponent(city)}&encoding=markdown`;
   const md = await fetch(url).then((r) => r.text());
-  const html = marked(md);
+  const html = await marked(md); // ← 这里 await 一下
 
   CACHE.set(key, { t: Date.now(), html });
   return html;

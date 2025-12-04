@@ -7,11 +7,29 @@ import Card from "@/components/temple/Card.astro";
 import CardGroup from "@/components/temple/CardGroup.astro";
 import { Icon } from "astro-icon/components";
 
+/* ===== 1. 补齐类型 ===== */
+interface AlbumPhoto {
+  src: string;
+  alt?: string;
+  title?: string;
+  width?: number;
+  height?: number;
+}
+interface Album {
+  id: string;
+  title: string;
+  description?: string;
+  date: string;
+  location?: string;
+  tags?: string[];
+  photos: AlbumPhoto[]; // 元素是对象而非 string
+}
+
 export async function getStaticPaths() {
   const albums = await scanAlbums();
-  return albums.map((a) => ({ params: { id: a.id }, props: { album: a } }));
+  return albums.map((a) => ({ params: { id: a.id }, props: { album: a as Album } }));
 }
-const { album } = Astro.props;
+const { album } = Astro.props as { album: Album };
 ---
 
 <BaseLayout title={album.title}>
@@ -49,7 +67,7 @@ const { album } = Astro.props;
         {
           album.tags && album.tags.length > 0 && (
             <div class="flex flex-wrap gap-2">
-              {album.tags.map((t) => (
+              {album.tags.map((t: string) => (
                 <span class="btn btn-xs btn-outline">{t}</span>
               ))}
             </div>
@@ -59,7 +77,7 @@ const { album } = Astro.props;
         <!-- Masonry 照片墙 -->
         <div class="masonry-grid" data-ready="false">
           {
-            album.photos.map((p) => (
+            album.photos.map((p: AlbumPhoto) => (
               <figure class="break-inside-avoid mb-2">
                 <a
                   href={p.src}
@@ -89,12 +107,19 @@ const { album } = Astro.props;
 
   <!-- 3. 等 Lightbox 初始化完再解锁 -->
   <script>
+    /* 扩展全局变量类型 */
+    declare global {
+      interface Window {
+        lightbox?: any;
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
-      const grid = document.querySelector(".masonry-grid");
+      const grid = document.querySelector<HTMLElement>(".masonry-grid");
       if (!grid) return;
 
       // 先临时禁止 <a> 默认跳转
-      grid.querySelectorAll("a[data-lightbox]").forEach((a) => {
+      grid.querySelectorAll<HTMLAnchorElement>("a[data-lightbox]").forEach((a) => {
         a.addEventListener("click", (e) => e.preventDefault(), { once: true });
       });
 

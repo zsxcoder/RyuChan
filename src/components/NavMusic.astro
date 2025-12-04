@@ -318,7 +318,7 @@ const typedMenu = SITE_MENU as MenuItem[];
   }
 
   /* ===== 移动端滑入/滑出（不变） ===== */
-  const toggle = document.getElementById("menu-toggle");
+  const toggle = document.getElementById("menu-toggle") as HTMLInputElement | null;
   const menu = document.getElementById("header-menu");
   if (toggle && menu) {
     toggle.addEventListener("change", () => menu.classList.toggle("open", toggle.checked));
@@ -331,7 +331,7 @@ const typedMenu = SITE_MENU as MenuItem[];
     document.addEventListener("click", (e) => {
       const nav = document.getElementById("navbar");
       if (!nav) return;
-      if (!nav.contains(e.target) && menu.classList.contains("open")) {
+      if (!nav.contains(e.target as Node) && menu.classList.contains("open")) {
         toggle.checked = false;
         menu.classList.remove("open");
       }
