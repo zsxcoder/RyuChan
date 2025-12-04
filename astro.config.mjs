@@ -1,7 +1,7 @@
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
-import vercel from "@astrojs/vercel/serverless"; 
+import vercel from "@astrojs/vercel/serverless";
 import playformCompress from "@playform/compress";
 import terser from "@rollup/plugin-terser";
 // --------------  只加这一行：Expressive Code --------------
@@ -10,8 +10,9 @@ import icon from "astro-icon";
 import { defineConfig } from "astro/config";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeKatex from "rehype-katex";
-
 import remarkMath from "remark-math";
+
+import pagefindPatch from "./integrations/pagefind-patch.ts";
 import { CODE_THEME, USER_SITE } from "./src/config.ts";
 import updateConfig from "./src/integration/updateConfig.ts";
 
@@ -25,6 +26,7 @@ export default defineConfig({
   style: { scss: { includePaths: ["./src/styles"] } },
   integrations: [
     updateConfig(),
+    pagefindPatch(),
 
     // ① 只改这里：用 Expressive Code 接管代码块（含复制按钮、行号）
     expressiveCode({
