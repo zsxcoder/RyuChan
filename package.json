@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-    "build": "astro build && pagefind --site .vercel/output/static",
+    "build": "astro build && pagefind --site dist",
     "search:clean": "rimraf public/pagefind",
     "search:index": "npm run build && cpy 'dist/pagefind/**' public/pagefind",
     "preview": "astro preview",
