@@ -2,8 +2,8 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "functions": {
-    "dist/pagefind/**/*.js": { "runtime": "static" },
-    "dist/pagefind/**/*.wasm": { "runtime": "static" }
+    "dist/pagefind/**/*.js": { "runtime": "vercel/static@1.0.0" },
+    "dist/pagefind/**/*.wasm": { "runtime": "vercel/static@1.0.0" }
   },
   "routes": [
     { "src": "/pagefind/(.*)", "dest": "/pagefind/$1" }
