@@ -24,7 +24,7 @@ pnpm-debug.log*
 .idea/
 
 # pagefind
-public/pagefind/
+# public/pagefind/
 
 # pnpm store
 pnpm-store/

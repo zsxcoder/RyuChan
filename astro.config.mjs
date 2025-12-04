@@ -12,7 +12,6 @@ import rehypeExternalLinks from "rehype-external-links";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 
-import pagefindPatch from "./integrations/pagefind-patch.ts";
 import { CODE_THEME, USER_SITE } from "./src/config.ts";
 import updateConfig from "./src/integration/updateConfig.ts";
 
@@ -26,7 +25,6 @@ export default defineConfig({
   style: { scss: { includePaths: ["./src/styles"] } },
   integrations: [
     updateConfig(),
-    pagefindPatch(),
 
     // ① 只改这里：用 Expressive Code 接管代码块（含复制按钮、行号）
     expressiveCode({
