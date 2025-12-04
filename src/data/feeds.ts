@@ -73,7 +73,7 @@ export default [
         qrcode: "https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/links/liushen-link.77dzp14uks.webp",
         date: "2025-11-23",
         recommend: true,
-        },
+      },
       {
         author: "Cynosura",
         sitenick: "Cynosura",
