@@ -4,18 +4,18 @@ import tailwind from "@astrojs/tailwind";
 import vercel from "@astrojs/vercel";
 import playformCompress from "@playform/compress";
 import terser from "@rollup/plugin-terser";
+// --------------  只加这一行：Expressive Code --------------
+import expressiveCode from "astro-expressive-code";
 import icon from "astro-icon";
 import { defineConfig } from "astro/config";
 import rehypeExternalLinks from "rehype-external-links";
 import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
 
+import remarkMath from "remark-math";
 import { CODE_THEME, USER_SITE } from "./src/config.ts";
 import updateConfig from "./src/integration/updateConfig.ts";
-import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 
-// --------------  只加这一行：Expressive Code --------------
-import expressiveCode from "astro-expressive-code";
+import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -28,11 +28,11 @@ export default defineConfig({
 
     // ① 只改这里：用 Expressive Code 接管代码块（含复制按钮、行号）
     expressiveCode({
-      themes: [CODE_THEME],          // 仍用你的主题变量
+      themes: [CODE_THEME], // 仍用你的主题变量
       styleOverrides: {
-        borderRadius: "0.75rem",     // 圆角同 Frosti
+        borderRadius: "0.75rem", // 圆角同 Frosti
       },
-      plugins: ["line-numbers"],     // 行号
+      plugins: ["line-numbers"], // 行号
       // copy-button 默认已内置，无需显式声明
     }),
 
