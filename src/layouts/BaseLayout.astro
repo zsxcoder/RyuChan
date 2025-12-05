@@ -33,18 +33,109 @@ const bannerSubtitle = pageConfig?.subtitle || "";
     <Header description={SITE_DESCRIPTION} favicon={SITE_FAVICON} image={image} />
     <title>{`${title} - ${SITE_TAB}`}</title>
 
-    <!-- Umami分析（自建） -->
-    {
-      umamiConfig.enable && (
-        <script defer src={`${umamiConfig.baseUrl}/script.js`} data-website-id={umamiConfig.websiteId} />
-      )
-    }
+    <!-- ███████ 全局加载动画 ███████ -->
+    <style>
+      /* 全屏遮罩 */
+      #global-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.35s ease;
+      }
+      html[data-theme-type="dark"] #global-loader {
+        background: #121212;
+      }
 
-    <script defer src="https://han.zsx815.top/tracker.min.js" data-website-id="ryu"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" />
+      /* 圆形头像 + 呼吸灯 */
+      .loader-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        margin-bottom: 24px;
+        object-fit: cover;
+        animation: flash 1.2s ease-in-out infinite;
+      }
+      @keyframes flash {
+        0%,
+        100% {
+          opacity: 0.4;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
 
-    <!-- Microsoft Clarity -->
-    <!-- <script type="text/javascript">
+      /* 进度条外壳 */
+      .loader-track {
+        width: 220px;
+        height: 4px;
+        background: rgba(0, 0, 0, 0.08);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      html[data-theme-type="dark"] .loader-track {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      /* 进度条滑块 */
+      .loader-bar {
+        height: 100%;
+        width: 0%;
+        background: #3b82f6; /* 可换成主题色 */
+        border-radius: inherit;
+        transition: width 0.25s ease;
+      }
+    </style>
+  </head><div id="global-loader">
+    <!-- 头像地址换成你自己的 -->
+    <img class="loader-avatar" src="https://gravatar.mcyzsx.top/avatar/me" alt="avatar" />
+    <div class="loader-track">
+      <div class="loader-bar" id="loader-bar"></div>
+    </div>
+  </div>
+
+  <script>
+    /* 让进度条在 3 s 内匀速走到 90%，剩 10% 等页面真正好了再冲满 */
+    const bar = document.getElementById("loader-bar");
+    let width = 0;
+    const interval = setInterval(() => {
+      if (width >= 90) {
+        clearInterval(interval);
+        return;
+      }
+      width += 3;
+      bar.style.width = width + "%";
+    }, 100);
+
+    /* 页面真正 ready 后冲满 + 淡出 + 移除节点 */
+    document.addEventListener("astro:page-load", () => {
+      bar.style.width = "100%";
+      setTimeout(() => {
+        const mask = document.getElementById("global-loader");
+        mask.style.opacity = "0";
+        mask.addEventListener("transitionend", () => mask.remove(), { once: true });
+      }, 250);
+    });
+  </script>
+  <!-- ███████  加载动画结束 ███████ -->
+
+  <!-- Umami分析（自建） -->
+  {
+    umamiConfig.enable && (
+      <script defer src={`${umamiConfig.baseUrl}/script.js`} data-website-id={umamiConfig.websiteId} />
+    )
+  }
+
+  <script defer src="https://han.zsx815.top/tracker.min.js" data-website-id="ryu"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" />
+
+  <!-- Microsoft Clarity -->
+  <!-- <script type="text/javascript">
       (function (c, l, a, r, i, t, y) {
         c[a] =
           c[a] ||
@@ -59,155 +150,156 @@ const bannerSubtitle = pageConfig?.subtitle || "";
       })(window, document, "clarity", "script", "skz108rus8");
     </script> -->
 
-    <!-- 主题管理脚本 -->
-    <script define:vars={{ SITE_THEME }} is:inline>
-      (function () {
-        const storedTheme = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        let theme;
-        if (storedTheme) {
-          theme = storedTheme;
-        } else {
-          theme = prefersDark ? SITE_THEME.dark : SITE_THEME.light;
-          localStorage.setItem("theme", theme);
-        }
-        document.documentElement.setAttribute("data-theme", theme);
-        const themeType = theme === SITE_THEME.dark ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme-type", themeType);
-        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-          if (!localStorage.getItem("theme")) {
-            const newTheme = e.matches ? SITE_THEME.dark : SITE_THEME.light;
-            document.documentElement.setAttribute("data-theme", newTheme);
-            const newThemeType = e.matches ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme-type", newThemeType);
-            localStorage.setItem("theme", newTheme);
-          }
-        });
-      })();
-    </script>
-
-    <!-- 导航生命周期处理 -->
-    <script is:inline>
-      // 导航状态跟踪
-      let navigationInProgress = false;
-      let navigationTimeout = null;
-
-      // 清除导航超时
-      function clearNavigationTimeout() {
-        if (navigationTimeout) {
-          clearTimeout(navigationTimeout);
-          navigationTimeout = null;
-        }
+  <!-- 主题管理脚本 -->
+  <script define:vars={{ SITE_THEME }} is:inline>
+    (function () {
+      const storedTheme = localStorage.getItem("theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      let theme;
+      if (storedTheme) {
+        theme = storedTheme;
+      } else {
+        theme = prefersDark ? SITE_THEME.dark : SITE_THEME.light;
+        localStorage.setItem("theme", theme);
       }
+      document.documentElement.setAttribute("data-theme", theme);
+      const themeType = theme === SITE_THEME.dark ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme-type", themeType);
+      window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+        if (!localStorage.getItem("theme")) {
+          const newTheme = e.matches ? SITE_THEME.dark : SITE_THEME.light;
+          document.documentElement.setAttribute("data-theme", newTheme);
+          const newThemeType = e.matches ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme-type", newThemeType);
+          localStorage.setItem("theme", newTheme);
+        }
+      });
+    })();
+  </script>
 
-      // 导航开始处理
-      document.addEventListener("astro:before-preparation", (event) => {
-        console.log("Navigation starting...");
-        navigationInProgress = true;
+  <!-- 导航生命周期处理 -->
+  <script is:inline>
+    // 导航状态跟踪
+    let navigationInProgress = false;
+    let navigationTimeout = null;
 
-        // 设置导航超时保护（5秒后强制完成）
-        clearNavigationTimeout();
-        navigationTimeout = setTimeout(() => {
-          console.warn("Navigation timeout, forcing completion");
-          navigationInProgress = false;
-          // 强制隐藏加载器
-          const loader = document.getElementById("globalLoader");
-          if (loader) {
-            loader.style.opacity = "0";
-            setTimeout(() => loader.remove(), 300);
+    // 清除导航超时
+    function clearNavigationTimeout() {
+      if (navigationTimeout) {
+        clearTimeout(navigationTimeout);
+        navigationTimeout = null;
+      }
+    }
+
+    // 导航开始处理
+    document.addEventListener("astro:before-preparation", (event) => {
+      console.log("Navigation starting...");
+      navigationInProgress = true;
+
+      // 设置导航超时保护（5秒后强制完成）
+      clearNavigationTimeout();
+      navigationTimeout = setTimeout(() => {
+        console.warn("Navigation timeout, forcing completion");
+        navigationInProgress = false;
+        // 强制隐藏加载器
+        const loader = document.getElementById("globalLoader");
+        if (loader) {
+          loader.style.opacity = "0";
+          setTimeout(() => loader.remove(), 300);
+        }
+      }, 5000);
+    });
+
+    // 导航内容加载完成
+    document.addEventListener("astro:after-preparation", (event) => {
+      console.log("Navigation content loaded...");
+    });
+
+    // 导航完成处理
+    document.addEventListener("astro:page-load", () => {
+      console.log("Page loaded");
+      navigationInProgress = false;
+      clearNavigationTimeout();
+
+      // 重新初始化导航链接处理
+      initializeNavigationLinks();
+    });
+
+    // 导航错误处理
+    document.addEventListener("astro:navigation-error", (event) => {
+      console.error("Navigation error:", event.error);
+      navigationInProgress = false;
+      clearNavigationTimeout();
+
+      // 错误时强制刷新页面
+      if (confirm("导航失败，是否刷新页面？")) {
+        window.location.reload();
+      }
+    });
+
+    // 初始化导航链接处理
+    function initializeNavigationLinks() {
+      const links = document.querySelectorAll("a[href]");
+
+      links.forEach((link) => {
+        // 移除旧的事件监听器（避免重复绑定）
+        const newLink = link.cloneNode(true);
+        link.parentNode.replaceChild(newLink, link);
+
+        newLink.addEventListener("click", (e) => {
+          const currentUrl = window.location.href;
+          const targetUrl = newLink.href;
+
+          // 如果点击的是当前页面链接，阻止默认行为
+          if (targetUrl === currentUrl) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("Prevented navigation to current page");
+            return;
           }
-        }, 5000);
-      });
 
-      // 导航内容加载完成
-      document.addEventListener("astro:after-preparation", (event) => {
-        console.log("Navigation content loaded...");
-      });
+          // 如果导航正在进行中，阻止重复点击
+          if (navigationInProgress) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("Navigation already in progress");
+            return;
+          }
 
-      // 导航完成处理
-      document.addEventListener("astro:page-load", () => {
-        console.log("Page loaded");
+          // 检查是否是外部链接
+          const isExternal = newLink.hostname !== window.location.hostname;
+          const hasTargetBlank = newLink.target === "_blank";
+
+          if (isExternal || hasTargetBlank) {
+            // 外部链接或新窗口链接，不处理
+            return;
+          }
+
+          console.log("Allowing navigation to:", targetUrl);
+        });
+      });
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener("DOMContentLoaded", () => {
+      initializeNavigationLinks();
+    });
+
+    // 处理浏览器后退/前进按钮
+    window.addEventListener("popstate", () => {
+      if (navigationInProgress) {
+        console.log("Browser navigation detected during transition");
         navigationInProgress = false;
         clearNavigationTimeout();
-
-        // 重新初始化导航链接处理
-        initializeNavigationLinks();
-      });
-
-      // 导航错误处理
-      document.addEventListener("astro:navigation-error", (event) => {
-        console.error("Navigation error:", event.error);
-        navigationInProgress = false;
-        clearNavigationTimeout();
-
-        // 错误时强制刷新页面
-        if (confirm("导航失败，是否刷新页面？")) {
-          window.location.reload();
-        }
-      });
-
-      // 初始化导航链接处理
-      function initializeNavigationLinks() {
-        const links = document.querySelectorAll("a[href]");
-
-        links.forEach((link) => {
-          // 移除旧的事件监听器（避免重复绑定）
-          const newLink = link.cloneNode(true);
-          link.parentNode.replaceChild(newLink, link);
-
-          newLink.addEventListener("click", (e) => {
-            const currentUrl = window.location.href;
-            const targetUrl = newLink.href;
-
-            // 如果点击的是当前页面链接，阻止默认行为
-            if (targetUrl === currentUrl) {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log("Prevented navigation to current page");
-              return;
-            }
-
-            // 如果导航正在进行中，阻止重复点击
-            if (navigationInProgress) {
-              e.preventDefault();
-              e.stopPropagation();
-              console.log("Navigation already in progress");
-              return;
-            }
-
-            // 检查是否是外部链接
-            const isExternal = newLink.hostname !== window.location.hostname;
-            const hasTargetBlank = newLink.target === "_blank";
-
-            if (isExternal || hasTargetBlank) {
-              // 外部链接或新窗口链接，不处理
-              return;
-            }
-
-            console.log("Allowing navigation to:", targetUrl);
-          });
-        });
       }
+    });
+  </script>
 
-      // 页面加载完成后初始化
-      document.addEventListener("DOMContentLoaded", () => {
-        initializeNavigationLinks();
-      });
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css" />
 
-      // 处理浏览器后退/前进按钮
-      window.addEventListener("popstate", () => {
-        if (navigationInProgress) {
-          console.log("Browser navigation detected during transition");
-          navigationInProgress = false;
-          clearNavigationTimeout();
-        }
-      });
-    </script>
+  <!-- 移除上边距，让Banner从顶部开始 -->
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/css/lightbox.min.css" />
-
-    <!-- 移除上边距，让Banner从顶部开始 -->
-  </head><body class="flex flex-col min-h-screen" {...isIndexed ? { "data-pagefind-body": true } : {}}>
+  <body class="flex flex-col min-h-screen" {...isIndexed ? { "data-pagefind-body": true } : {}}>
     <Banner title={bannerTitle} subtitle={bannerSubtitle} />
     <Navbar />
     <div class="max-w-blog mx-auto w-full flex-grow">
