@@ -694,3 +694,62 @@ code {
   }
 }
 
+/* ===== 浅色 ===== */
+[data-theme-type="light"] {
+  --waline-bg: #f6f4fb;
+}
+
+/* ===== 深色 ===== */
+[data-theme-type="dark"] {
+  --waline-bg: #1e1b24;                 /* Waline 专用背景，不改 --custom-page-bg */
+  --waline-label-color: #fff;           /* 字段名：昵称/邮箱/网址 */
+  --waline-placeholder-color: #bbb;     /* 占位字再提一级 */
+}
+
+/* ===== Waline 强制取上面变量 ===== */
+[data-theme-type="light"] .wl-panel,
+[data-theme-type="light"] .wl-content,
+[data-theme-type="light"] .wl-editor,
+[data-theme-type="light"] .wl-input,
+[data-theme-type="light"] .wl-meta,
+[data-theme-type="light"] .wl-btn {
+  background: var(--waline-bg) !important;
+  color: #111 !important;
+  border-color: #e5e7eb !important;
+}
+
+[data-theme-type="dark"] .wl-panel,
+[data-theme-type="dark"] .wl-content,
+[data-theme-type="dark"] .wl-editor,
+[data-theme-type="dark"] .wl-input,
+[data-theme-type="dark"] .wl-meta,
+[data-theme-type="dark"] .wl-btn {
+  background: var(--waline-bg) !important;
+  color: #e5e7eb !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* 字段名（昵称/邮箱/网址）→ 纯白 */
+[data-theme-type="dark"] .wl-label {
+  color: var(--waline-label-color) !important;
+}
+
+/* 占位字 → 再亮一点 */
+[data-theme-type="dark"] .wl-input::placeholder,
+[data-theme-type="dark"] .wl-editor::placeholder {
+  color: var(--waline-placeholder-color) !important;
+}
+
+/* 链接/按钮高亮保持原样 */
+[data-theme-type="dark"] .wl-action a,
+[data-theme-type="dark"] .wl-comment-actions a {
+  color: var(--color-link, #58a6ff) !important;
+}
+
+/* ===== 深色：字段名加粗加大 ===== */
+[data-theme-type="dark"] .wl-label {
+  color: var(--waline-label-color) !important;
+  font-weight: 600 !important;     /* 加粗 */
+  font-size: 0.95rem !important;   /* 比默认大一圈 */
+  letter-spacing: 0.3px !important;/* 让字间稍微分开，更清楚 */
+}

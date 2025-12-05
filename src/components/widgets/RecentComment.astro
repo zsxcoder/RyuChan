@@ -11,7 +11,7 @@ export interface Props {
 const { serverURL } = Astro.props;
 
 /* ---------- 工具函数 ---------- */
-const ADMIN_HASH = "252fb3ce94cd050b2ee835aca2b211b3"; // 如需 md5 比对可保留，这里用 type 判断站长
+const ADMIN_HASH = "252fb3ce94cd050b2ee835aca2b211b3";
 
 function formatTimeAgo(ts: number): string {
   const diff = Math.floor((Date.now() - ts) / 1000);
@@ -52,7 +52,10 @@ try {
   const res = await fetch(`${serverURL}/comment?type=recent&count=5`);
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   const data = await res.json();
-  console.log("[RecentComment] 拿到", data.length, "条", data);
+  /* 仅开发环境打印日志 */
+  if (import.meta.env.DEV) {
+    console.log("[RecentComment] 拿到", data.length, "条", data);
+  }
 
   comments = data.slice(0, 5).map((c: any) => ({
     id: c.objectId,
@@ -180,7 +183,6 @@ try {
 </style>
 
 <script>
-  // 点击跳转到 Waline 评论锚点
   document.querySelectorAll(".comment-item").forEach((el) => {
     const url = (el as HTMLElement).dataset.url;
     const id = (el as HTMLElement).dataset.id;

@@ -37,6 +37,14 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
+    text: "今天搞了cloudflare的memos和cfalbums，还算可以。",
+    date: "2025-12-6 00:40",
+    tags: ["日常"],
+    location: "南京",
+    github: ["https://github.com/mcyzsx/Cloudflare-Memos", "https://github.com/mcyzsx/cfalbum"],
+    url: ["https://echo.051531.xyz", "https://memos.mcyzsx.top/"],
+  },
+  {
     text: "今天搞了Echo，被逼校园网折磨的要死。。。",
     date: "2025-12-3 21:59",
     tags: ["日常"],
