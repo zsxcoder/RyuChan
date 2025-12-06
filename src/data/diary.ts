@@ -42,7 +42,7 @@ export const diaryEntries: DiaryEntry[] = [
     tags: ["日常"],
     location: "南京",
     github: ["https://github.com/mcyzsx/Cloudflare-Memos", "https://github.com/mcyzsx/cfalbum"],
-    url: ["https://echo.051531.xyz", "https://memos.mcyzsx.top/"],
+    url: ["https://gallery.mcyzsx.top", "https://memos.mcyzsx.top/"],
   },
   {
     text: "今天搞了Echo，被逼校园网折磨的要死。。。",
