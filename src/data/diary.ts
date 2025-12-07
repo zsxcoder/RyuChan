@@ -37,6 +37,14 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
+    text: "今天搞了个cloudflare的moments，然后继续完善博客。",
+    date: "2025-12-8 00:14",
+    tags: ["日常"],
+    location: "南京",
+    github: ["https://github.com/jkjoy/moments-cloudflare"],
+    url: ["https://moment.mcyzsx.top"],
+  },
+  {
     text: "今天搞了cloudflare的memos和cfalbums，还算可以。",
     date: "2025-12-6 00:40",
     tags: ["日常"],
