@@ -37,6 +37,14 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
+    text: "今天搞了个友链检测页面，感谢柳神~",
+    date: "2025-12-9 00:14",
+    tags: ["日常"],
+    location: "南京",
+    github: ["https://github.com/willow-god/check-flink"],
+    url: ["https://check-flink.mcyzsx.top"],
+  },
+  {
     text: "今天搞了个cloudflare的moments，然后继续完善博客。",
     date: "2025-12-8 00:14",
     tags: ["日常"],
