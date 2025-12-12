@@ -81,7 +81,7 @@ export const diaryEntries: DiaryEntry[] = [
     date: "2025-12-1 23:27",
     tags: ["日常"],
     location: "南京",
-    github: ["https://github.com/mcyzsx/Nuxt-blog-v3"],
+    github: ["https://github.com/zsxcoder/Nuxt-blog-v3"],
   },
   {
     text: "今天算是完成了设备和日记的页面，明天要继续完善页面的语段，添加音乐、网页卡片这些。",

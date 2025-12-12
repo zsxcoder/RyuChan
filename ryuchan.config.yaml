@@ -194,7 +194,7 @@ user:
       #   ariaLabel: Support my work # 图标的可访问性标签
       #   title: Support my work # 图标的悬浮标题
       #   svg: "ri:cup-line"
-      - href: "https://github.com/mcyzsx"
+      - href: "https://github.com/zsxcoder"
         ariaLabel: Github
         title: Github
         svg: "ri:github-line"
@@ -229,7 +229,7 @@ user:
       #   ariaLabel: Support my work # 图标的可访问性标签
       #   title: Support my work # 图标的悬浮标题
       #   svg: "ri:cup-line"
-      - href: "https://github.com/mcyzsx"
+      - href: "https://github.com/zsxcoder"
         ariaLabel: Github
         title: Github
         svg: "ri:github-line"
