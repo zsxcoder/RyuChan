@@ -37,6 +37,14 @@ export interface DiaryEntry {
 /* ---------- 日记数据 ---------- */
 export const diaryEntries: DiaryEntry[] = [
   {
+    text: "今天给博客把友链检测页面放到了友链页。然后搞了个中转页",
+    date: "2025-12-15 14:32",
+    tags: ["日常"],
+    location: "南京",
+    github: ["https://github.com/willow-god/check-flink", "https://github.com/willow-god/hexo-safego"],
+    url: ["httpd://boke.zsx815.top/links"],
+  },
+  {
     text: "今天搞了个友链检测页面，感谢柳神~",
     date: "2025-12-9 00:14",
     tags: ["日常"],

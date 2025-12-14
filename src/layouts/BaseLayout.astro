@@ -179,9 +179,33 @@ const bannerSubtitle = pageConfig?.subtitle || "";
             // 检查是否是外部链接
             const isExternal = newLink.hostname !== window.location.hostname;
             const hasTargetBlank = newLink.target === "_blank";
+            
+            // 白名单域名检查（与safego.js保持一致）
+            const trustedDomains = [
+              'boke.zsx815.top',
+              'mcyzsx.top',
+              'localhost',
+              '127.0.0.1',
+              'github.com',
+              'gitee.com',
+              'cdn.jsdelivr.net',
+              'unpkg.com'
+            ];
+            
+            const isTrustedDomain = trustedDomains.some(domain => newLink.hostname.includes(domain));
 
-            if (isExternal || hasTargetBlank) {
-              // 外部链接或新窗口链接，不处理
+            if (isExternal && !isTrustedDomain) {
+              // 外部非信任域名链接，不处理，由safego.js接管
+              return;
+            }
+            
+            if (isExternal && isTrustedDomain) {
+              // 外部信任域名链接或新窗口链接，不处理
+              return;
+            }
+            
+            if (hasTargetBlank) {
+              // 新窗口链接，不处理
               return;
             }
 
@@ -293,6 +317,111 @@ const bannerSubtitle = pageConfig?.subtitle || "";
     </style>
 
     <script is:inline src="https://cdn.jsdelivr.net/npm/lightbox2@2.11.4/dist/js/lightbox.min.js "></script>
+    
+    <!-- 外链安全跳转 -->
+    <script is:inline>
+/**
+ * 外链安全跳转脚本
+ * 将所有外部链接重定向到中转页面
+ */
+
+// 可信任的域名白名单
+const trustedDomains = [
+  'boke.zsx815.top',
+  'mcyzsx.top',
+  'localhost',
+  '127.0.0.1',
+  'github.com',
+  'gitee.com',
+  'cdn.jsdelivr.net',
+  'unpkg.com'
+];
+
+// 检查URL是否在白名单中
+function isTrustedDomain(url) {
+  try {
+    const urlObj = new URL(url);
+    // 检查是否是同域名或白名单域名
+    if (window.location.hostname === urlObj.hostname) {
+      return true;
+    }
+    return trustedDomains.some(domain => urlObj.hostname.includes(domain));
+  } catch (e) {
+    return false;
+  }
+}
+
+// 处理链接点击
+function handleLinkClick(event) {
+  const link = event.target.closest('a');
+  if (!link) return;
+  
+  const href = link.getAttribute('href');
+  if (!href) return;
+  
+  // 跳过特殊链接
+  if (
+    href.startsWith('#') ||           // 锚点
+    href.startsWith('javascript:') ||  // JavaScript
+    href.startsWith('mailto:') ||      // 邮件
+    href.startsWith('tel:') ||         // 电话
+    href.startsWith('data:')           // Data URI
+  ) {
+    return;
+  }
+  
+  try {
+    const urlObj = new URL(href, window.location.href);
+    // 如果是外部链接且不在白名单中
+    if (urlObj.hostname !== window.location.hostname && !isTrustedDomain(urlObj.href)) {
+      event.preventDefault();
+      // 跳转到中转页
+      window.location.href = `/go?url=${encodeURIComponent(urlObj.href)}`;
+    }
+  } catch (e) {
+    console.error('Safego: 处理链接时出错', e);
+  }
+}
+
+// 初始化函数
+function initSafeGo() {
+  // 监听整个文档的点击事件
+  document.addEventListener('click', handleLinkClick);
+  
+  // 处理已经存在的链接
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+    
+    try {
+      const urlObj = new URL(href, window.location.href);
+      // 如果是外部链接且不在白名单中，不做额外标记
+      if (urlObj.hostname !== window.location.hostname && !isTrustedDomain(urlObj.href)) {
+        // 外部链接不添加图标，保持简洁
+      }
+    } catch (e) {
+      // URL解析失败，可能是相对路径，忽略
+    }
+  });
+}
+
+// 当DOM加载完成后初始化
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSafeGo);
+} else {
+  initSafeGo();
+}
+
+// 添加到全局作用域，方便调试
+window.SafeGo = {
+  isTrustedDomain,
+  handleLinkClick,
+  init: initSafeGo
+};
+
+// 确保在页面导航后重新初始化
+document.addEventListener('astro:page-load', initSafeGo);
+    </script>
 
     <!-- 导航降级处理 -->
     <script is:inline>

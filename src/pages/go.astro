@@ -1,0 +1,152 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+
+// 安全地获取目标链接
+let targetUrl = '/';
+try {
+  const url = Astro.url;
+  if (url && url.searchParams) {
+    targetUrl = url.searchParams.get('url') || '/';
+  }
+} catch (e) {
+  console.error('获取URL参数失败:', e);
+}
+
+// 定义可信任的域名白名单（这些域名不需要中转）
+const trustedDomains = [
+  'boke.zsx815.top',
+  'mcyzsx.top',
+  'github.com',
+  'gitee.com',
+  'cdn.jsdelivr.net',
+  'unpkg.com'
+];
+
+// 检查URL是否在白名单中
+function isTrustedDomain(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    return trustedDomains.some(domain => urlObj.hostname.includes(domain));
+  } catch (e) {
+    return false;
+  }
+}
+
+// 直接跳转到白名单域名
+if (targetUrl !== '/' && isTrustedDomain(targetUrl)) {
+  try {
+    return Astro.redirect(targetUrl);
+  } catch (e) {
+    console.error('重定向失败:', e);
+  }
+}
+---
+
+<BaseLayout title="外链跳转提示">
+  <div class="container mx-auto px-4 py-16 max-w-2xl">
+    <div class="bg-base-100 rounded-xl shadow-lg p-8 text-center">
+      <div class="mb-6">
+        <Icon name="lucide:external-link" class="w-16 h-16 mx-auto text-warning" />
+      </div>
+      
+      <h1 class="text-3xl font-bold mb-4">即将离开本站</h1>
+      
+      <p class="text-lg mb-6 text-base-content/80">
+        您即将访问外部网站，本站不对该网站内容负责。
+      </p>
+      
+      <div class="bg-base-200 rounded-lg p-4 mb-8 text-left break-all">
+        <p class="text-sm text-base-content/60 mb-2">目标网址:</p>
+        <p class="text-base-content font-medium">{targetUrl}</p>
+      </div>
+      
+      <!-- 倒计时提示 -->
+      <div class="flex justify-center mb-4">
+        <p id="countdownText" class="text-sm text-base-content/60"></p>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button 
+          id="continueButton"
+          class="btn btn-primary"
+        >
+          <Icon name="lucide:external-link" class="w-4 h-4 mr-2" />
+          继续访问
+        </button>
+        
+        <button 
+          onclick="history.back()" 
+          class="btn btn-outline"
+        >
+          <Icon name="lucide:arrow-left" class="w-4 h-4 mr-2" />
+          返回上页
+        </button>
+      </div>
+      
+      <div class="mt-8 pt-6 border-t border-base-300">
+        <p class="text-sm text-base-content/60">
+          <Icon name="lucide:info" class="w-4 h-4 inline mr-1" />
+          为了您的上网安全，请注意辨别网站真伪，保护个人信息。
+        </p>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // 添加5秒后自动跳转选项
+  let countdown = 5;
+  let countdownInterval;
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    // 安全地获取URL参数
+    let targetUrl = '/';
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      targetUrl = urlParams.get('url') || '/';
+    } catch (e) {
+      console.error('获取URL参数失败:', e);
+    }
+    
+    // 直接获取倒计时元素
+    const countdownElement = document.getElementById('countdownText');
+    if (!countdownElement) {
+      console.error('找不到倒计时元素');
+      return;
+    }
+    
+    // 跳转到目标URL的函数
+    function redirectToTarget() {
+      clearInterval(countdownInterval);
+      // 使用window.location.href代替window.open，确保跳转成功
+      window.location.href = targetUrl;
+    }
+    
+    function updateCountdown() {
+      if (countdown > 0) {
+        countdownElement.textContent = `${countdown} 秒后自动跳转...`;
+        countdown--;
+      } else {
+        redirectToTarget();
+      }
+    }
+    
+    // 为继续访问按钮添加点击事件
+    const continueButton = document.getElementById('continueButton');
+    if (continueButton) {
+      continueButton.addEventListener('click', redirectToTarget);
+    }
+    
+    // 如果用户点击了返回按钮，停止倒计时
+    const backButton = document.querySelector('button[onclick="history.back()"]');
+    if (backButton) {
+      backButton.addEventListener('click', () => {
+        clearInterval(countdownInterval);
+      });
+    }
+    
+    updateCountdown();
+    countdownInterval = setInterval(updateCountdown, 1000);
+  });
+</script>

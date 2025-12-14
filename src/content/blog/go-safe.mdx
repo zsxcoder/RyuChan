@@ -1,0 +1,474 @@
+---
+title: 为博客添加外链安全跳转中转页
+description: 参考hexo-safego项目，为博客添加外链安全跳转功能，提高用户体验和安全性。
+pubDate: 14 12 2025
+image: https://cdn.jsdelivr.net/gh/mcyzsx/picx-images-hosting@master/cover/go-safe.webp
+tags:
+  - Astro
+  - 安全跳转
+  - 前端开发
+categories:
+  - tech
+---
+import Info from "@/components/mdx/Info.astro";
+
+<Info>下列文章来自AI</Info>
+
+## 外链安全跳转中转页的实现
+
+　　在浏览博客时，经常会点击到外部链接。为了提高用户体验和安全性，我决定为博客添加一个外链安全跳转中转页。这个功能参考了[hexo-safego](https://github.com/willow-god/hexo-safego)项目，但进行了适当的适配以符合我的博客风格。
+
+### 功能设计
+
+外链安全跳转功能的主要需求：
+
+1. **中转提示**：当用户点击外部链接时，显示一个友好的中转页面，告知用户即将离开当前网站
+2. **目标URL展示**：清晰显示用户即将访问的URL，方便用户确认
+3. **操作选择**：提供"继续访问"和"返回上页"两个选项
+4. **自动跳转**：添加5秒倒计时自动跳转功能
+5. **白名单机制**：对常用服务（如GitHub等）不触发中转，直接跳转
+
+### 实现步骤
+
+#### 1. 创建中转页面
+
+首先创建`/src/pages/go.astro`文件作为中转页面：
+
+```astro
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { Icon } from "astro-icon/components";
+
+// 安全地获取目标链接
+let targetUrl = '/';
+try {
+  const url = Astro.url;
+  if (url && url.searchParams) {
+    targetUrl = url.searchParams.get('url') || '/';
+  }
+} catch (e) {
+  console.error('获取URL参数失败:', e);
+}
+
+// 定义可信任的域名白名单
+const trustedDomains = [
+  'boke.zsx815.top',
+  'mcyzsx.top',
+  'github.com',
+  'gitee.com',
+  'cdn.jsdelivr.net',
+  'unpkg.com'
+];
+
+// 检查URL是否在白名单中
+function isTrustedDomain(url: string): boolean {
+  try {
+    const urlObj = new URL(url);
+    return trustedDomains.some(domain => urlObj.hostname.includes(domain));
+  } catch (e) {
+    return false;
+  }
+}
+
+// 直接跳转到白名单域名
+if (targetUrl !== '/' && isTrustedDomain(targetUrl)) {
+  try {
+    return Astro.redirect(targetUrl);
+  } catch (e) {
+    console.error('重定向失败:', e);
+  }
+}
+---
+
+<BaseLayout title="外链跳转提示">
+  <div class="container mx-auto px-4 py-16 max-w-2xl">
+    <div class="bg-base-100 rounded-xl shadow-lg p-8 text-center">
+      <div class="mb-6">
+        <Icon name="lucide:external-link" class="w-16 h-16 mx-auto text-warning" />
+      </div>
+      
+      <h1 class="text-3xl font-bold mb-4">即将离开本站</h1>
+      
+      <p class="text-lg mb-6 text-base-content/80">
+        您即将访问外部网站，本站不对该网站内容负责。
+      </p>
+      
+      <div class="bg-base-200 rounded-lg p-4 mb-8 text-left break-all">
+        <p class="text-sm text-base-content/60 mb-2">目标网址:</p>
+        <p class="text-base-content font-medium">{targetUrl}</p>
+      </div>
+      
+      <!-- 倒计时提示 -->
+      <div class="flex justify-center mb-4">
+        <p id="countdownText" class="text-sm text-base-content/60"></p>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button id="continueButton" class="btn btn-primary">
+          <Icon name="lucide:external-link" class="w-4 h-4 mr-2" />
+          继续访问
+        </button>
+        
+        <button onclick="history.back()" class="btn btn-outline">
+          <Icon name="lucide:arrow-left" class="w-4 h-4 mr-2" />
+          返回上页
+        </button>
+      </div>
+      
+      <div class="mt-8 pt-6 border-t border-base-300">
+        <p class="text-sm text-base-content/60">
+          <Icon name="lucide:info" class="w-4 h-4 inline mr-1" />
+          为了您的上网安全，请注意辨别网站真伪，保护个人信息。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 添加5秒后自动跳转选项
+    let countdown = 5;
+    let countdownInterval;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      // 安全地获取URL参数
+      let targetUrl = '/';
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        targetUrl = urlParams.get('url') || '/';
+      } catch (e) {
+        console.error('获取URL参数失败:', e);
+      }
+      
+      // 直接获取倒计时元素
+      const countdownElement = document.getElementById('countdownText');
+      if (!countdownElement) {
+        console.error('找不到倒计时元素');
+        return;
+      }
+      
+      // 跳转到目标URL的函数
+      function redirectToTarget() {
+        clearInterval(countdownInterval);
+        // 使用window.location.href代替window.open，确保跳转成功
+        window.location.href = targetUrl;
+      }
+      
+      function updateCountdown() {
+        if (countdown > 0) {
+          countdownElement.textContent = `${countdown} 秒后自动跳转...`;
+          countdown--;
+        } else {
+          redirectToTarget();
+        }
+      }
+      
+      // 为继续访问按钮添加点击事件
+      const continueButton = document.getElementById('continueButton');
+      if (continueButton) {
+        continueButton.addEventListener('click', redirectToTarget);
+      }
+      
+      // 如果用户点击了返回按钮，停止倒计时
+      const backButton = document.querySelector('button[onclick="history.back()"]');
+      if (backButton) {
+        backButton.addEventListener('click', () => {
+          clearInterval(countdownInterval);
+        });
+      }
+      
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
+    });
+  </script>
+</BaseLayout>
+```
+
+#### 2. 创建外链处理脚本
+
+在`/src/layouts/BaseLayout.astro`中添加外链处理脚本：
+
+```js
+<script is:inline>
+/**
+ * 外链安全跳转脚本
+ * 将所有外部链接重定向到中转页面
+ */
+
+// 可信任的域名白名单
+const trustedDomains = [
+  'boke.zsx815.top',
+  'mcyzsx.top',
+  'localhost',
+  '127.0.0.1',
+  'github.com',
+  'gitee.com',
+  'cdn.jsdelivr.net',
+  'unpkg.com'
+];
+
+// 检查URL是否在白名单中
+function isTrustedDomain(url) {
+  try {
+    const urlObj = new URL(url);
+    // 检查是否是同域名或白名单域名
+    if (window.location.hostname === urlObj.hostname) {
+      return true;
+    }
+    return trustedDomains.some(domain => urlObj.hostname.includes(domain));
+  } catch (e) {
+    return false;
+  }
+}
+
+// 处理链接点击
+function handleLinkClick(event) {
+  const link = event.target.closest('a');
+  if (!link) return;
+  
+  const href = link.getAttribute('href');
+  if (!href) return;
+  
+  // 跳过特殊链接
+  if (
+    href.startsWith('#') ||           // 锚点
+    href.startsWith('javascript:') ||  // JavaScript
+    href.startsWith('mailto:') ||      // 邮件
+    href.startsWith('tel:') ||         // 电话
+    href.startsWith('data:')           // Data URI
+  ) {
+    return;
+  }
+  
+  try {
+    const urlObj = new URL(href, window.location.href);
+    // 如果是外部链接且不在白名单中
+    if (urlObj.hostname !== window.location.hostname && !isTrustedDomain(urlObj.href)) {
+      event.preventDefault();
+      // 跳转到中转页
+      window.location.href = `/go?url=${encodeURIComponent(urlObj.href)}`;
+    }
+  } catch (e) {
+    console.error('Safego: 处理链接时出错', e);
+  }
+}
+
+// 初始化函数
+function initSafeGo() {
+  // 监听整个文档的点击事件
+  document.addEventListener('click', handleLinkClick);
+  
+  // 处理已经存在的链接
+  document.querySelectorAll('a[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href) return;
+    
+    try {
+      const urlObj = new URL(href, window.location.href);
+      // 如果是外部链接且不在白名单中，不做额外标记
+      if (urlObj.hostname !== window.location.hostname && !isTrustedDomain(urlObj.href)) {
+        // 外部链接不添加图标，保持简洁
+      }
+    } catch (e) {
+      // URL解析失败，可能是相对路径，忽略
+    }
+  });
+}
+
+// 当DOM加载完成后初始化
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initSafeGo);
+} else {
+  initSafeGo();
+}
+
+// 添加到全局作用域，方便调试
+window.SafeGo = {
+  isTrustedDomain,
+  handleLinkClick,
+  init: initSafeGo
+};
+
+// 确保在页面导航后重新初始化
+document.addEventListener('astro:page-load', initSafeGo);
+</script>
+```
+
+#### 3. 中转页面UI设计
+
+中转页面的UI设计要点：
+
+1. **清晰提示**：显示"即将离开本站"的提示
+2. **URL展示**：以醒目方式显示目标URL
+3. **操作按钮**：提供"继续访问"和"返回上页"两个选项
+4. **倒计时**：在按钮上方显示倒计时，5秒后自动跳转
+
+```astro
+<div class="bg-base-100 rounded-xl shadow-lg p-8 text-center">
+  <div class="mb-6">
+    <Icon name="lucide:external-link" class="w-16 h-16 mx-auto text-warning" />
+  </div>
+  
+  <h1 class="text-3xl font-bold mb-4">即将离开本站</h1>
+  
+  <p class="text-lg mb-6 text-base-content/80">
+    您即将访问外部网站，本站不对该网站内容负责。
+  </p>
+  
+  <div class="bg-base-200 rounded-lg p-4 mb-8 text-left break-all">
+    <p class="text-sm text-base-content/60 mb-2">目标网址:</p>
+    <p class="text-base-content font-medium">{targetUrl}</p>
+  </div>
+  
+  <!-- 倒计时提示 -->
+  <div class="flex justify-center mb-4">
+    <p id="countdownText" class="text-sm text-base-content/60"></p>
+  </div>
+  
+  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <button id="continueButton" class="btn btn-primary">
+      <Icon name="lucide:external-link" class="w-4 h-4 mr-2" />
+      继续访问
+    </button>
+    
+    <button onclick="history.back()" class="btn btn-outline">
+      <Icon name="lucide:arrow-left" class="w-4 h-4 mr-2" />
+      返回上页
+    </button>
+  </div>
+</div>
+```
+
+#### 4. 倒计时脚本
+
+添加倒计时功能，在用户不操作时自动跳转：
+
+```js
+<script>
+  // 添加5秒后自动跳转选项
+  let countdown = 5;
+  let countdownInterval;
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    // 安全地获取URL参数
+    let targetUrl = '/';
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      targetUrl = urlParams.get('url') || '/';
+    } catch (e) {
+      console.error('获取URL参数失败:', e);
+    }
+    
+    // 直接获取倒计时元素
+    const countdownElement = document.getElementById('countdownText');
+    if (!countdownElement) {
+      console.error('找不到倒计时元素');
+      return;
+    }
+    
+    // 跳转到目标URL的函数
+    function redirectToTarget() {
+      clearInterval(countdownInterval);
+      // 使用window.location.href代替window.open，确保跳转成功
+      window.location.href = targetUrl;
+    }
+    
+    function updateCountdown() {
+      if (countdown > 0) {
+        countdownElement.textContent = `${countdown} 秒后自动跳转...`;
+        countdown--;
+      } else {
+        redirectToTarget();
+      }
+    }
+    
+    // 为继续访问按钮添加点击事件
+    const continueButton = document.getElementById('continueButton');
+    if (continueButton) {
+      continueButton.addEventListener('click', redirectToTarget);
+    }
+    
+    // 如果用户点击了返回按钮，停止倒计时
+    const backButton = document.querySelector('button[onclick="history.back()"]');
+    if (backButton) {
+      backButton.addEventListener('click', () => {
+        clearInterval(countdownInterval);
+      });
+    }
+    
+    updateCountdown();
+    countdownInterval = setInterval(updateCountdown, 1000);
+  });
+</script>
+```
+
+### 遇到的问题及解决方案
+
+#### 1. Astro.url 未定义错误
+
+在实现初期，遇到了"Cannot read properties of undefined (reading 'searchParams')"错误，这是因为`Astro.url`在某些情况下可能是未定义的。
+
+**解决方案**：
+```js
+let targetUrl = '/';
+try {
+  const url = Astro.url;
+  if (url && url.searchParams) {
+    targetUrl = url.searchParams.get('url') || '/';
+  }
+} catch (e) {
+  console.error('获取URL参数失败:', e);
+}
+```
+
+#### 2. "继续访问"按钮跳转失败
+
+用户点击"继续访问"按钮时，只刷新了页面而没有跳转到目标网站。
+
+**解决方案**：
+- 将链接从`<a>`标签改为`<button>`标签
+- 使用`window.location.href`代替`window.open()`
+- 创建统一的`redirectToTarget()`函数处理跳转
+
+```js
+function redirectToTarget() {
+  clearInterval(countdownInterval);
+  window.location.href = targetUrl;
+}
+```
+
+#### 3. 倒计时位置和样式调整
+
+最初倒计时显示在按钮下方，用户希望它显示在按钮上方并居中。
+
+**解决方案**：
+```astro
+<!-- 倒计时提示 -->
+<div class="flex justify-center mb-4">
+  <p id="countdownText" class="text-sm text-base-content/60"></p>
+</div>
+```
+
+#### 4. MDX代码块格式问题
+
+在MDX中，所有代码块必须正确地标记为代码，否则MDX解析器会尝试执行它们作为JavaScript。
+
+**解决方案**：
+- 确保所有代码块使用正确的语法高亮标识符（astro、js）
+- 确保代码块使用三个反引号包裹
+- 避免在MDX中直接使用非导入/导出的JavaScript语句
+
+### 效果展示
+
+最终实现的外链安全跳转功能具有以下特点：
+
+1. **安全性**：提醒用户即将离开当前网站，提高安全意识
+2. **透明度**：清晰显示目标URL，避免钓鱼网站风险
+3. **用户体验**：提供多种操作选择，包括自动跳转和手动控制
+4. **兼容性**：对白名单域名直接跳转，不影响正常使用体验
+5. **视觉一致性**：中转页面设计与博客整体风格保持一致
+
+### 总结
+
+通过这次实现，我为博客添加了外链安全跳转功能，提高了用户的外链访问体验和安全性。这个功能借鉴了hexo-safego项目的设计思路，但根据Astro框架的特点和我的博客风格进行了适配和优化。
+
+实现过程中遇到的一些问题，如Astro.url未定义、跳转失败、MDX格式问题等，都通过适当的错误处理和代码调整得到了解决。最终的实现既满足了功能需求，又保持了良好的用户体验。
