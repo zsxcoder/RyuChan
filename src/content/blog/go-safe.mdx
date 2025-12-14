@@ -124,7 +124,7 @@ if (targetUrl !== '/' && isTrustedDomain(targetUrl)) {
     </div>
   </div>
 
-  <script>
+  <script is:inline>
     // 添加5秒后自动跳转选项
     let countdown = 5;
     let countdownInterval;
@@ -189,6 +189,7 @@ if (targetUrl !== '/' && isTrustedDomain(targetUrl)) {
 
 ```js
 <script is:inline>
+// @ts-nocheck
 /**
  * 外链安全跳转脚本
  * 将所有外部链接重定向到中转页面
@@ -343,7 +344,8 @@ document.addEventListener('astro:page-load', initSafeGo);
 添加倒计时功能，在用户不操作时自动跳转：
 
 ```js
-<script>
+<script is:inline>
+  // @ts-nocheck
   // 添加5秒后自动跳转选项
   let countdown = 5;
   let countdownInterval;
@@ -448,7 +450,26 @@ function redirectToTarget() {
 </div>
 ```
 
-#### 4. MDX代码块格式问题
+#### 4. 脚本类型和 Astro 脚本处理问题
+
+在 Astro 组件中使用脚本时，需要注意脚本标签的类型和处理方式。Astro 默认将脚本标签视为普通 JavaScript，而不是 TypeScript，这会导致类型注解错误。
+
+**解决方案**：
+- 对于需要在客户端执行的脚本，使用 `is:inline` 指令
+- 移除 TypeScript 类型注解，改用纯 JavaScript 语法
+- 如果仍然需要避免 TypeScript 检查，可以添加 `// @ts-nocheck` 注释
+
+```astro
+<!-- 正确的方式 -->
+<script is:inline>
+  // @ts-nocheck
+  (window).__openQR = function(src) {
+    // JavaScript 代码，不含类型注解
+  };
+</script>
+```
+
+#### 5. MDX代码块格式问题
 
 在MDX中，所有代码块必须正确地标记为代码，否则MDX解析器会尝试执行它们作为JavaScript。
 

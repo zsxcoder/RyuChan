@@ -282,8 +282,8 @@ comments:
 # Umami 统计配置
 umami:
   enable: true
-  baseUrl: "https://umami.050815.xyz"
-  shareId: "tsQMChFuvCHcWA1L"
-  websiteId: "e4712ed9-35be-48ac-93ac-d81e3af5781f"
+  baseUrl: "https://umami.mcyzsx.top"
+  shareId: "CYRk95cHwlWkyqqE"
+  websiteId: "ce811557-6832-478a-b2b4-83c2a5df0d8e"
   timezone: "Asia/Shanghai"
 

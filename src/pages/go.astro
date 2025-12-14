@@ -94,7 +94,7 @@ if (targetUrl !== '/' && isTrustedDomain(targetUrl)) {
   </div>
 </BaseLayout>
 
-<script>
+<script is:inline define:vars={{}}>
   // 添加5秒后自动跳转选项
   let countdown = 5;
   let countdownInterval;
@@ -118,14 +118,18 @@ if (targetUrl !== '/' && isTrustedDomain(targetUrl)) {
     
     // 跳转到目标URL的函数
     function redirectToTarget() {
-      clearInterval(countdownInterval);
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
       // 使用window.location.href代替window.open，确保跳转成功
       window.location.href = targetUrl;
     }
     
     function updateCountdown() {
       if (countdown > 0) {
-        countdownElement.textContent = `${countdown} 秒后自动跳转...`;
+        if (countdownElement) {
+          countdownElement.textContent = `${countdown} 秒后自动跳转...`;
+        }
         countdown--;
       } else {
         redirectToTarget();
@@ -142,7 +146,9 @@ if (targetUrl !== '/' && isTrustedDomain(targetUrl)) {
     const backButton = document.querySelector('button[onclick="history.back()"]');
     if (backButton) {
       backButton.addEventListener('click', () => {
-        clearInterval(countdownInterval);
+        if (countdownInterval) {
+          clearInterval(countdownInterval);
+        }
       });
     }
     

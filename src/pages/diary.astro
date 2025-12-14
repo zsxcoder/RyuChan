@@ -255,7 +255,7 @@ const bannerImage = "https://img-api.zsx815.top/mc-pc";
 </BaseLayout>
 
 <!-- 把用户信息打到 window -->
-<script define:vars={{ avatar: userInfo.avatar, userName: userInfo.name }}>
+<script is:inline define:vars={{ avatar: userInfo.avatar, userName: userInfo.name }}>
   window.__USER_INFO__ = { avatar: avatar, name: userName };
 </script>
 
