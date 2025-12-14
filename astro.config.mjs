@@ -127,7 +127,7 @@ export default defineConfig({
       },
     },
     optimizeDeps: {
-      include: ["astro", "@astrojs/mdx", "@astrojs/tailwind"],
+      include: ["@astrojs/mdx", "@astrojs/tailwind"],
     },
   },
 });
