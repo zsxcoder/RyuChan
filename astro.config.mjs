@@ -129,5 +129,22 @@ export default defineConfig({
     optimizeDeps: {
       include: ["@astrojs/mdx", "@astrojs/tailwind"],
     },
+    build: {
+      minify: "esbuild",
+      rollupOptions: {
+        onwarn(warning, warn) {
+          // 忽略某些警告以减少控制台噪音
+          if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
+          if (warning.code === 'THIS_IS_UNDEFINED') return;
+          warn(warning);
+        },
+      },
+    },
+    server: {
+      fs: {
+        // 减少文件系统检查
+        strict: false,
+      },
+    },
   },
 });

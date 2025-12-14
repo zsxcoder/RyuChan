@@ -6,8 +6,10 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-    "build": "astro build && pagefind --site dist/client --output-path .vercel/output/static/pagefind",
-    "build:full": "astro check && astro build && pagefind --site dist/client --output-path .vercel/output/static/pagefind",
+    "build": "astro build",
+    "build:search": "pagefind --site dist/client --output-path .vercel/output/static/pagefind",
+    "build:full": "astro check && astro build && pnpm run build:search",
+    "build:parallel": "concurrently \"pnpm run build\" \"pnpm run build:search\"",
     "preview": "astro preview",
     "astro": "astro",
     "clean": "node clean-build-cache.js"
