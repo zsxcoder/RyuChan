@@ -1,0 +1,6 @@
+src/content/images/*
+public/images/*
+dist/*
+node_modules/*
+*.md
+*.mdx

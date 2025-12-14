@@ -6,9 +6,11 @@
     "dev": "astro dev",
     "start": "astro dev",
     "check": "astro check",
-    "build": "astro check && astro build && pagefind --site dist/client --output-path .vercel/output/static/pagefind",
+    "build": "astro build && pagefind --site dist/client --output-path .vercel/output/static/pagefind",
+    "build:full": "astro check && astro build && pagefind --site dist/client --output-path .vercel/output/static/pagefind",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "clean": "node clean-build-cache.js"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

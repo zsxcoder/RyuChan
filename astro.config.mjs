@@ -126,5 +126,8 @@ export default defineConfig({
         scss: { api: "modern-compiler" },
       },
     },
+    optimizeDeps: {
+      include: ["astro", "@astrojs/mdx", "@astrojs/tailwind"],
+    },
   },
 });
