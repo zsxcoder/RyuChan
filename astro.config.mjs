@@ -134,8 +134,10 @@ export default defineConfig({
       rollupOptions: {
         onwarn(warning, warn) {
           // 忽略某些警告以减少控制台噪音
-          if (warning.code === 'MODULE_LEVEL_DIRECTIVE') return;
-          if (warning.code === 'THIS_IS_UNDEFINED') return;
+          if (warning.code === "MODULE_LEVEL_DIRECTIVE")
+            return;
+          if (warning.code === "THIS_IS_UNDEFINED")
+            return;
           warn(warning);
         },
       },
